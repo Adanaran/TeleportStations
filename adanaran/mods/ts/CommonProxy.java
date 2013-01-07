@@ -12,7 +12,6 @@ import cpw.mods.fml.common.network.IGuiHandler;
  * Used for server-side.
  * 
  * @author Adanaran
- * 
  */
 public class CommonProxy implements IGuiHandler {
 
@@ -37,25 +36,20 @@ public class CommonProxy implements IGuiHandler {
 	}
 
 	/**
-	 * Registers the TileEntitySpecialRenderer.
-	 * <p>
-	 * Unused server-side.
-	 */
-	public void registerTESpRenderer() {
-	}
-
-	/**
-	 * Gets the current world name.
+	 * Gets the current world (save) name.
 	 * 
 	 * @return String the current world name
 	 */
 	public String getWorldName() {
-		return MinecraftServer.getServer().worldServers[0].getSaveHandler().getSaveDirectoryName();
+		return MinecraftServer.getServer().worldServers[0].getSaveHandler()
+				.getSaveDirectoryName();
 	}
 
 	/**
 	 * Gets the current world.
-	 * @param dim int the dimension of the world
+	 * 
+	 * @param dim
+	 *            int the dimension of the world
 	 * 
 	 * @return World the current world
 	 */

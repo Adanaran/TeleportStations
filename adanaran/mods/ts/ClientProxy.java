@@ -32,7 +32,8 @@ public class ClientProxy extends CommonProxy {
 				.preloadTexture("/adanaran/mods/ts/textures/TPGUI.png");
 		MinecraftForgeClient
 				.preloadTexture("/adanaran/mods/ts/textures/Frame.png");
-
+		ClientRegistry.bindTileEntitySpecialRenderer(
+				TileEntityTeleporter.class, new TileEntityTeleRenderer());
 	}
 
 	@Override
@@ -65,12 +66,6 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public boolean isSinglePlayer() {
 		return Minecraft.getMinecraft().isSingleplayer();
-	}
-
-	@Override
-	public void registerTESpRenderer() {
-		ClientRegistry.bindTileEntitySpecialRenderer(
-				TileEntityTeleporter.class, new TileEntityTeleRenderer());
 	}
 
 	@Override

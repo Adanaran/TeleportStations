@@ -14,9 +14,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 /**
- * Replacement for TileEntityTele.
+ * TileEntity for TeleportStations
  * <p>
- * Work in progress! javadoc...
+ * Stores the data of one teleporter.
  * 
  * @author Adanaran
  */
@@ -81,7 +81,9 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	}
 
 	/**
+	 * Updates the entity.
 	 * 
+	 * @param worldType int world type
 	 */
 	@SideOnly(Side.CLIENT)
 	public void update(int worldType) {
@@ -95,7 +97,6 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 */
 	public String getName() {
 		return name;
-		// this.writeToNBT(par1NBTTagCompound);
 	}
 
 	/**
@@ -107,24 +108,47 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 		return this.target;
 	}
 
+	/**
+	 * Gets the teleporter's meta.
+	 * 
+	 * @return int meta value
+	 */
 	public int getMeta() {
 		return meta;
 	}
 
+	/**
+	 * Gets the teleporter's worldtype.
+	 * 
+	 * @return int the world type
+	 */
 	public int getWorldType() {
 		return worldType;
 	}
 
+	/**
+	 * Sets the teleporter's name. 
+	 * 
+	 * @param name String the name to be set 
+	 */
 	public void setName(String name) {
-		System.out.println("Setting name of te at " + xCoord + ", " + yCoord
-				+ ", " + zCoord + " to " + name);
 		this.name = name;
 	}
 
+	/**
+	 * Sets the teleporter's target.
+	 * 
+	 * @param target {@link#TileEntityTeleporter} the target to be set
+	 */
 	public void setTarget(TileEntityTeleporter target) {
 		this.target = target;
 	}
 
+	/**
+	 * Sets the teleporter's meta 
+	 * 
+	 * @param meta int the meta to be set
+	 */
 	public void setMeta(int meta) {
 		this.meta = meta;
 	}

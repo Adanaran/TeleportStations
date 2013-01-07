@@ -12,16 +12,14 @@ import adanaran.mods.ts.entities.TileEntityTeleporter;
  * On this block's side the name and target of the teleporter will be rendered.
  * 
  * @author Demitreus
- * 
  */
 public class BlockTeleTop extends BlockContainer {
 
 	/**
-	 * Constructs the BlockContainer BlockTeleTop
+	 * Constructs the BlockContainer BlockTeleTop.
 	 * 
 	 * @param par1
 	 *            int id
-	 * 
 	 */
 	public BlockTeleTop(int par1) {
 		super(par1, Material.portal);
@@ -41,7 +39,6 @@ public class BlockTeleTop extends BlockContainer {
 	public int getBlockTextureFromSide(int par1) {
 		return par1 > 1 ? 35 : 33 + par1;
 	}
-
 
 	@Override
 	public void onBlockDestroyedByPlayer(World par1World, int par2, int par3,

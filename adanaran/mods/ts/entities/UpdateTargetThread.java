@@ -10,7 +10,6 @@ import adanaran.mods.ts.TeleportStations;
  * Waits until the entities are created.
  * 
  * @author Adanaran
- * 
  */
 public class UpdateTargetThread extends Thread {
 
@@ -26,8 +25,11 @@ public class UpdateTargetThread extends Thread {
 	 * @param tileEntity
 	 *            TileEntityTeleporter the teleporter being updated
 	 * @param tx
+	 *            int z-coordinate of target
 	 * @param ty
+	 *            int z-coordinate of target
 	 * @param tz
+	 *            int z-coordinate of target
 	 */
 	public UpdateTargetThread(TileEntityTeleporter tileEntity, int tx, int ty,
 			int tz) {

@@ -23,9 +23,9 @@ import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 import adanaran.mods.ts.items.ItemTeleporter;
 
-//TODO JAVADOC!!!
-
 /**
+ * GUI for changing targets.
+ * 
  * @author Demitreus
  */
 public class GUIEditTeleTarget extends GuiScreen {
@@ -41,6 +41,18 @@ public class GUIEditTeleTarget extends GuiScreen {
 	private int zlSize;
 	private Vector<TileEntityTeleporter> zielliste;
 
+	/**
+	 * Creates a new GUI.
+	 * 
+	 * @param world
+	 *            World the world the player is in
+	 * @param x
+	 *            int x-coordinate
+	 * @param y
+	 *            int y-coordinate
+	 * @param z
+	 *            int z-coordinate
+	 */
 	public GUIEditTeleTarget(World world, int x, int y, int z) {
 		isScrolling = false;
 		selected = -1;

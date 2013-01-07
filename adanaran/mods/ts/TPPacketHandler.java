@@ -15,10 +15,9 @@ import cpw.mods.fml.common.network.Player;
 /**
  * PacketHandler for teleporter mod.
  * <p>
- * Handles all send and received packets.
+ * Handles all received packets.
  * 
  * @author Adanaran
- * 
  */
 public class TPPacketHandler implements IPacketHandler {
 

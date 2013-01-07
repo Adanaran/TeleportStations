@@ -1,5 +1,7 @@
 package adanaran.mods.ts;
 
+// TODO remove debug recipes!
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -34,9 +36,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
  * 
  * @author Adanaran
  * @author Demitreus
- * 
  */
-
 @Mod(modid = "TeleportStations", name = "Teleport Stations", version = "1.0")
 @NetworkMod(channels = { "tpname", "tptarget" }, versionBounds = "[1.0,)", clientSideRequired = true, serverSideRequired = false, packetHandler = TPPacketHandler.class)
 public class TeleportStations {
@@ -80,25 +80,14 @@ public class TeleportStations {
 	 */
 	@Init
 	public void load(FMLInitializationEvent evt) {
-		// die uebergebenen ints stehen fuer die gewuenschte ids --> einfacher
-		// zu
-		// aendern bei konflikten
+		// TODO IDs changeables
 		registerBlockTeleTarget(3001);
-		registerBlockTeleporter(3002, 3003); // zwei ints fuer Aus/An Status
+		registerBlockTeleporter(3002, 3003);
 		registerBlockTeleMid(3004);
 		registerBlockTeleTop(3005);
 		registerHandtele(3006);
 		registerSpawnPearl(3007);
-
 		proxy.registerRenderInformation();
-		proxy.registerTESpRenderer();
-
-//		db = new TPDatabase();
-
-//		fh = new TPFileHandler(db);
-//		pt = new TPPlayerTracker(db, fh);
-//		pt=new TPPlayerTracker(db);
-//		GameRegistry.registerPlayerTracker(pt);
 	}
 
 	private void registerSpawnPearl(int i) {
@@ -183,7 +172,8 @@ public class TeleportStations {
 		LanguageRegistry.addName(blockTeleTop, "Teleporterdeckel");
 		blockTeleTop.setBlockUnbreakable().setBlockBounds(0.01f, 0.5f, 0.01f,
 				0.99f, 1f, 0.99f);
-		GameRegistry.registerTileEntity(TileEntityTeleporter.class, "TileEntityTeleporter");
+		GameRegistry.registerTileEntity(TileEntityTeleporter.class,
+				"TileEntityTeleporter");
 	}
 
 	private void registerBlockTeleMid(int id) {

@@ -24,8 +24,7 @@ import cpw.mods.fml.common.network.PacketDispatcher;
  * GUI to name and rename a teleporter.
  * <p>
  * Parts of GUI are copied from {@link#GuiEditSign}. The GUI is called on
- * placing a teleporter/-target or if a activated teleporter hasn't a name
- * (error).
+ * placing a teleporter/-target.
  * 
  * @author Demitreus
  */
@@ -37,6 +36,15 @@ public class GUIEditTeleName extends GuiScreen {
 	private static final String allowedCharacters = ChatAllowedCharacters.allowedCharacters;
 	private static LinkedList namenListe;
 
+	/**
+	 * Creates a new GUI.
+	 * 
+	 * @param world World the world the player is in
+	 * @param i int x-coordinate
+	 * @param j int y-coordinate
+	 * @param k int z-coordinate
+	 * @param type String type
+	 */
 	public GUIEditTeleName(World world, int i, int j, int k, String type) {
 		System.out.println("new gui");
 		this.world = world;
@@ -50,7 +58,6 @@ public class GUIEditTeleName extends GuiScreen {
 
 	@Override
 	public void initGui() {
-
 		controlList.clear();
 		Keyboard.enableRepeatEvents(true);
 		controlList.add(new GuiButton(0, width / 2 - 100, height / 4 + 120,
@@ -99,29 +106,23 @@ public class GUIEditTeleName extends GuiScreen {
 	@Override
 	public void onGuiClosed() {
 		tet.update(world.getWorldInfo().getDimension());
-
-		 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		 DataOutputStream dos = new DataOutputStream(bos);
-		 try {
-		 dos.writeInt(i);
-		 dos.writeInt(j);
-		 dos.writeInt(k);
-		 dos.writeInt(world.getWorldInfo().getDimension());
-		 dos.writeChars(tet.getName());
-		 } catch (IOException e) {
-		 e.printStackTrace();
-		 }
-		 Packet250CustomPayload packet = new Packet250CustomPayload();
-		 packet.channel = "tpname";
-		 packet.data = bos.toByteArray();
-		 packet.length = packet.data.length;
-		 packet.isChunkDataPacket = true;
-		 PacketDispatcher.sendPacketToServer(packet);
-
-//		NetClientHandler var1 = this.mc.getSendQueue();
-//		if (var1 != null) {
-//			var1.addToSendQueue(tet.getDescriptionPacket());
-//		}
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(bos);
+		try {
+			dos.writeInt(i);
+			dos.writeInt(j);
+			dos.writeInt(k);
+			dos.writeInt(world.getWorldInfo().getDimension());
+			dos.writeChars(tet.getName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = "tpname";
+		packet.data = bos.toByteArray();
+		packet.length = packet.data.length;
+		packet.isChunkDataPacket = true;
+		PacketDispatcher.sendPacketToServer(packet);
 	}
 
 	private LinkedList createListNames(World world) {

@@ -13,24 +13,30 @@ import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 /**
- * Handteleporter zur mobilen Teleportation.
+ * Mobile teleporter item.
  * <p>
- * Client File
+ * Cannot act as a target for teleportation.
  * 
  * @author Demitreus
- * 
  */
 
 public class ItemTeleporter extends Item implements ICommandSender {
 	private static TileEntityTeleporter target;
 	private boolean porting = false;
 
+	/**
+	 * Creates a new item.
+	 * 
+	 * @param par1
+	 *            int ID
+	 */
 	public ItemTeleporter(int par1) {
 		super(par1);
 		maxStackSize = 1;
 		setMaxDamage(200);
 	}
 
+	@Override
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer, int par4) {
 		// System.out.println(par2World.worldProvider.worldType); //Ergibt 0 bei
@@ -47,29 +53,27 @@ public class ItemTeleporter extends Item implements ICommandSender {
 		}
 	}
 
+	/**
+	 * Sets the target.
+	 * 
+	 * @param ziel
+	 *            {@link#TileEntityTeleporter} the target to be set.
+	 */
 	public static void setTarget(TileEntityTeleporter ziel) {
 		target = ziel;
 	}
 
-	/**
-	 * How long it takes to use or consume an item
-	 */
+	@Override
 	public int getMaxItemUseDuration(ItemStack par1ItemStack) {
 		return 0x11940;
 	}
 
-	/**
-	 * returns the action that specifies what animation to play when the items
-	 * is being used
-	 */
+	@Override
 	public EnumAction getItemUseAction(ItemStack par1ItemStack) {
 		return EnumAction.block;
 	}
 
-	/**
-	 * Called whenever this item is equipped and the right mouse button is
-	 * pressed. Args: itemStack, world, entityPlayer
-	 */
+	@Override
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer) {
 		par3EntityPlayer.setItemInUse(par1ItemStack,
@@ -92,10 +96,7 @@ public class ItemTeleporter extends Item implements ICommandSender {
 		return "/adanaran/mods/ts/textures/TS.png";
 	}
 
-	/**
-	 * Return the enchantability factor of the item, most of the time is based
-	 * on material.
-	 */
+	@Override
 	public int getItemEnchantability() {
 		return 1;
 	}
@@ -115,12 +116,8 @@ public class ItemTeleporter extends Item implements ICommandSender {
 			cm.executeCommand(this,
 					new StringBuilder("/tp ").append(entity.getEntityName())
 							.append(" ").append(target.xCoord + 0.5)
-							.append(" ").append(target.yCoord - 2 /*
-																 * + entity.
-																 * getEyeHeight
-																 * ()
-																 */)
-							.append(" ").append(target.zCoord + 0.5).toString());
+							.append(" ").append(target.yCoord - 2).append(" ")
+							.append(target.zCoord + 0.5).toString());
 		}
 		porting = false;
 	}

@@ -12,8 +12,11 @@ import adanaran.mods.ts.entities.TileEntityTeleporter;
 //TODO JAVADOC!!!
 
 /**
- * @author Demitreus
+ * Block for teleportation.
+ * <p>
+ * Can teleport the player and can also act as target. 
  * 
+ * @author Demitreus
  */
 public class BlockTeleporter extends BlockTeleTarget {
 
@@ -29,8 +32,6 @@ public class BlockTeleporter extends BlockTeleTarget {
 			world.setBlockWithNotify(i, j, k, 3002);
 		}
 		int meta = super.update(world, i, j, k);
-		// System.out.println("Update Teleporter called. New meta: " + meta
-		// + " new ID " + world.getBlockId(i, j, k));
 		return meta;
 	}
 

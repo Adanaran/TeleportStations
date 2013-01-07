@@ -19,7 +19,6 @@ import adanaran.mods.ts.TeleportStations;
  * player.
  * 
  * @author Demitreus
- * 
  */
 public class BlockTeleTarget extends Block {
 
@@ -482,5 +481,4 @@ public class BlockTeleTarget extends Block {
 //		}
 //		}
 	}
-
 }

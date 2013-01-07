@@ -11,7 +11,6 @@ import net.minecraft.world.World;
  * being placed in a teleporter.
  * 
  * @author Demitreus
- * 
  */
 public class BlockTeleMid extends Block {
 
@@ -31,9 +30,7 @@ public class BlockTeleMid extends Block {
 
 	@Override
 	public boolean canBlockStay(World world, int i, int j, int k) {
-		//block cannot exist without teleporter beneath
 		return ((world.getBlockId(i, j - 1, k) == 3001 || world.getBlockId(i,
 				j - 1, k) == 3002));
 	}
-
 }

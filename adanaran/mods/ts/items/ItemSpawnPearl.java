@@ -7,8 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 /**
+ * Spanwpearl entity.
  * 
- * @author Demitreus Client File
+ * @author Demitreus
  */
 public class ItemSpawnPearl extends Item {
 	public ItemSpawnPearl(int par1) {
@@ -16,10 +17,7 @@ public class ItemSpawnPearl extends Item {
 		maxStackSize = 16;
 	}
 
-	/**
-	 * Called whenever this item is equipped and the right mouse button is
-	 * pressed. Args: itemStack, world, entityPlayer
-	 */
+	@Override
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer) {
 		if (par3EntityPlayer.ridingEntity != null) {

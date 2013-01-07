@@ -8,17 +8,20 @@ import org.lwjgl.opengl.GL11;
 
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 
-//TODO JAVADOC!!!
-
 /**
+ * Renderer for teleporter tile entity.
+ * <p>
+ * Renders text information at the top block.
  * 
  * @author Demitreus
- *
  */
 public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 
 	private ModelTeleporter teleModel = new ModelTeleporter();
 
+	/**
+	 * Creates a new Object.
+	 */
 	public TileEntityTeleRenderer() {
 	}
 

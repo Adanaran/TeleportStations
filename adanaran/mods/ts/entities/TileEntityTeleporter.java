@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 /**
  * Replacement for TileEntityTele.
  * <p>
- * Work in progress!
+ * Work in progress! javadoc...
  * 
  * @author Adanaran
  */

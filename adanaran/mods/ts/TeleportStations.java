@@ -80,7 +80,7 @@ public class TeleportStations {
 	 */
 	@Init
 	public void load(FMLInitializationEvent evt) {
-		// TODO IDs changeables
+		// TODO IDs changeable
 		registerBlockTeleTarget(3001);
 		registerBlockTeleporter(3002, 3003);
 		registerBlockTeleMid(3004);
@@ -121,7 +121,6 @@ public class TeleportStations {
 	 */
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent evt) {
-
 	}
 
 	private void registerBlockTeleTarget(int id) {

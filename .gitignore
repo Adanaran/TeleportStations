@@ -1,0 +1,12 @@
+*.txt
+*.sh
+*.bat
+*.cfg
+forge*
+fml*
+mcp*
+Start.java
+cpw/*
+ibxm/*
+net/*
+paulscode/*

@@ -25,7 +25,6 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	// Data storage
 	private String name = "";
 	private TileEntityTeleporter target = null;
-	private int meta = 0;
 	private int worldType;
 	// To prevent multiple command execution per teleport
 	private boolean porting = false;
@@ -109,15 +108,6 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	}
 
 	/**
-	 * Gets the teleporter's meta.
-	 * 
-	 * @return int meta value
-	 */
-	public int getMeta() {
-		return meta;
-	}
-
-	/**
 	 * Gets the teleporter's worldtype.
 	 * 
 	 * @return int the world type
@@ -142,15 +132,6 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 */
 	public void setTarget(TileEntityTeleporter target) {
 		this.target = target;
-	}
-
-	/**
-	 * Sets the teleporter's meta 
-	 * 
-	 * @param meta int the meta to be set
-	 */
-	public void setMeta(int meta) {
-		this.meta = meta;
 	}
 
 	/**
@@ -201,7 +182,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 		StringBuilder builder = new StringBuilder();
 		builder.append(name).append(";;").append(this.xCoord).append(";;")
 				.append(this.yCoord).append(";;").append(this.yCoord)
-				.append(";;").append(meta).append(";;").append(worldType)
+				.append(";;").append(worldType)
 				.append(";;");
 		if (target != null) {
 			builder.append(target.xCoord).append(";;").append(target.yCoord)
@@ -245,5 +226,13 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 			return this.xCoord == te.xCoord && this.yCoord == te.yCoord
 					&& this.zCoord == te.zCoord;
 		}
+	}
+
+	public TileEntityTeleporter getZiel() {
+		return target;
+	}
+
+	public int getMeta() {
+		return worldObj.getBlockMetadata(xCoord, yCoord - 2, zCoord);
 	}
 }

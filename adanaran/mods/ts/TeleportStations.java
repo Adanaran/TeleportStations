@@ -103,6 +103,7 @@ public class TeleportStations {
 						new Object[] { "K", "E", Character.valueOf('E'),
 								Item.enderPearl, Character.valueOf('K'),
 								Item.compass });
+		itemSpawnPearl.setItemName("Spawnpearl");
 	}
 
 	private void registerHandtele(int i) {

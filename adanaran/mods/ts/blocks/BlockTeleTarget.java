@@ -7,10 +7,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import adanaran.mods.ts.TeleportStations;
+import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 /**
  * Teleporter-target-block represents valid destination for teleporting.
@@ -252,8 +254,6 @@ public class BlockTeleTarget extends Block {
 			meta = 0;
 		}
 		// *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
-//		TODO meta in TileEntity updaten...
-//		TeleportStations.db.updateMeta(i, j, k, meta);
 		world.setBlockAndMetadataWithNotify(i, j, k, world.getBlockId(i, j, k),
 				meta);
 		return meta;
@@ -279,206 +279,208 @@ public class BlockTeleTarget extends Block {
 	public void handleMC(World world, EntityMinecart eM, int i, int j, int k) {
 		double ex = eM.posX, ez = eM.posZ, speed = eM.motionX + eM.motionZ
 				+ 0.05;
-//	TODO handleMC	
-//		TeleData quelle = TeleportStations.db.getTeleDataByCoords(i, j, k);
-//		ChunkCoordinates ziel = quelle.getZiel();
-//		if (ziel != null) {
-//			i = ziel.posX;
-//			j = ziel.posY;
-//			k = ziel.posZ;
-//		}
-//		int teleMeta = world.getBlockMetadata(i, j, k);
-//		teleMeta -= 1;
-//		switch (teleMeta) {
-//		case 0: {// Streckenende im Norden
-//			eM.setPosition(i + 0.5, j, k + 1.5);
-//			eM.addVelocity(0, 0, speed);
-//			break;
-//
-//		}
-//		case 1: {// Streckenende im Westen
-//			eM.setPosition(i + 1.5, j, k + 0.5);
-//			eM.addVelocity(speed, 0, 0);
-//			break;
-//
-//		}
-//		case 2: {// Streckenende im Sueden
-//			eM.setPosition(i + 0.5, j, k - 0.5);
-//			eM.addVelocity(0, 0, -speed);
-//			break;
-//
-//		}
-//		case 3: {// Streckenende im Osten
-//			eM.setPosition(i - 0.5, j, k + 0.5);
-//			eM.addVelocity(-speed, 0, 0);
-//			break;
-//
-//		}
-//		case 4: {// Kurve Sued-Ost
-//
-//			if (k + 0.5 < ez) { // Cart von Sueden
-//				eM.setPosition(i + 1.5, j, k + 0.5);
-//				eM.addVelocity(speed, 0, 0);
-//			} else if (k + 0.5 > ez) { // Cart von Norden
-//				eM.setPosition(i + 0.5, j, k + 1.5);
-//				eM.addVelocity(0, 0, speed);
-//			}
-//			if (i + 0.5 > ex) { // Cart von Westen
-//				eM.setPosition(i + 1.5, j, k + 0.5);
-//				eM.addVelocity(speed, 0, 0);
-//			} else if (i + 0.5 < ex) { // Cart von Osten
-//				eM.setPosition(i + 0.5, j, k + 1.5);
-//				eM.addVelocity(0, 0, speed);
-//			}
-//
-//			break;
-//
-//		}
-//		case 5: {// Kurve Sued-West
-//			if (k + 0.5 < ez) { // Cart von Sueden
-//				eM.setPosition(i - 0.5, j, k + 0.5);
-//				eM.addVelocity(-speed, 0, 0);
-//			} else if (k + 0.5 > ez) { // Cart von Norden
-//				eM.setPosition(i + 0.5, j, k + 1.5);
-//				eM.addVelocity(0, 0, speed);
-//			}
-//			if (i + 0.5 > ex) { // Cart von Westen
-//				eM.setPosition(i + 0.5, j, k + 1.5);
-//				eM.addVelocity(0, 0, speed);
-//			} else if (i + 0.5 < ex) { // Cart von Osten
-//				eM.setPosition(i - 0.5, j, k + 0.5);
-//				eM.addVelocity(-speed, 0, 0);
-//			}
-//			break;
-//
-//		}
-//		case 6: {// Kurve Nord-West
-//			if (k + 0.5 < ez) { // Cart von Sueden
-//				eM.setPosition(i + 0.5, j, k - 0.5);
-//				eM.addVelocity(0, 0, -speed);
-//			} else if (k + 0.5 > ez) { // Cart von Norden
-//				eM.setPosition(i - 0.5, j, k + 0.5);
-//				eM.addVelocity(-speed, 0, 0);
-//			}
-//			if (i + 0.5 > ex) { // Cart von Westen
-//				eM.setPosition(i + 0.5, j, k - 0.5);
-//				eM.addVelocity(0, 0, -speed);
-//			} else if (i + 0.5 < ex) { // Cart von Osten
-//				eM.setPosition(i - 0.5, j, k + 0.5);
-//				eM.addVelocity(-speed, 0, 0);
-//			}
-//			break;
-//
-//		}
-//		case 7: {// Kurve Nord-Ost
-//			if (k + 0.5 < ez) { // Cart von Sueden
-//				eM.setPosition(i + 0.5, j, k - 0.5);
-//				eM.addVelocity(0, 0, -speed);
-//			} else if (k + 0.5 > ez) { // Cart von Norden
-//				eM.setPosition(i + 1.5, j, k + 0.5);
-//				eM.addVelocity(speed, 0, 0);
-//			}
-//			if (i + 0.5 > ex) { // Cart von Westen
-//				eM.setPosition(i + 1.5, j, k + 0.5);
-//				eM.addVelocity(speed, 0, 0);
-//			} else if (i + 0.5 < ex) { // Cart von Osten
-//				eM.setPosition(i + 0.5, j, k - 0.5);
-//				eM.addVelocity(0, 0, -speed);
-//			}
-//			break;
-//
-//		}
-//		case 8: {// T ohne Nord
-//			if (i + 0.5 > ex) {
-//				eM.setPosition(i + 1.5, j, k + 0.5);
-//				eM.addVelocity(speed, 0, 0);
-//			} else if (i + 0.5 < ex) {
-//				eM.setPosition(i - 0.5, j, k + 0.5);
-//				eM.addVelocity(-speed, 0, 0);
-//			} else
-//				eM.setPosition(i + 0.5, j, k + 2);
-//			eM.addVelocity(0, 0, speed);
-//			break;
-//
-//		}
-//		case 9: {// T ohne Ost
-//			if (k + 0.5 < ez) {
-//				eM.setPosition(i + 0.5, j, k - 0.5);
-//				eM.addVelocity(0, 0, -speed);
-//			} else if (k + 0.5 > ez) {
-//				eM.setPosition(i + 0.5, j, k + 1.5);
-//				eM.addVelocity(0, 0, speed);
-//			} else
-//				eM.setPosition(i - 1.5, j, k + 0.5);
-//			eM.addVelocity(-speed, 0, 0);
-//			break;
-//
-//		}
-//		case 10: {// T ohne Sued
-//			if (i + 0.5 > ex) {
-//				eM.setPosition(i + 1.5, j, k + 0.5);
-//				eM.addVelocity(speed, 0, 0);
-//			} else if (i + 0.5 < ex) {
-//				eM.setPosition(i - 0.5, j, k + 0.5);
-//				eM.addVelocity(-speed, 0, 0);
-//			} else
-//				eM.setPosition(i + 0.5, j, k - 1.5);
-//			eM.addVelocity(0, 0, -speed);
-//			break;
-//
-//		}
-//		case 11: {// T ohne West
-//			if (k + 0.5 < ez) {
-//				eM.setPosition(i + 0.5, j, k - 0.5);
-//				eM.addVelocity(0, 0, -speed);
-//			} else if (k + 0.5 > ez) {
-//				eM.setPosition(i + 0.5, j, k + 1.5);
-//				eM.addVelocity(0, 0, speed);
-//			} else
-//				eM.setPosition(i + 2, j, k + 0.5);
-//			break;
-//		}
-//
-//		case 12: {// Kreuzung
-//			if (k + 0.5 < ez) { // Cart von Sueden
-//				eM.setPosition(i + 0.5, j, k - 0.5);
-//				eM.addVelocity(0, 0, -speed);
-//			} else if (k + 0.5 > ez) { // Cart von Norden
-//				eM.setPosition(i + 0.5, j, k + 1.5);
-//				eM.addVelocity(0, 0, speed);
-//			}
-//			if (i + 0.5 > ex) { // Cart von Westen
-//				eM.setPosition(i + 1.5, j, k + 0.5);
-//				eM.addVelocity(speed, 0, 0);
-//			} else if (i + 0.5 < ex) { // Cart von Osten
-//				eM.setPosition(i - 0.5, j, k + 0.5);
-//				eM.addVelocity(-speed, 0, 0);
-//			}
-//			break;
-//		}
-//		case 13: {// Gerade Nord-Sued
-//			if (k + 0.5 < ez) {
-//				eM.setPosition(i + 0.5, j, k - 0.5);
-//				eM.addVelocity(0, 0, -speed);
-//			} else if (k + 0.5 > ez) {
-//				eM.setPosition(i + 0.5, j, k + 1.5);
-//				eM.addVelocity(0, 0, speed);
-//			}
-//			break;
-//		}
-//		case 14: {// Gerade Ost-West
-//			if (i + 0.5 > ex) {
-//				eM.setPosition(i + 1.5, j, k + 0.5);
-//				eM.addVelocity(speed, 0, 0);
-//			} else if (i + 0.5 < ex) {
-//				eM.setPosition(i - 0.5, j, k + 0.5);
-//				eM.addVelocity(-speed, 0, 0);
-//			}
-//			break;
-//		}
-//		default: {// Keine Schiene oder Fehler
-//			// eM.setOnFireFromLava();
-//		}
-//		}
+		TileEntity quelle = world.getBlockTileEntity(i, j+2, k);
+		TileEntityTeleporter ziel = null;
+		if( quelle instanceof TileEntityTeleporter){
+			ziel = ((TileEntityTeleporter) quelle).getZiel();
+		}
+		if (ziel != null) {
+			i = ziel.xCoord;
+			j = ziel.yCoord - 2;
+			k = ziel.zCoord;
+		}
+		int teleMeta = world.getBlockMetadata(i, j, k);
+		teleMeta -= 1;
+		switch (teleMeta) {
+		case 0: {// Streckenende im Norden
+			eM.setPosition(i + 0.5, j, k + 1.5);
+			eM.addVelocity(0, 0, speed);
+			break;
+
+		}
+		case 1: {// Streckenende im Westen
+			eM.setPosition(i + 1.5, j, k + 0.5);
+			eM.addVelocity(speed, 0, 0);
+			break;
+
+		}
+		case 2: {// Streckenende im Sueden
+			eM.setPosition(i + 0.5, j, k - 0.5);
+			eM.addVelocity(0, 0, -speed);
+			break;
+
+		}
+		case 3: {// Streckenende im Osten
+			eM.setPosition(i - 0.5, j, k + 0.5);
+			eM.addVelocity(-speed, 0, 0);
+			break;
+
+		}
+		case 4: {// Kurve Sued-Ost
+
+			if (k + 0.5 < ez) { // Cart von Sueden
+				eM.setPosition(i + 1.5, j, k + 0.5);
+				eM.addVelocity(speed, 0, 0);
+			} else if (k + 0.5 > ez) { // Cart von Norden
+				eM.setPosition(i + 0.5, j, k + 1.5);
+				eM.addVelocity(0, 0, speed);
+			}
+			if (i + 0.5 > ex) { // Cart von Westen
+				eM.setPosition(i + 1.5, j, k + 0.5);
+				eM.addVelocity(speed, 0, 0);
+			} else if (i + 0.5 < ex) { // Cart von Osten
+				eM.setPosition(i + 0.5, j, k + 1.5);
+				eM.addVelocity(0, 0, speed);
+			}
+
+			break;
+
+		}
+		case 5: {// Kurve Sued-West
+			if (k + 0.5 < ez) { // Cart von Sueden
+				eM.setPosition(i - 0.5, j, k + 0.5);
+				eM.addVelocity(-speed, 0, 0);
+			} else if (k + 0.5 > ez) { // Cart von Norden
+				eM.setPosition(i + 0.5, j, k + 1.5);
+				eM.addVelocity(0, 0, speed);
+			}
+			if (i + 0.5 > ex) { // Cart von Westen
+				eM.setPosition(i + 0.5, j, k + 1.5);
+				eM.addVelocity(0, 0, speed);
+			} else if (i + 0.5 < ex) { // Cart von Osten
+				eM.setPosition(i - 0.5, j, k + 0.5);
+				eM.addVelocity(-speed, 0, 0);
+			}
+			break;
+
+		}
+		case 6: {// Kurve Nord-West
+			if (k + 0.5 < ez) { // Cart von Sueden
+				eM.setPosition(i + 0.5, j, k - 0.5);
+				eM.addVelocity(0, 0, -speed);
+			} else if (k + 0.5 > ez) { // Cart von Norden
+				eM.setPosition(i - 0.5, j, k + 0.5);
+				eM.addVelocity(-speed, 0, 0);
+			}
+			if (i + 0.5 > ex) { // Cart von Westen
+				eM.setPosition(i + 0.5, j, k - 0.5);
+				eM.addVelocity(0, 0, -speed);
+			} else if (i + 0.5 < ex) { // Cart von Osten
+				eM.setPosition(i - 0.5, j, k + 0.5);
+				eM.addVelocity(-speed, 0, 0);
+			}
+			break;
+
+		}
+		case 7: {// Kurve Nord-Ost
+			if (k + 0.5 < ez) { // Cart von Sueden
+				eM.setPosition(i + 0.5, j, k - 0.5);
+				eM.addVelocity(0, 0, -speed);
+			} else if (k + 0.5 > ez) { // Cart von Norden
+				eM.setPosition(i + 1.5, j, k + 0.5);
+				eM.addVelocity(speed, 0, 0);
+			}
+			if (i + 0.5 > ex) { // Cart von Westen
+				eM.setPosition(i + 1.5, j, k + 0.5);
+				eM.addVelocity(speed, 0, 0);
+			} else if (i + 0.5 < ex) { // Cart von Osten
+				eM.setPosition(i + 0.5, j, k - 0.5);
+				eM.addVelocity(0, 0, -speed);
+			}
+			break;
+
+		}
+		case 8: {// T ohne Nord
+			if (i + 0.5 > ex) {
+				eM.setPosition(i + 1.5, j, k + 0.5);
+				eM.addVelocity(speed, 0, 0);
+			} else if (i + 0.5 < ex) {
+				eM.setPosition(i - 0.5, j, k + 0.5);
+				eM.addVelocity(-speed, 0, 0);
+			} else
+				eM.setPosition(i + 0.5, j, k + 2);
+			eM.addVelocity(0, 0, speed);
+			break;
+
+		}
+		case 9: {// T ohne Ost
+			if (k + 0.5 < ez) {
+				eM.setPosition(i + 0.5, j, k - 0.5);
+				eM.addVelocity(0, 0, -speed);
+			} else if (k + 0.5 > ez) {
+				eM.setPosition(i + 0.5, j, k + 1.5);
+				eM.addVelocity(0, 0, speed);
+			} else
+				eM.setPosition(i - 1.5, j, k + 0.5);
+			eM.addVelocity(-speed, 0, 0);
+			break;
+
+		}
+		case 10: {// T ohne Sued
+			if (i + 0.5 > ex) {
+				eM.setPosition(i + 1.5, j, k + 0.5);
+				eM.addVelocity(speed, 0, 0);
+			} else if (i + 0.5 < ex) {
+				eM.setPosition(i - 0.5, j, k + 0.5);
+				eM.addVelocity(-speed, 0, 0);
+			} else
+				eM.setPosition(i + 0.5, j, k - 1.5);
+			eM.addVelocity(0, 0, -speed);
+			break;
+
+		}
+		case 11: {// T ohne West
+			if (k + 0.5 < ez) {
+				eM.setPosition(i + 0.5, j, k - 0.5);
+				eM.addVelocity(0, 0, -speed);
+			} else if (k + 0.5 > ez) {
+				eM.setPosition(i + 0.5, j, k + 1.5);
+				eM.addVelocity(0, 0, speed);
+			} else
+				eM.setPosition(i + 2, j, k + 0.5);
+			break;
+		}
+
+		case 12: {// Kreuzung
+			if (k + 0.5 < ez) { // Cart von Sueden
+				eM.setPosition(i + 0.5, j, k - 0.5);
+				eM.addVelocity(0, 0, -speed);
+			} else if (k + 0.5 > ez) { // Cart von Norden
+				eM.setPosition(i + 0.5, j, k + 1.5);
+				eM.addVelocity(0, 0, speed);
+			}
+			if (i + 0.5 > ex) { // Cart von Westen
+				eM.setPosition(i + 1.5, j, k + 0.5);
+				eM.addVelocity(speed, 0, 0);
+			} else if (i + 0.5 < ex) { // Cart von Osten
+				eM.setPosition(i - 0.5, j, k + 0.5);
+				eM.addVelocity(-speed, 0, 0);
+			}
+			break;
+		}
+		case 13: {// Gerade Nord-Sued
+			if (k + 0.5 < ez) {
+				eM.setPosition(i + 0.5, j, k - 0.5);
+				eM.addVelocity(0, 0, -speed);
+			} else if (k + 0.5 > ez) {
+				eM.setPosition(i + 0.5, j, k + 1.5);
+				eM.addVelocity(0, 0, speed);
+			}
+			break;
+		}
+		case 14: {// Gerade Ost-West
+			if (i + 0.5 > ex) {
+				eM.setPosition(i + 1.5, j, k + 0.5);
+				eM.addVelocity(speed, 0, 0);
+			} else if (i + 0.5 < ex) {
+				eM.setPosition(i - 0.5, j, k + 0.5);
+				eM.addVelocity(-speed, 0, 0);
+			}
+			break;
+		}
+		default: {// Keine Schiene oder Fehler
+			// eM.setOnFireFromLava();
+		}
+		}
 	}
 }

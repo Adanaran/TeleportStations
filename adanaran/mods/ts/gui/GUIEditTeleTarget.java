@@ -75,17 +75,12 @@ public class GUIEditTeleTarget extends GuiScreen {
 			while (iterator.hasNext()) {
 				TileEntityTeleporter LName = iterator.next();
 				if (LName.getWorldType() == world.getWorldInfo().getDimension()) {
-					System.out.println(LName.getMeta() + " meta Lname");
 					if (metacheck <= 0 && LName.getMeta() == 0) {
 						zieldb[i] = LName;
 						zielNames[i] = new StringBuilder(LName.getName());
-						System.out.println(i + " benannt: "
-								+ zielNames[i].toString());
 					} else if (metacheck > 0 && LName.getMeta() > 0) {
 						zieldb[i] = LName;
 						zielNames[i] = new StringBuilder(LName.getName());
-						System.out.println(i + " benannt: "
-								+ zielNames[i].toString());
 					}
 
 					if (LName.getTarget() != null) {
@@ -115,7 +110,9 @@ public class GUIEditTeleTarget extends GuiScreen {
 			Object obj = iterator.next();
 			if (obj instanceof TileEntityTeleporter) {
 				TileEntityTeleporter te = (TileEntityTeleporter) obj;
-				if (!te.equals(self)) {
+				if (metacheck <= 0&& te.getMeta() == 0 && !te.equals(self) ) {
+					v.add(te);
+				}else if (metacheck > 0 && te.getMeta() > 0 && !te.equals(self)){
 					v.add(te);
 				}
 			}
@@ -309,9 +306,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 	private void sortArrays() {
 		if (zielNames.length > 1) {
 			for (int i1 = zielNames.length; i1 > 0; i1--) {
-				System.out.println(i1 + " erste schleife ");
 				for (int j = 0; j < i1 - 1; j++) {
-					System.out.println(j + " zweite schleife ");
 					if ((zielNames[j].toString()
 							.compareToIgnoreCase(zielNames[j + 1].toString())) > 0) {
 						StringBuilder z1 = zielNames[j];

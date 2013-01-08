@@ -15,6 +15,7 @@ public class ItemSpawnPearl extends Item {
 	public ItemSpawnPearl(int par1) {
 		super(par1);
 		maxStackSize = 16;
+		this.iconIndex = 38;
 	}
 
 	@Override
@@ -35,13 +36,7 @@ public class ItemSpawnPearl extends Item {
 	}
 
 	@Override
-	public int getIconFromDamage(int par1) {
-		return 33; // TODO textur einfuegen
-	}
-
-	@Override
 	public String getTextureFile() {
 		return "/adanaran/mods/ts/textures/TS.png";
 	}
-
 }

@@ -1,16 +1,20 @@
 package adanaran.mods.ts;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.DimensionManager;
+import adanaran.mods.ts.entities.EntitySpawnPearl;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 import adanaran.mods.ts.gui.GUIEditTeleName;
 import adanaran.mods.ts.gui.GUIEditTeleTarget;
+import adanaran.mods.ts.renderer.RenderSpawnPearl;
 import adanaran.mods.ts.renderer.TileEntityTeleRenderer;
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 
 /**
  * The client proxy for teleporter mod.
@@ -34,6 +38,7 @@ public class ClientProxy extends CommonProxy {
 				.preloadTexture("/adanaran/mods/ts/textures/Frame.png");
 		ClientRegistry.bindTileEntitySpecialRenderer(
 				TileEntityTeleporter.class, new TileEntityTeleRenderer());
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpawnPearl.class, new RenderSpawnPearl(38));
 	}
 
 	@Override

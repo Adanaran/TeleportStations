@@ -3,6 +3,7 @@ package adanaran.mods.ts;
 // TODO remove debug recipes!
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,7 @@ import adanaran.mods.ts.entities.EntitySpawnPearl;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 import adanaran.mods.ts.items.ItemSpawnPearl;
 import adanaran.mods.ts.items.ItemTeleporter;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;

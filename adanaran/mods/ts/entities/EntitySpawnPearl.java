@@ -55,7 +55,6 @@ public class EntitySpawnPearl extends EntityThrowable {
 		World theWorld = ModLoader.getMinecraftInstance().theWorld;
 		EntityPlayer thePlayer = ModLoader.getMinecraftInstance().thePlayer;
 		Minecraft mc = ModLoader.getMinecraftInstance();
-		InventoryPlayer inv = thePlayer.inventory;
 		if (par1MovingObjectPosition.entityHit != null) {
 			if (!par1MovingObjectPosition.entityHit.attackEntityFrom(
 					DamageSource.causeThrownDamage(this, getThrower()), 0))

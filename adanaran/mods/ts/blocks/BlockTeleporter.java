@@ -9,8 +9,6 @@ import net.minecraft.world.World;
 import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 
-//TODO JAVADOC!!!
-
 /**
  * Block for teleportation.
  * <p>

@@ -3,8 +3,6 @@ package adanaran.mods.ts.renderer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 
-//TODO JAVADOC!!!
-
 /**
  * Custom model for teleporter.
  * 

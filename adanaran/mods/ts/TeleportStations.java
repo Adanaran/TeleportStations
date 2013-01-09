@@ -1,11 +1,12 @@
 package adanaran.mods.ts;
 
-// TODO remove debug recipes!
+import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.Configuration;
 import adanaran.mods.ts.blocks.BlockTeleMid;
 import adanaran.mods.ts.blocks.BlockTeleTarget;
 import adanaran.mods.ts.blocks.BlockTeleTop;
@@ -14,6 +15,7 @@ import adanaran.mods.ts.entities.EntitySpawnPearl;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 import adanaran.mods.ts.items.ItemSpawnPearl;
 import adanaran.mods.ts.items.ItemTeleporter;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -56,6 +58,14 @@ public class TeleportStations {
 	// The items
 	public static ItemTeleporter itemTele;
 	public static ItemSpawnPearl itemSpawnPearl;
+	// The IDs
+	private static int idTeleTar;
+	private static int idTele;
+	private static int idTeleAn;
+	private static int idTeleMid;
+	private static int idTeleTop;
+	private static int idHandTele;
+	private static int idSpawnPearl;
 
 	/**
 	 * The pre-initialization method.
@@ -68,6 +78,23 @@ public class TeleportStations {
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
 		NetworkRegistry.instance().registerGuiHandler(this, proxy);
+		Configuration cfg = new Configuration(
+				event.getSuggestedConfigurationFile());
+		try {
+			cfg.load();
+			idTeleTar = cfg.getBlock("TeleTarget", 3001).getInt(3001);
+			idTele = cfg.getBlock("Teleporter", 3002).getInt(3002);// 3002;
+			idTeleAn = cfg.getBlock("TeleporterOn", 3003).getInt(3003);// 3003;
+			idTeleMid = cfg.getBlock("TeleMid", 3004).getInt(3004);// 3004;
+			idTeleTop = cfg.getBlock("TeleTop", 3005).getInt(3005);// 3005;
+			idHandTele = cfg.getBlock("MobileTele", 3006).getInt(3006);// 3006;
+			idSpawnPearl = cfg.getBlock("SpawnPearl", 3007).getInt(3007);// 3007;
+		} catch (Exception e) {
+			FMLLog.log(Level.SEVERE, e,
+					"Failed loading TeleportStations configuration");
+		} finally {
+			cfg.save();
+		}
 	}
 
 	/**
@@ -80,13 +107,12 @@ public class TeleportStations {
 	 */
 	@Init
 	public void load(FMLInitializationEvent evt) {
-		// TODO IDs changeable
-		registerBlockTeleTarget(3001);
-		registerBlockTeleporter(3002, 3003);
-		registerBlockTeleMid(3004);
-		registerBlockTeleTop(3005);
-		registerHandtele(3006);
-		registerSpawnPearl(3007);
+		registerBlockTeleTarget(idTeleTar);
+		registerBlockTeleporter(idTele, idTeleAn);
+		registerBlockTeleMid(idTeleMid);
+		registerBlockTeleTop(idTeleTop);
+		registerHandtele(idHandTele);
+		registerSpawnPearl(idSpawnPearl);
 		proxy.registerRenderInformation();
 	}
 
@@ -95,8 +121,6 @@ public class TeleportStations {
 		itemSpawnPearl.setCreativeTab(CreativeTabs.tabTransport);
 		EntityRegistry.registerModEntity(EntitySpawnPearl.class, "Spawnpearl",
 				3, this, 164, 10, true);
-		EntityRegistry.registerGlobalEntityID(EntitySpawnPearl.class,
-				"Spawnpearl", 3);
 		LanguageRegistry.addName(itemSpawnPearl, "Spawnpearl");
 		GameRegistry
 				.addRecipe(new ItemStack(itemSpawnPearl),
@@ -128,7 +152,6 @@ public class TeleportStations {
 		blockTeleTarget = new BlockTeleTarget(id);
 		blockTeleTarget.setBlockName("Teleporterziel");
 		blockTeleTarget.setCreativeTab(CreativeTabs.tabTransport);
-
 		GameRegistry.registerBlock(blockTeleTarget,
 				blockTeleTarget.getBlockName());
 		LanguageRegistry.addName(blockTeleTarget, "Teleporterziel");
@@ -138,9 +161,6 @@ public class TeleportStations {
 				"DOD", "ORO", "DOD", Character.valueOf('D'), Block.glass,
 				Character.valueOf('O'), Block.obsidian, Character.valueOf('R'),
 				Item.redstone });
-		// DEBUG
-		GameRegistry.addRecipe(new ItemStack(blockTeleTarget), new Object[] {
-				"E", Character.valueOf('E'), Block.dirt });
 	}
 
 	private void registerBlockTeleporter(int id, int idAn) {
@@ -148,9 +168,7 @@ public class TeleportStations {
 		blockTeleporterAn = new BlockTeleporter(idAn);
 		blockTeleporter.setBlockName("Teleporter");
 		blockTeleporterAn.setBlockUnbreakable();
-
 		blockTeleporter.setCreativeTab(CreativeTabs.tabTransport);
-
 		GameRegistry.registerBlock(blockTeleporter,
 				blockTeleporter.getBlockName());
 		GameRegistry.registerBlock(blockTeleporterAn,
@@ -160,10 +178,6 @@ public class TeleportStations {
 				"DOD", "ORO", "DOD", Character.valueOf('D'), Item.diamond,
 				Character.valueOf('O'), Block.obsidian, Character.valueOf('R'),
 				Item.redstone });
-		// DEBUG
-		GameRegistry.addRecipe(new ItemStack(blockTeleporter), new Object[] {
-				"EE", Character.valueOf('E'), Block.dirt });
-
 	}
 
 	private void registerBlockTeleTop(int id) {

@@ -1,5 +1,7 @@
 package adanaran.mods.ts.blocks;
 
+import java.util.logging.Level;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRail;
 import net.minecraft.block.material.Material;
@@ -131,6 +133,8 @@ public class BlockTeleTarget extends Block {
 	@Override
 	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4,
 			EntityLiving par5EntityLiving) {
+		TeleportStations.logger.log(Level.FINE, "TP placed, world: "
+				+ par1World + ", dimension: " + par1World.provider.dimensionId);
 		par1World.setBlock(par2, par3 + 1, par4, 3004);
 		par1World.setBlock(par2, par3 + 2, par4, 3005);
 		if (par5EntityLiving instanceof EntityPlayer) {
@@ -143,7 +147,6 @@ public class BlockTeleTarget extends Block {
 	public void onEntityCollidedWithBlock(World par1World, int par2, int par3,
 			int par4, Entity par5Entity) {
 		if (par5Entity instanceof EntityMinecart) {
-			System.out.print("MINECART");
 			handleMC(par1World, (EntityMinecart) par5Entity, par2, par3, par4);
 		}
 	}
@@ -279,9 +282,9 @@ public class BlockTeleTarget extends Block {
 	public void handleMC(World world, EntityMinecart eM, int i, int j, int k) {
 		double ex = eM.posX, ez = eM.posZ, speed = eM.motionX + eM.motionZ
 				+ 0.05;
-		TileEntity quelle = world.getBlockTileEntity(i, j+2, k);
+		TileEntity quelle = world.getBlockTileEntity(i, j + 2, k);
 		TileEntityTeleporter ziel = null;
-		if( quelle instanceof TileEntityTeleporter){
+		if (quelle instanceof TileEntityTeleporter) {
 			ziel = ((TileEntityTeleporter) quelle).getZiel();
 		}
 		if (ziel != null) {

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.Vector;
 
 import net.minecraft.client.gui.GuiScreen;
@@ -40,6 +41,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 	private int metacheck;
 	private int zlSize;
 	private Vector<TileEntityTeleporter> zielliste;
+	private int x, y, z;
 
 	/**
 	 * Creates a new GUI.
@@ -55,9 +57,11 @@ public class GUIEditTeleTarget extends GuiScreen {
 	 */
 	public GUIEditTeleTarget(World world, int x, int y, int z) {
 		isScrolling = false;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 		selected = -1;
 		metacheck = y == -1 ? -1 : world.getBlockMetadata(x, y, z);
-		System.out.println("Teleportermeta: " + metacheck);
 		self = (TileEntityTeleporter) world.getBlockTileEntity(x, y + 2, z);
 		zielliste = createListOfTargets(world);
 		zlSize = zielliste.size();
@@ -110,9 +114,10 @@ public class GUIEditTeleTarget extends GuiScreen {
 			Object obj = iterator.next();
 			if (obj instanceof TileEntityTeleporter) {
 				TileEntityTeleporter te = (TileEntityTeleporter) obj;
-				if (metacheck <= 0&& te.getMeta() == 0 && !te.equals(self) ) {
+				if (metacheck <= 0 && te.getMeta() == 0 && !te.equals(self)) {
 					v.add(te);
-				}else if (metacheck > 0 && te.getMeta() > 0 && !te.equals(self)){
+				} else if (metacheck > 0 && te.getMeta() > 0
+						&& !te.equals(self)) {
 					v.add(te);
 				}
 			}
@@ -128,9 +133,9 @@ public class GUIEditTeleTarget extends GuiScreen {
 			} else {
 				self.setTarget(zieldb[selected]);
 			}
-			System.out.println("onGuiClosed: Coords of chosen target: "
-					+ zieldb[selected].xCoord + ", "
-					+ (zieldb[selected].yCoord - 2) + ", "
+			TeleportStations.logger.log(Level.FINE, "Changed target at " + x
+					+ "|" + y + "|" + z + " to " + zieldb[selected].xCoord
+					+ "|" + (zieldb[selected].yCoord - 2) + "|"
 					+ zieldb[selected].zCoord);
 		} else {
 			if (metacheck == -1) {
@@ -138,8 +143,10 @@ public class GUIEditTeleTarget extends GuiScreen {
 			} else {
 				self.setTarget(null);
 			}
+			TeleportStations.logger.log(Level.FINE,
+					"Removed target of teleporter at " + x + "|" + y + "|" + z);
 		}
-		if (metacheck != -1) {
+		if (metacheck != -1 && selected != -1) {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			DataOutputStream dos = new DataOutputStream(bos);
 			try {
@@ -175,7 +182,6 @@ public class GUIEditTeleTarget extends GuiScreen {
 					continue;
 				}
 				selected = j1;
-				// System.out.println(selected + " ausgewaehlt");
 				break;
 			}
 		}

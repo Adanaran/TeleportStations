@@ -48,12 +48,8 @@ public class UpdateTargetThread extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("Trying to update te at " + tileEntity.xCoord + "|"
-				+ tileEntity.yCoord + "|" + tileEntity.zCoord);
-		System.out.println("World: " + world);
 		while (world != null && world.getBlockTileEntity(tx, ty, tz) == null) {
 			try {
-				System.out.println("Waiting for TileEntity...");
 				Thread.sleep(250);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -63,7 +59,6 @@ public class UpdateTargetThread extends Thread {
 	}
 
 	private void updateTargetIntern() {
-		System.out.println("Updating.");
 		TileEntity te = world.getBlockTileEntity(tx, ty, tz);
 		if (te instanceof TileEntityTeleporter) {
 			tileEntity.setTarget((TileEntityTeleporter) te);

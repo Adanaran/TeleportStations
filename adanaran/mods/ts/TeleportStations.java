@@ -1,6 +1,7 @@
 package adanaran.mods.ts;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.entity.RenderSnowball;
@@ -69,6 +70,8 @@ public class TeleportStations {
 	private int idHandtele;
 	private int idSpawnPearl;
 
+	public static Logger logger;
+
 	/**
 	 * The pre-initialization method.
 	 * <p>
@@ -79,6 +82,7 @@ public class TeleportStations {
 	 */
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
+		logger = event.getModLog();
 		NetworkRegistry.instance().registerGuiHandler(this, proxy);
 		Configuration cfg = new Configuration(
 				event.getSuggestedConfigurationFile());
@@ -94,9 +98,10 @@ public class TeleportStations {
 			idBlockTeleTop = cfg.getBlock("blockteletop", 3005).getInt(3005);
 			idHandtele = cfg.getBlock("mobileteleporter", 3006).getInt(3006);
 			idSpawnPearl = cfg.getBlock("spawmpearl", 3007).getInt(3007);
+			logger.log(Level.INFO, "TeleportStations configuration loaded.");
 		} catch (Exception e) {
-			FMLLog.log(Level.SEVERE, e,
-					"Failed loading TeleportStations configuration");
+			logger.log(Level.SEVERE,
+					"Failed loading TeleportStations configuration" ,e);
 		} finally {
 			cfg.save();
 		}
@@ -112,6 +117,7 @@ public class TeleportStations {
 	 */
 	@Init
 	public void load(FMLInitializationEvent evt) {
+		logger.log(Level.FINE, "Registering blocks and items");
 		registerBlockTeleTarget(idBlockTeleTarget);
 		registerBlockTeleporter(idBlockTeleporter, idBlockTeleporterAn);
 		registerBlockTeleMid(idBlockTeleMid);
@@ -151,6 +157,7 @@ public class TeleportStations {
 	 */
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent evt) {
+		logger.log(Level.FINE, "done loading");
 	}
 
 	private void registerBlockTeleTarget(int id) {

@@ -1,5 +1,7 @@
 package adanaran.mods.ts.items;
 
+import java.util.logging.Level;
+
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,8 +41,8 @@ public class ItemTeleporter extends Item implements ICommandSender {
 	@Override
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer, int par4) {
-		// System.out.println(par2World.worldProvider.worldType); //Ergibt 0 bei
-		// normaler Welt, -1 bei Netherwelt :D
+		// par2World.provider.dimensionId Ergibt 0 bei normaler Welt, -1 bei
+		// Netherwelt, 1 bei The End :D
 		if (par4 > 71950) {
 			target = null;
 			par3EntityPlayer.openGui(TeleportStations.instance, 1, par2World,
@@ -112,12 +114,16 @@ public class ItemTeleporter extends Item implements ICommandSender {
 			porting = true;
 			ICommandManager cm = TeleportStations.proxy.getServer()
 					.getCommandManager();
-			System.out.println("Executing tp command");
 			cm.executeCommand(this,
 					new StringBuilder("/tp ").append(entity.getEntityName())
 							.append(" ").append(target.xCoord + 0.5)
 							.append(" ").append(target.yCoord - 2).append(" ")
 							.append(target.zCoord + 0.5).toString());
+			TeleportStations.logger.log(Level.FINE,
+					"teleported " + entity.getEntityName() + " from " + entity.posX
+							+ "|" + entity.posY + "|" + entity.posZ + " to "
+							+ target.xCoord + "|" + (target.yCoord - 2) + "|"
+							+ target.zCoord);
 		}
 		porting = false;
 	}

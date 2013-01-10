@@ -61,11 +61,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public World getWorld(int dim) {
-		if (this.isSinglePlayer()) {
 			return DimensionManager.getWorld(dim);
-		} else {
-			return Minecraft.getMinecraft().theWorld;
-		}
 	}
 
 	@Override

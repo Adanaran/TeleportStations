@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.logging.Level;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -17,6 +18,7 @@ import net.minecraft.world.World;
 
 import org.lwjgl.input.Keyboard;
 
+import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 import cpw.mods.fml.common.network.PacketDispatcher;
 
@@ -46,7 +48,6 @@ public class GUIEditTeleName extends GuiScreen {
 	 * @param type String type
 	 */
 	public GUIEditTeleName(World world, int i, int j, int k, String type) {
-		System.out.println("new gui");
 		this.world = world;
 		this.i = i;
 		this.j = j;
@@ -105,14 +106,15 @@ public class GUIEditTeleName extends GuiScreen {
 
 	@Override
 	public void onGuiClosed() {
-		tet.update(world.getWorldInfo().getDimension());
+		TeleportStations.logger.log(Level.FINE, "");
+		tet.update(world.provider.dimensionId);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
 		try {
 			dos.writeInt(i);
 			dos.writeInt(j);
 			dos.writeInt(k);
-			dos.writeInt(world.getWorldInfo().getDimension());
+			dos.writeInt(world.provider.dimensionId);
 			dos.writeChars(tet.getName());
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -1,5 +1,7 @@
 package adanaran.mods.ts.entities;
 
+import java.util.logging.Level;
+
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -82,7 +84,8 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	/**
 	 * Updates the entity.
 	 * 
-	 * @param worldType int world type
+	 * @param worldType
+	 *            int world type
 	 */
 	@SideOnly(Side.CLIENT)
 	public void update(int worldType) {
@@ -117,9 +120,10 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	}
 
 	/**
-	 * Sets the teleporter's name. 
+	 * Sets the teleporter's name.
 	 * 
-	 * @param name String the name to be set 
+	 * @param name
+	 *            String the name to be set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -128,7 +132,8 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	/**
 	 * Sets the teleporter's target.
 	 * 
-	 * @param target {@link#TileEntityTeleporter} the target to be set
+	 * @param target
+	 *            {@link#TileEntityTeleporter} the target to be set
 	 */
 	public void setTarget(TileEntityTeleporter target) {
 		this.target = target;
@@ -157,14 +162,20 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 			porting = true;
 			ICommandManager cm = TeleportStations.proxy.getServer()
 					.getCommandManager();
-			System.out.println("Executing tp command");
-			cm.executeCommand(
-					this,
+			cm.executeCommand(this,
 					new StringBuilder("/tp ").append(entity.getEntityName())
 							.append(" ").append(target.xCoord + 0.5)
-							.append(" ")
-							.append(target.yCoord - 2 /*+ entity.getEyeHeight()*/)
+							.append(" ").append(target.yCoord - 2 /*
+																 * + entity.
+																 * getEyeHeight
+																 * ()
+																 */)
 							.append(" ").append(target.zCoord + 0.5).toString());
+			TeleportStations.logger.log(Level.FINE,
+					"teleported " + entity.getEntityName() + " from " + xCoord
+							+ "|" + yCoord + "|" + zCoord + " to "
+							+ target.xCoord + "|" + (target.yCoord - 2) + "|"
+							+ target.zCoord);
 		}
 		porting = false;
 	}
@@ -182,8 +193,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 		StringBuilder builder = new StringBuilder();
 		builder.append(name).append(";;").append(this.xCoord).append(";;")
 				.append(this.yCoord).append(";;").append(this.yCoord)
-				.append(";;").append(worldType)
-				.append(";;");
+				.append(";;").append(worldType).append(";;");
 		if (target != null) {
 			builder.append(target.xCoord).append(";;").append(target.yCoord)
 					.append(";;").append(target.zCoord);

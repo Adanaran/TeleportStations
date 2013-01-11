@@ -71,6 +71,8 @@ public class BlockTeleporter extends BlockTeleTarget {
 			} else if (meta > 0 && entity instanceof EntityMinecart) {
 				handleMC(world, (EntityMinecart) entity, i, j, k);
 			}
+		} else {
+			super.onEntityCollidedWithBlock(world, i, j, k, entity);
 		}
 	}
 

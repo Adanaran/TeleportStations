@@ -26,7 +26,8 @@ public class TPPacketHandler implements IPacketHandler {
 	@Override
 	public void onPacketData(INetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
-		TeleportStations.logger.log(Level.FINER, "Packet received at channel " +packet.channel);
+		TeleportStations.logger.log(Level.FINER, "Packet received at channel "
+				+ packet.channel);
 		switch (packet.channel) {
 		case "tpname":
 			tpName(packet);
@@ -45,23 +46,39 @@ public class TPPacketHandler implements IPacketHandler {
 		int y = dat.readInt();
 		int z = dat.readInt();
 		int dim = dat.readInt();
-		int tx = dat.readInt();
-		int ty = dat.readInt();
-		int tz = dat.readInt();
-		TeleportStations.logger.log(Level.FINEST, "Processing target packet for te at " + x + ", " + y
-				+ ", " + z + " request for target te at " + tx + ", " + ty
-				+ ", " + tz);
+		boolean tar = dat.readBoolean();
+		int tx, ty, tz;
 		World world = TeleportStations.proxy.getWorld(dim);
 		TileEntity te = world.getBlockTileEntity(x, y, z);
-		TileEntity tet = world.getBlockTileEntity(tx, ty, tz);
-		if (te instanceof TileEntityTeleporter
-				&& tet instanceof TileEntityTeleporter) {
-			TeleportStations.logger.log(Level.FINEST, "Setting TP(" + x + "|" + (y - 2) + "|" + z
-					+ ") target to " + tet);
+		TileEntity tet = null;
+		if (tar) {
+			tx = dat.readInt();
+			ty = dat.readInt();
+			tz = dat.readInt();
+			TeleportStations.logger.log(Level.FINEST,
+					"Processing target packet for te at " + x + ", " + y + ", "
+							+ z + " request for target te at " + tx + ", " + ty
+							+ ", " + tz);
+			tet = world.getBlockTileEntity(tx, ty, tz);
+		} else {
+			TeleportStations.logger.log(Level.FINEST,
+					"Processing target packet for te at " + x + ", " + y + ", "
+							+ z + " request for removing target te");
+		}
+		if (te instanceof TileEntityTeleporter) {
 			TileEntityTeleporter tetp = (TileEntityTeleporter) te;
-			TileEntityTeleporter tettp = (TileEntityTeleporter) tet;
-			tetp.setTarget(tettp);
-			TeleportStations.logger.log(Level.FINEST, "Target packet processing finished");
+			if (tet instanceof TileEntityTeleporter) {
+				TeleportStations.logger.log(Level.FINEST, "Setting TP(" + x
+						+ "|" + (y - 2) + "|" + z + ") target to " + tet);
+				TileEntityTeleporter tettp = (TileEntityTeleporter) tet;
+				tetp.setTarget(tettp);
+				TeleportStations.logger.log(Level.FINEST,
+						"Target packet processing finished");
+			} else if (tet==null){
+				TeleportStations.logger.log(Level.FINEST, "Setting TP(" + x
+						+ "|" + (y - 2) + "|" + z + ") target to null");
+				tetp.setTarget(null);
+			}
 		}
 		world.markBlockForUpdate(x, y, z);
 	}
@@ -73,8 +90,9 @@ public class TPPacketHandler implements IPacketHandler {
 		int z = dat.readInt();
 		int dim = dat.readInt();
 		String s = dat.readLine();
-		TeleportStations.logger.log(Level.FINEST, "Processing name packet for tp at " + x + ", " + y
-				+ ", " + z + " in dimension " + dim);
+		TeleportStations.logger.log(Level.FINEST,
+				"Processing name packet for tp at " + x + ", " + y + ", " + z
+						+ " in dimension " + dim);
 		World world = TeleportStations.proxy.getWorld(dim);
 		TileEntity te = world.getBlockTileEntity(x, y + 2, z);
 		StringBuilder name = new StringBuilder();
@@ -83,12 +101,13 @@ public class TPPacketHandler implements IPacketHandler {
 		}
 		TeleportStations.logger.log(Level.FINEST, "Name received: " + name);
 		if (te instanceof TileEntityTeleporter) {
-			TeleportStations.logger.log(Level.FINEST, "Setting TP(" + x + "|" + (y) + "|" + z
-					+ ") name to " + name.toString());
+			TeleportStations.logger.log(Level.FINEST, "Setting TP(" + x + "|"
+					+ (y) + "|" + z + ") name to " + name.toString());
 			TileEntityTeleporter tetp = (TileEntityTeleporter) te;
 			tetp.setName(name.toString());
 		} else {
-			TeleportStations.logger.log(Level.SEVERE, "Expected instanceof TileEntityTeleporter but was " + te);
+			TeleportStations.logger.log(Level.SEVERE,
+					"Expected instanceof TileEntityTeleporter but was " + te);
 		}
 		world.markBlockForUpdate(x, y + 2, z);
 	}

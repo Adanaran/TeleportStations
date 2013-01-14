@@ -146,7 +146,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 			TeleportStations.logger.log(Level.FINE,
 					"Removed target of teleporter at " + x + "|" + y + "|" + z);
 		}
-		if (metacheck != -1 && selected != -1) {
+		if (metacheck != -1) {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			DataOutputStream dos = new DataOutputStream(bos);
 			try {
@@ -154,9 +154,14 @@ public class GUIEditTeleTarget extends GuiScreen {
 				dos.writeInt(self.yCoord);
 				dos.writeInt(self.zCoord);
 				dos.writeInt(self.getWorldType());
-				dos.writeInt(zieldb[selected].xCoord);
-				dos.writeInt(zieldb[selected].yCoord);
-				dos.writeInt(zieldb[selected].zCoord);
+				if (selected != -1) {
+					dos.writeBoolean(true);
+					dos.writeInt(zieldb[selected].xCoord);
+					dos.writeInt(zieldb[selected].yCoord);
+					dos.writeInt(zieldb[selected].zCoord);
+				} else if (selected == -1) {
+					dos.writeBoolean(false);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

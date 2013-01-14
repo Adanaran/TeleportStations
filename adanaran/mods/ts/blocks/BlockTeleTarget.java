@@ -1,5 +1,6 @@
 package adanaran.mods.ts.blocks;
 
+import java.util.ListIterator;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
@@ -112,8 +113,8 @@ public class BlockTeleTarget extends Block {
 	/**
 	 * Deletes a whole teleporter with it's data.
 	 * <p>
-	 * The dleted Teleporter is removed from the database and all 3 blocks are
-	 * filled with air.
+	 * The deleted Teleporter is removed and all 3 blocks are filled with air.
+	 * All references to this teleporter are going to be deleted.
 	 * 
 	 * @param world
 	 *            World world
@@ -125,6 +126,17 @@ public class BlockTeleTarget extends Block {
 	 *            int z-coordinate
 	 */
 	protected static void deleteTP(World world, int i, int j, int k) {
+		TileEntityTeleporter tet=(TileEntityTeleporter) world.getBlockTileEntity(i, j+2, k);
+		ListIterator iterator = world.loadedTileEntityList.listIterator();
+		while(iterator.hasNext()){
+			TileEntity te= (TileEntity) iterator.next();
+			if (te instanceof TileEntityTeleporter){
+				TileEntityTeleporter tetp = (TileEntityTeleporter) te;
+				if (tet.equals(tetp.getTarget())){
+					tetp.setTarget(null);
+				}
+			}
+		}
 		world.setBlock(i, j + 1, k, 0);
 		world.setBlock(i, j + 2, k, 0);
 		world.setBlock(i, j, k, 0);
@@ -284,7 +296,8 @@ public class BlockTeleTarget extends Block {
 				+ 0.05;
 		TileEntity quelle = world.getBlockTileEntity(i, j + 2, k);
 		TileEntityTeleporter ziel = null;
-		if (quelle instanceof TileEntityTeleporter) {
+		if (quelle instanceof TileEntityTeleporter
+				&& world.isBlockIndirectlyGettingPowered(i, j, k)) {
 			ziel = ((TileEntityTeleporter) quelle).getZiel();
 		}
 		if (ziel != null) {

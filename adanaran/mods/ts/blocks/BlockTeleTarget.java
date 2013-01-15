@@ -1,6 +1,7 @@
 package adanaran.mods.ts.blocks;
 
 import java.util.ListIterator;
+import java.util.Random;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
@@ -13,7 +14,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 
@@ -77,15 +82,20 @@ public class BlockTeleTarget extends Block {
 	@Override
 	public void onNeighborBlockChange(World par1World, int par2, int par3,
 			int par4, int par5) {
+		/* TODO canBlockStay prüfen, siehe BlockRedstoneRepeater */
+//		if (!canBlockStay(par1World, par2, par3, par4)) {
+//			deleteTP(par1World, par2, par3, par4);
+//			return;
+//		}
 		update(par1World, par2, par3, par4);
-		if (!par1World.isBlockNormalCube(par2, par3 - 1, par4)) {
-			par1World.setBlock(par2, par3 - 1, par4,
-					par1World.getBlockId(par2, par3 - 1, par4));
-		}
+		 if (!par1World.isBlockNormalCube(par2, par3 - 1, par4)) {
+		 deleteTP(par1World, par2, par3, par4);
+		 }
 	}
 
 	@Override
 	public boolean canBlockStay(World par1World, int par2, int par3, int par4) {
+		System.out.println("canBlockStay?");
 		return par1World.isBlockNormalCube(par2, par3 - 1, par4);
 	}
 
@@ -126,20 +136,21 @@ public class BlockTeleTarget extends Block {
 	 *            int z-coordinate
 	 */
 	protected static void deleteTP(World world, int i, int j, int k) {
-		TileEntityTeleporter tet=(TileEntityTeleporter) world.getBlockTileEntity(i, j+2, k);
+		TileEntityTeleporter tet = (TileEntityTeleporter) world
+				.getBlockTileEntity(i, j + 2, k);
+		world.setBlock(i, j + 1, k, 0);
+		world.setBlock(i, j + 2, k, 0);
+		world.setBlock(i, j, k, 0);
 		ListIterator iterator = world.loadedTileEntityList.listIterator();
-		while(iterator.hasNext()){
-			TileEntity te= (TileEntity) iterator.next();
-			if (te instanceof TileEntityTeleporter){
+		while (tet != null && iterator.hasNext()) {
+			TileEntity te = (TileEntity) iterator.next();
+			if (te instanceof TileEntityTeleporter) {
 				TileEntityTeleporter tetp = (TileEntityTeleporter) te;
-				if (tet.equals(tetp.getTarget())){
+				if (tet.equals(tetp.getTarget())) {
 					tetp.setTarget(null);
 				}
 			}
 		}
-		world.setBlock(i, j + 1, k, 0);
-		world.setBlock(i, j + 2, k, 0);
-		world.setBlock(i, j, k, 0);
 	}
 
 	@Override
@@ -149,6 +160,9 @@ public class BlockTeleTarget extends Block {
 				+ par1World + ", dimension: " + par1World.provider.dimensionId);
 		par1World.setBlock(par2, par3 + 1, par4, 3004);
 		par1World.setBlock(par2, par3 + 2, par4, 3005);
+
+		/* TODO Howto force chunk?? */
+
 		if (par5EntityLiving instanceof EntityPlayer) {
 			((EntityPlayer) par5EntityLiving).openGui(
 					TeleportStations.instance, 0, par1World, par2, par3, par4);

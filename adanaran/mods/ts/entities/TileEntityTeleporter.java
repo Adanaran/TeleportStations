@@ -11,6 +11,10 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.ForgeChunkManager.Type;
 import adanaran.mods.ts.TeleportStations;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -30,6 +34,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	private int worldType;
 	// To prevent multiple command execution per teleport
 	private boolean porting = false;
+	private Ticket ticket;
 
 	@Override
 	public Packet getDescriptionPacket() {
@@ -238,11 +243,39 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 		}
 	}
 
+	@Override
+	public void onChunkUnload() {
+		System.out.println("Unloading Chunk of a teleporter...");
+	}
+
 	public TileEntityTeleporter getZiel() {
 		return target;
 	}
 
 	public int getMeta() {
 		return worldObj.getBlockMetadata(xCoord, yCoord - 2, zCoord);
+	}
+
+	public void forceChunkLoading(Ticket t) {
+		System.out.println("forcing chunk load");
+		if (ticket == null) {
+			if (t == null) {
+				System.out.println("creating new ticket");
+				ticket = ForgeChunkManager
+						.requestTicket(TeleportStations.instance,
+								TeleportStations.proxy.getWorld(worldType),
+								Type.NORMAL);
+			} else {
+				System.out.println("using given ticket");
+				ticket = t;
+			}
+		}
+		ticket.getModData().setInteger("tpX", xCoord);
+		ticket.getModData().setInteger("tpY", yCoord);
+		ticket.getModData().setInteger("tpZ", zCoord);
+		ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(xCoord >> 4,
+				zCoord >> 4));
+		System.out.println("forced chunk load @(" + xCoord + "|" + yCoord + "|"
+				+ zCoord + ") with ticket " + ticket);
 	}
 }

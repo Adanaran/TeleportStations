@@ -9,6 +9,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.ForgeChunkManager;
 import adanaran.mods.ts.blocks.BlockTeleMid;
 import adanaran.mods.ts.blocks.BlockTeleTarget;
 import adanaran.mods.ts.blocks.BlockTeleTop;
@@ -47,7 +48,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class TeleportStations {
 
 	// The mod instance
-	@Instance
+	@Instance("TeleportStations")
 	public static TeleportStations instance;
 	// The sided Proxy instance
 	@SidedProxy(clientSide = "adanaran.mods.ts.ClientProxy", serverSide = "adanaran.mods.ts.CommonProxy")
@@ -101,7 +102,7 @@ public class TeleportStations {
 			logger.log(Level.INFO, "TeleportStations configuration loaded.");
 		} catch (Exception e) {
 			logger.log(Level.SEVERE,
-					"Failed loading TeleportStations configuration" ,e);
+					"Failed loading TeleportStations configuration", e);
 		} finally {
 			cfg.save();
 		}
@@ -150,13 +151,15 @@ public class TeleportStations {
 	/**
 	 * The post-init method.
 	 * <p>
-	 * Does nothing.
+	 * Registers the LoadCallback-handler.
 	 * 
 	 * @param evt
 	 *            FMLPostInitializationEvent
 	 */
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent evt) {
+		ForgeChunkManager.setForcedChunkLoadingCallback(instance,
+				new LoadCallback());
 		logger.log(Level.FINE, "done loading");
 	}
 

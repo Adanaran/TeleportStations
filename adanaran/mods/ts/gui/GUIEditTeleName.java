@@ -108,6 +108,7 @@ public class GUIEditTeleName extends GuiScreen {
 	public void onGuiClosed() {
 		TeleportStations.logger.log(Level.FINE, "");
 		tet.update(world.provider.dimensionId);
+		tet.forceChunkLoading(null);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
 		try {

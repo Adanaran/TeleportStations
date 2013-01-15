@@ -123,29 +123,37 @@ public class TeleportStations {
 		registerBlockTeleporter(idBlockTeleporter, idBlockTeleporterAn);
 		registerBlockTeleMid(idBlockTeleMid);
 		registerBlockTeleTop(idBlockTeleTop);
-		registerHandtele(idHandtele);
 		registerSpawnPearl(idSpawnPearl);
+		registerHandtele(idHandtele);
 		proxy.registerRenderInformation();
 	}
 
 	private void registerSpawnPearl(int i) {
 		itemSpawnPearl = new ItemSpawnPearl(i);
-		itemSpawnPearl.setCreativeTab(CreativeTabs.tabTransport);
+		itemSpawnPearl.setCreativeTab(CreativeTabs.tabTransport).setItemName("Spawnpearl");
 		EntityRegistry.registerModEntity(EntitySpawnPearl.class, "Spawnpearl",
 				3, this, 164, 10, true);
 		LanguageRegistry.addName(itemSpawnPearl, "Spawnpearl");
-		GameRegistry
-				.addRecipe(new ItemStack(itemSpawnPearl),
-						new Object[] { "K", "E", Character.valueOf('E'),
+		GameRegistry.registerItem(itemSpawnPearl, itemSpawnPearl.getItemName());
+		GameRegistry.addRecipe(
+				new ItemStack(itemSpawnPearl),
+				new Object[] { "K", "E", Character.valueOf('E'),
 								Item.enderPearl, Character.valueOf('K'),
 								Item.compass });
-		itemSpawnPearl.setItemName("Spawnpearl");
 	}
 
 	private void registerHandtele(int i) {
 		itemTele = new ItemTeleporter(i);
-		itemTele.setCreativeTab(CreativeTabs.tabTransport);
+		itemTele.setCreativeTab(CreativeTabs.tabTransport).setItemName("Handteleporter");
 		LanguageRegistry.addName(itemTele, "Handteleporter");
+		GameRegistry.registerItem(itemTele, itemTele.getItemName());
+		GameRegistry.addRecipe(
+				new ItemStack(itemTele),
+				new Object[] { "EPE", "EKE","ETE", Character.valueOf('E'),
+								Item.ingotIron, Character.valueOf('T'),
+								blockTeleporter, Character.valueOf('P'),
+								itemSpawnPearl, Character.valueOf('K'),
+								Item.coal });
 	}
 
 	/**
@@ -167,11 +175,12 @@ public class TeleportStations {
 		blockTeleTarget = new BlockTeleTarget(id);
 		blockTeleTarget.setBlockName("Teleporterziel");
 		blockTeleTarget.setCreativeTab(CreativeTabs.tabTransport);
-		GameRegistry.registerBlock(blockTeleTarget,
-				blockTeleTarget.getBlockName());
 		LanguageRegistry.addName(blockTeleTarget, "Teleporterziel");
 		LanguageRegistry.instance().addNameForObject(blockTeleTarget, "de_DE",
 				"Teleporterziel");
+		GameRegistry.registerBlock(blockTeleTarget,
+				blockTeleTarget.getBlockName());
+		
 		GameRegistry.addRecipe(new ItemStack(blockTeleTarget), new Object[] {
 				"DOD", "ORO", "DOD", Character.valueOf('D'), Block.glass,
 				Character.valueOf('O'), Block.obsidian, Character.valueOf('R'),

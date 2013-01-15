@@ -34,8 +34,7 @@ public class BlockTeleporter extends BlockTeleTarget {
 	}
 
 	private boolean power(World world, int i, int j, int k) {
-		return (world.isBlockGettingPowered(i, j, k) || world
-				.isBlockIndirectlyGettingPowered(i, j, k));
+		return world.isBlockIndirectlyGettingPowered(i, j, k);
 	}
 
 	@Override
@@ -43,13 +42,6 @@ public class BlockTeleporter extends BlockTeleTarget {
 		return par1 == 1 ? this.blockID == 3002 ? super
 				.getBlockTextureFromSideAndMetadata(par1, par2) : (super
 				.getBlockTextureFromSideAndMetadata(par1, par2) + 16) : 32;
-	}
-
-	@Override
-	public void onNeighborBlockChange(World par1World, int par2, int par3,
-			int par4, int par5) {
-		super.onNeighborBlockChange(par1World, par2, par3, par4, par5);
-		update(par1World, par2, par3, par4);
 	}
 
 	@Override

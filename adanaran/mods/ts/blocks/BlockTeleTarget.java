@@ -82,21 +82,10 @@ public class BlockTeleTarget extends Block {
 	@Override
 	public void onNeighborBlockChange(World par1World, int par2, int par3,
 			int par4, int par5) {
-		/* TODO canBlockStay prüfen, siehe BlockRedstoneRepeater */
-//		if (!canBlockStay(par1World, par2, par3, par4)) {
-//			deleteTP(par1World, par2, par3, par4);
-//			return;
-//		}
 		update(par1World, par2, par3, par4);
 		 if (!par1World.isBlockNormalCube(par2, par3 - 1, par4)) {
 		 deleteTP(par1World, par2, par3, par4);
 		 }
-	}
-
-	@Override
-	public boolean canBlockStay(World par1World, int par2, int par3, int par4) {
-		System.out.println("canBlockStay?");
-		return par1World.isBlockNormalCube(par2, par3 - 1, par4);
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package adanaran.mods.ts;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 /**
@@ -12,6 +11,7 @@ import cpw.mods.fml.common.network.IGuiHandler;
  * Used for server-side.
  * 
  * @author Adanaran
+ * 
  */
 public class CommonProxy implements IGuiHandler {
 
@@ -36,25 +36,29 @@ public class CommonProxy implements IGuiHandler {
 	}
 
 	/**
-	 * Gets the current world (save) name.
+	 * Registers the TileEntitySpecialRenderer.
+	 * <p>
+	 * Unused server-side.
+	 */
+	public void registerTESpRenderer() {
+	}
+
+	/**
+	 * Gets the current world name.
 	 * 
 	 * @return String the current world name
 	 */
 	public String getWorldName() {
-		return MinecraftServer.getServer().worldServers[0].getSaveHandler()
-				.getSaveDirectoryName();
+		return MinecraftServer.getServer().worldServers[0].getSaveHandler().getSaveDirectoryName();
 	}
 
 	/**
 	 * Gets the current world.
 	 * 
-	 * @param dim
-	 *            int the dimension of the world
-	 * 
 	 * @return World the current world
 	 */
-	public World getWorld(int dim) {
-		return DimensionManager.getWorld(dim);
+	public World getWorld() {
+		return MinecraftServer.getServer().worldServers[0].provider.worldObj;
 	}
 
 	/**

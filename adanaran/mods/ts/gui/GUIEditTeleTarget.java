@@ -1,69 +1,57 @@
 package adanaran.mods.ts.gui;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.Vector;
+import java.util.TreeMap;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
-
 import adanaran.mods.ts.TeleportStations;
-import adanaran.mods.ts.entities.TileEntityTeleporter;
+import adanaran.mods.ts.database.TeleData;
 import adanaran.mods.ts.items.ItemTeleporter;
 
+//TODO JAVADOC!!!
+
 /**
- * GUI for changing targets.
- * 
  * @author Demitreus
  */
 public class GUIEditTeleTarget extends GuiScreen {
 
 	protected int width = 176, height = 166, listHeight = 0, scrollY = 0,
 			scrollHeight = 0;
-	private TileEntityTeleporter[] zieldb;
+	private ChunkCoordinates[] zieldb;
 	private StringBuilder[] zielNames;
 	private int selected;
 	private boolean isScrolling = false;
-	private TileEntityTeleporter self;
+	private TeleData self;
 	private int metacheck;
 	private int zlSize;
-	private Vector<TileEntityTeleporter> zielliste;
-	private int x, y, z;
+	private TreeMap<ChunkCoordinates, TeleData> zielliste;
 
 	/**
-	 * Creates a new GUI.
-	 * 
-	 * @param world
-	 *            World the world the player is in
-	 * @param x
-	 *            int x-coordinate
-	 * @param y
-	 *            int y-coordinate
 	 * @param z
-	 *            int z-coordinate
+	 * @param y
+	 * @param x
+	 * @param world
+	 * 
 	 */
 	public GUIEditTeleTarget(World world, int x, int y, int z) {
 		isScrolling = false;
-		this.x = x;
-		this.y = y;
-		this.z = z;
 		selected = -1;
 		metacheck = y == -1 ? -1 : world.getBlockMetadata(x, y, z);
-		self = (TileEntityTeleporter) world.getBlockTileEntity(x, y + 2, z);
-		zielliste = createListOfTargets(world);
+		System.out.println("Teleportermeta: " + metacheck);
+		zielliste = (TreeMap<ChunkCoordinates, TeleData>) TeleportStations.db
+				.getDB();
+		self = zielliste.remove(new ChunkCoordinates(x, y, z));
+
+		if (self == null) {
+			self = new TeleData("(mobile)");
+		}
 		zlSize = zielliste.size();
 		if (zlSize > 0) {
 			listHeight = 14 * ((zlSize + 1)) - 139;
@@ -71,24 +59,29 @@ public class GUIEditTeleTarget extends GuiScreen {
 			if (scrollHeight <= 0 || scrollHeight >= 139) {
 				scrollHeight = 139;
 			}
-			zieldb = new TileEntityTeleporter[zlSize];
+			zieldb = new ChunkCoordinates[zlSize];
 			zielNames = new StringBuilder[zlSize];
 			int i = 0;
-			ListIterator<TileEntityTeleporter> iterator = zielliste
-					.listIterator();
-			while (iterator.hasNext()) {
-				TileEntityTeleporter LName = iterator.next();
+			for (Entry<ChunkCoordinates, TeleData> entry : zielliste.entrySet()) {
+				TeleData LName = entry.getValue();
 				if (LName.getWorldType() == world.getWorldInfo().getDimension()) {
+					System.out.println(LName.getMeta() + " meta Lname");
 					if (metacheck <= 0 && LName.getMeta() == 0) {
-						zieldb[i] = LName;
+						zieldb[i] = entry.getKey();
 						zielNames[i] = new StringBuilder(LName.getName());
+						System.out.println(i + " benannt: "
+								+ zielNames[i].toString());
 					} else if (metacheck > 0 && LName.getMeta() > 0) {
-						zieldb[i] = LName;
+						zieldb[i] = entry.getKey();
 						zielNames[i] = new StringBuilder(LName.getName());
+						System.out.println(i + " benannt: "
+								+ zielNames[i].toString());
 					}
 
-					if (LName.getTarget() != null) {
-						String ttName = LName.getTarget().getName();
+					if (LName.getZiel() != null) {
+						ChunkCoordinates tZiel = LName.getZiel();
+						String ttName = TeleportStations.db.getNameByCoords(
+								tZiel.posX, tZiel.posY, tZiel.posZ);
 						if (ttName != null) {
 							zielNames[i].append(" (" + ttName + ")");
 						}
@@ -106,71 +99,25 @@ public class GUIEditTeleTarget extends GuiScreen {
 		}
 	}
 
-	private Vector<TileEntityTeleporter> createListOfTargets(World world) {
-		Vector<TileEntityTeleporter> v = new Vector<TileEntityTeleporter>();
-		ArrayList list = (ArrayList) world.loadedTileEntityList;
-		ListIterator iterator = list.listIterator();
-		while (iterator.hasNext()) {
-			Object obj = iterator.next();
-			if (obj instanceof TileEntityTeleporter) {
-				TileEntityTeleporter te = (TileEntityTeleporter) obj;
-				if (metacheck <= 0 && te.getMeta() == 0 && !te.equals(self)) {
-					v.add(te);
-				} else if (metacheck > 0 && te.getMeta() > 0
-						&& !te.equals(self)) {
-					v.add(te);
-				}
-			}
-		}
-		return v;
-	}
-
 	@Override
 	public void onGuiClosed() {
 		if (!zielliste.isEmpty() && selected != -1 && zieldb[selected] != null) {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(zieldb[selected]);
 			} else {
-				self.setTarget(zieldb[selected]);
+				TeleportStations.db.changeTarget(self.posX, self.posY,
+						self.posZ, zieldb[selected]);
 			}
-			TeleportStations.logger.log(Level.FINE, "Changed target at " + x
-					+ "|" + y + "|" + z + " to " + zieldb[selected].xCoord
-					+ "|" + (zieldb[selected].yCoord - 2) + "|"
-					+ zieldb[selected].zCoord);
+			System.out.println("onGuiClosed: Coords of chosen target: "
+					+ zieldb[selected].posX + ", " + zieldb[selected].posY
+					+ ", " + zieldb[selected].posZ);
 		} else {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(null);
 			} else {
-				self.setTarget(null);
+				TeleportStations.db.changeTarget(self.posX, self.posY,
+						self.posZ, null);
 			}
-			TeleportStations.logger.log(Level.FINE,
-					"Removed target of teleporter at " + x + "|" + y + "|" + z);
-		}
-		if (metacheck != -1) {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			DataOutputStream dos = new DataOutputStream(bos);
-			try {
-				dos.writeInt(self.xCoord);
-				dos.writeInt(self.yCoord);
-				dos.writeInt(self.zCoord);
-				dos.writeInt(self.getWorldType());
-				if (selected != -1) {
-					dos.writeBoolean(true);
-					dos.writeInt(zieldb[selected].xCoord);
-					dos.writeInt(zieldb[selected].yCoord);
-					dos.writeInt(zieldb[selected].zCoord);
-				} else if (selected == -1) {
-					dos.writeBoolean(false);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			Packet250CustomPayload packet = new Packet250CustomPayload();
-			packet.channel = "tptarget";
-			packet.data = bos.toByteArray();
-			packet.length = packet.data.length;
-			packet.isChunkDataPacket = true;
-			PacketDispatcher.sendPacketToServer(packet);
 		}
 	}
 
@@ -187,6 +134,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 					continue;
 				}
 				selected = j1;
+				// System.out.println(selected + " ausgewaehlt");
 				break;
 			}
 		}
@@ -197,8 +145,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 		handleKeyboardInput();
 		int k = width - width >> 1;
 		int l = height - height >> 1;
-		int i1 = mc.renderEngine
-				.getTexture("/adanaran/mods/ts/textures/TPGUI.png");
+		int i1 = mc.renderEngine.getTexture("/adanaran/mods/ts/textures/TPGUI.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i1);
 		int j1 = k;
@@ -270,12 +217,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 	}
 
 	private void c() {
-		if (self != null) {
-			fontRenderer.drawString("Teleporter " + self.getName(), 8, 6,
-					0x404040);
-		} else {
-			fontRenderer.drawString("Handteleporter", 8, 6, 0x404040);
-		}
+		fontRenderer.drawString("Teleporter " + self.getName(), 8, 6, 0x404040);
 		for (int i = 0; i < zlSize; i++) {
 			int j = 20;
 			int k = (14 * i + 20) - scrollY;
@@ -317,11 +259,13 @@ public class GUIEditTeleTarget extends GuiScreen {
 	private void sortArrays() {
 		if (zielNames.length > 1) {
 			for (int i1 = zielNames.length; i1 > 0; i1--) {
+				System.out.println(i1 + " erste schleife ");
 				for (int j = 0; j < i1 - 1; j++) {
+					System.out.println(j + " zweite schleife ");
 					if ((zielNames[j].toString()
 							.compareToIgnoreCase(zielNames[j + 1].toString())) > 0) {
 						StringBuilder z1 = zielNames[j];
-						TileEntityTeleporter db = zieldb[j];
+						ChunkCoordinates db = zieldb[j];
 						zielNames[j] = zielNames[j + 1];
 						zieldb[j] = zieldb[j + 1];
 						zielNames[j + 1] = z1;

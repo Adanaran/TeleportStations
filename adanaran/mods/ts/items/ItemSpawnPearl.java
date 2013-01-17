@@ -7,18 +7,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 /**
- * Spanwpearl entity.
  * 
- * @author Demitreus
+ * @author Demitreus Client File
  */
 public class ItemSpawnPearl extends Item {
 	public ItemSpawnPearl(int par1) {
 		super(par1);
 		maxStackSize = 16;
-		this.iconIndex = 38;
 	}
 
-	@Override
+	/**
+	 * Called whenever this item is equipped and the right mouse button is
+	 * pressed. Args: itemStack, world, entityPlayer
+	 */
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer) {
 		if (par3EntityPlayer.ridingEntity != null) {
@@ -29,6 +30,7 @@ public class ItemSpawnPearl extends Item {
 		par2World.playSoundAtEntity(par3EntityPlayer, "random.bow", 0.5F,
 				0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 		if (!par2World.isRemote) {
+			// TODO entity einfuegen
 			par2World.spawnEntityInWorld(new EntitySpawnPearl(par2World,
 					par3EntityPlayer));
 		}
@@ -36,7 +38,13 @@ public class ItemSpawnPearl extends Item {
 	}
 
 	@Override
+	public int getIconFromDamage(int par1) {
+		return 33; // TODO textur einfuegen
+	}
+
+	@Override
 	public String getTextureFile() {
 		return "/adanaran/mods/ts/textures/TS.png";
 	}
+
 }

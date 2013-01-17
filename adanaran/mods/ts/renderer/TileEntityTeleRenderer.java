@@ -6,22 +6,19 @@ import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 
-import adanaran.mods.ts.entities.TileEntityTeleporter;
+import adanaran.mods.ts.entities.TileEntityTele;
+
+//TODO JAVADOC!!!
 
 /**
- * Renderer for teleporter tile entity.
- * <p>
- * Renders text information at the top block.
  * 
  * @author Demitreus
+ *
  */
 public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 
 	private ModelTeleporter teleModel = new ModelTeleporter();
 
-	/**
-	 * Creates a new Object.
-	 */
 	public TileEntityTeleRenderer() {
 	}
 
@@ -29,9 +26,9 @@ public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 	@Override
 	public void renderTileEntityAt(TileEntity entityTele, double var2,
 			double var4, double var6, float var8) {
-		String tName = ((TileEntityTeleporter) entityTele).getName();
-		String tTarget = ((TileEntityTeleporter) entityTele).getTargetName();
-		tTarget = tTarget.equals("") ? "" : "( " + tTarget + " )";
+		String tName = ((TileEntityTele) entityTele).getName();
+		String tTarget = ((TileEntityTele) entityTele).getTarget();
+		tTarget = tTarget.equals("ziel") ? "" : "( " + tTarget + " )";
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) var2 + 0.5F, (float) var4 + 1.5f,
@@ -69,4 +66,5 @@ public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glPopMatrix();
 	}
+
 }

@@ -43,7 +43,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
  * @author Adanaran
  * @author Demitreus
  */
-
 @Mod(modid = "TeleportStations", name = "Teleport Stations", version = "0.1")
 @NetworkMod(channels = { "tpChange", "tpRemove", "tpDB" }, versionBounds = "[0.1,)", clientSideRequired = true, serverSideRequired = false, packetHandler = TPPacketHandler.class)
 public class TeleportStations {

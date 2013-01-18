@@ -1,5 +1,7 @@
 package adanaran.mods.ts.packethandler;
 
+import java.util.logging.Level;
+
 import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.database.TPDatabase;
 import adanaran.mods.ts.database.TPFileHandler;
@@ -32,65 +34,38 @@ public class TPPlayerTracker implements IPlayerTracker {
 		this.fh = fh;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cpw.mods.fml.common.IPlayerTracker#onPlayerLogin(net.minecraft.src.
-	 * EntityPlayer)
-	 */
 	@Override
 	public void onPlayerLogin(EntityPlayer player) {
-		System.out.println("Player logging in at");
+		TeleportStations.logger.log(Level.FINEST, "Player logging in at");
 		if (TeleportStations.proxy.isSinglePlayer()) {
 			if (player.getEntityName().equals(
 					Minecraft.getMinecraft().getIntegratedServer()
 							.getServerOwner())) {
-				System.out.println("local world");
+				TeleportStations.logger.log(Level.FINEST, "local world");
 				db.clearDB();
 				fh.readFromFile();
 			} else {
-				System.out.println("remote world");
+				TeleportStations.logger.log(Level.FINEST, "remote world");
 				db.sendDB(player);
 			}
 		}
 		if (TeleportStations.proxy.isServer()) {
-			System.out.println("remote dedicated server");
+			TeleportStations.logger.log(Level.FINEST, "remote dedicated server");
 			fh.readFromFile();
 			db.sendDB(player);
 		}
-		System.out.println("... login handling... finished");
+		TeleportStations.logger.log(Level.FINEST, "... login handling... finished");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cpw.mods.fml.common.IPlayerTracker#onPlayerLogout(net.minecraft.src.
-	 * EntityPlayer)
-	 */
 	@Override
 	public void onPlayerLogout(EntityPlayer player) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cpw.mods.fml.common.IPlayerTracker#onPlayerChangedDimension(net.minecraft
-	 * .src.EntityPlayer)
-	 */
 	@Override
 	public void onPlayerChangedDimension(EntityPlayer player) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cpw.mods.fml.common.IPlayerTracker#onPlayerRespawn(net.minecraft.src.
-	 * EntityPlayer)
-	 */
 	@Override
 	public void onPlayerRespawn(EntityPlayer player) {
 	}
-
 }

@@ -22,7 +22,7 @@ import adanaran.mods.ts.TeleportStations;
  * 
  */
 
-public class ItemTeleporter extends Item implements ICommandSender{
+public class ItemTeleporter extends Item implements ICommandSender {
 	private static ChunkCoordinates target;
 	private boolean porting = false;
 
@@ -34,8 +34,8 @@ public class ItemTeleporter extends Item implements ICommandSender{
 
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer, int par4) {
-		// System.out.println(par2World.worldProvider.worldType); //Ergibt 0 bei
-		// normaler Welt, -1 bei Netherwelt :D
+		// par2World.worldProvider.worldType; //Ergibt 0 bei normaler Welt, -1
+		// bei Netherwelt :D
 		if (par4 > 71950) {
 			target = null;
 			par3EntityPlayer.openGui(TeleportStations.instance, 1, par2World,
@@ -100,7 +100,7 @@ public class ItemTeleporter extends Item implements ICommandSender{
 	public int getItemEnchantability() {
 		return 1;
 	}
-	
+
 	/**
 	 * Teleports the player to the target that is set.
 	 * 
@@ -112,16 +112,17 @@ public class ItemTeleporter extends Item implements ICommandSender{
 			porting = true;
 			ICommandManager cm = TeleportStations.proxy.getServer()
 					.getCommandManager();
-			cm.executeCommand(this,
+			cm.executeCommand(
+					this,
 					new StringBuilder("/tp ").append(entity.getEntityName())
-							.append(" ").append(target.posX + 0.5)
-							.append(" ").append(target.posY - 2).append(" ")
+							.append(" ").append(target.posX + 0.5).append(" ")
+							.append(target.posY - 2).append(" ")
 							.append(target.posZ + 0.5).toString());
 			TeleportStations.logger.log(Level.FINE,
-					"teleported " + entity.getEntityName() + " from " + entity.posX
-							+ "|" + entity.posY + "|" + entity.posZ + " to "
-							+ target.posX + "|" + (target.posY - 2) + "|"
-							+ target.posZ);
+					"teleported " + entity.getEntityName() + " from "
+							+ entity.posX + "|" + entity.posY + "|"
+							+ entity.posZ + " to " + target.posX + "|"
+							+ (target.posY - 2) + "|" + target.posZ);
 		}
 		porting = false;
 	}
@@ -150,4 +151,3 @@ public class ItemTeleporter extends Item implements ICommandSender{
 		return null;
 	}
 }
-

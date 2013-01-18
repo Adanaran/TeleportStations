@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,7 +45,7 @@ public class TPPacketHandler implements IPacketHandler {
 	@Override
 	public void onPacketData(INetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
-		System.out.println("Packet empfangen, Channel: " + packet.channel);
+		TeleportStations.logger.log(Level.FINE, "Packet empfangen, Channel: " + packet.channel);
 		switch (packet.channel) {
 		case "tpChange":
 			tpChanged(packet);
@@ -62,14 +63,14 @@ public class TPPacketHandler implements IPacketHandler {
 
 	private void dbReceived(Packet250CustomPayload packet) {
 		String message = (readPacket(packet));// convertString
-		System.out.println("Received database: " + message);
+		TeleportStations.logger.log(Level.FINEST, "Received database: " + message);
 		String[] m = message.split(";;;");
-		System.out.println("Received " + m.length + " teleporters.");
+		TeleportStations.logger.log(Level.FINEST, "Received " + m.length + " teleporters.");
 		for (int i = 0; i < m.length; i++) {
-			System.out.println("Processing " + m[i] + ".");
+			TeleportStations.logger.log(Level.FINEST, "Processing " + m[i] + ".");
 			TeleportStations.db.receiveChangedTPFromServer(new TeleData(m[i]));
 		}
-		System.out.println("Database readin finished.");
+		TeleportStations.logger.log(Level.FINEST, "Database readin finished.");
 	}
 
 	private void tpRemoved(Packet250CustomPayload packet) {
@@ -112,12 +113,12 @@ public class TPPacketHandler implements IPacketHandler {
 	}
 
 	private String convertString(String lineIn) {
-		System.out.println("lineIn: " + lineIn);
+		TeleportStations.logger.log(Level.FINEST, "lineIn: " + lineIn);
 		StringBuilder lineOut = new StringBuilder();
 		for (int i = 1; i < lineIn.length(); i += 2) {
 			lineOut.append(lineIn.charAt(i));
 		}
-		System.out.println("lineOut: " + lineOut);
+		TeleportStations.logger.log(Level.FINEST, "lineOut: " + lineOut);
 		return lineOut.toString();
 	}
 
@@ -181,12 +182,12 @@ public class TPPacketHandler implements IPacketHandler {
 			TreeMap<ChunkCoordinates, TeleData> db) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
-		System.out.println("Building database packet, size: " + TeleportStations.db
+		TeleportStations.logger.log(Level.FINEST, "Building database packet, size: " + TeleportStations.db
 				.getDB().size());
 		try {
 			StringBuilder m = new StringBuilder();
 			for (Map.Entry<ChunkCoordinates, TeleData> entry : db.entrySet()) {
-				System.out.println("writing TP " + entry.getValue()
+				TeleportStations.logger.log(Level.FINEST, "writing TP " + entry.getValue()
 						+ " to packet");
 				m.append(entry.getValue().toString()).append(";;;");
 			}

@@ -54,7 +54,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 		this.z = z;
 		selected = -1;
 		metacheck = y == -1 ? -1 : world.getBlockMetadata(x, y, z);
-		System.out.println("Teleportermeta: " + metacheck);
+		TeleportStations.logger.log(Level.FINE, "Teleportermeta: " + metacheck);
 		zielliste = (TreeMap<ChunkCoordinates, TeleData>) TeleportStations.db
 				.getDB();
 		self = zielliste.remove(new ChunkCoordinates(x, y, z));
@@ -74,16 +74,16 @@ public class GUIEditTeleTarget extends GuiScreen {
 			for (Entry<ChunkCoordinates, TeleData> entry : zielliste.entrySet()) {
 				TeleData LName = entry.getValue();
 				if (LName.getWorldType() == world.getWorldInfo().getDimension()) {
-					System.out.println(LName.getMeta() + " meta Lname");
+					TeleportStations.logger.log(Level.FINER, LName.getMeta() + " meta Lname");
 					if (metacheck <= 0 && LName.getMeta() == 0) {
 						zieldb[i] = entry.getKey();
 						zielNames[i] = new StringBuilder(LName.getName());
-						System.out.println(i + " benannt: "
+						TeleportStations.logger.log(Level.FINER, i + " benannt: "
 								+ zielNames[i].toString());
 					} else if (metacheck > 0 && LName.getMeta() > 0) {
 						zieldb[i] = entry.getKey();
 						zielNames[i] = new StringBuilder(LName.getName());
-						System.out.println(i + " benannt: "
+						TeleportStations.logger.log(Level.FINER, i + " benannt: "
 								+ zielNames[i].toString());
 					}
 
@@ -144,7 +144,6 @@ public class GUIEditTeleTarget extends GuiScreen {
 					continue;
 				}
 				selected = j1;
-				// System.out.println(selected + " ausgewaehlt");
 				break;
 			}
 		}
@@ -269,9 +268,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 	private void sortArrays() {
 		if (zielNames.length > 1) {
 			for (int i1 = zielNames.length; i1 > 0; i1--) {
-				System.out.println(i1 + " erste schleife ");
 				for (int j = 0; j < i1 - 1; j++) {
-					System.out.println(j + " zweite schleife ");
 					if ((zielNames[j].toString()
 							.compareToIgnoreCase(zielNames[j + 1].toString())) > 0) {
 						StringBuilder z1 = zielNames[j];

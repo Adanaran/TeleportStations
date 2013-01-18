@@ -3,6 +3,7 @@ package adanaran.mods.ts.database;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
@@ -19,7 +20,6 @@ import cpw.mods.fml.relauncher.SideOnly;
  * Used to store the teleporters.
  * 
  * @author Adanaran
- * 
  */
 public class TPDatabase {
 	private static TreeMap<ChunkCoordinates, TeleData> db = new TreeMap<ChunkCoordinates, TeleData>(
@@ -73,9 +73,9 @@ public class TPDatabase {
 	public void addTP(TeleData td) {
 		if (TeleportStations.proxy.isServer()
 				|| TeleportStations.proxy.isSinglePlayer()) {
-			System.out.println("Received  " + td + " from flatfile database");
+			TeleportStations.logger.log(Level.FINE, "Received  " + td + " from flatfile database");
 			db.put(new ChunkCoordinates(td.posX, td.posY, td.posZ), td);
-			System.out.println("Groesse der Datenbank: " + db.size()
+			TeleportStations.logger.log(Level.FINE, "Groesse der Datenbank: " + db.size()
 					+ " Eintraege.");
 		}
 	}
@@ -143,15 +143,14 @@ public class TPDatabase {
 	 *            EntityPlayer the player the database should be send to
 	 */
 	public void sendDB(EntityPlayer player) {
-		System.out.print("Datenbanksendeauftrag registriert, Empfaenger: "
-				+ player.getEntityName() + ", DB-size: " + db.size());
 		if (db.size() > 0) {
-			System.out.println();
+			TeleportStations.logger.log(Level.INFO, "Sending databse to "
+				+ player.getEntityName() + ", size: " + db.size());
 			PacketDispatcher.sendPacketToPlayer(
 					TPPacketHandler.getNewDatabaseSyncPacket(this.getDB()),
 					(Player) player);
 		}else{
-			System.out.println(" Database empty, not sending.");
+			TeleportStations.logger.log(Level.INFO, "Database empty, not sending.");
 		}
 	}
 
@@ -305,19 +304,19 @@ public class TPDatabase {
 	}
 
 	private void deleteReferencesAfterTPRemoved(ChunkCoordinates coords) {
-		System.out.println("Checking for references in DB...");
+		TeleportStations.logger.log(Level.FINE, "Removing references in DB...");
 		for (Map.Entry<ChunkCoordinates, TeleData> entry : db.entrySet()) {
 			if (entry.getValue().getZiel() == coords) {
-				System.out.println("Deleting reference to removed teleporter.");
+				TeleportStations.logger.log(Level.FINER, "Deleting reference to removed teleporter.");
 				entry.getValue().setZiel(null);
 			}
 		}
 		TeleportStations.fh.writeToFile();
-		System.out.println("All references deleted.");
+		TeleportStations.logger.log(Level.FINE, "All references removed.");
 	}
 
 	private void deleteReferencesAfterMetaChange(ChunkCoordinates coords) {
-		System.out.println("Checking for references in DB...");
+		TeleportStations.logger.log(Level.FINE, "Checking for references in DB...");
 		TeleData td = db.get(coords);
 		int meta = td.getMeta();
 		for (Map.Entry<ChunkCoordinates, TeleData> entry : db.entrySet()) {
@@ -327,10 +326,11 @@ public class TPDatabase {
 			if (refZiel == coords) {
 				if ((meta > 0 && refMeta == 0) || (meta == 0 && refMeta > 0)) {
 					refTD.setZiel(null);
+					TeleportStations.logger.log(Level.FINER, "Removed wrong reference");
 				}
 			}
 		}
 		TeleportStations.fh.writeToFile();
-		System.out.println("All wrong references deleted.");
+		TeleportStations.logger.log(Level.FINE, "All wrong references deleted.");
 	}
 }

@@ -1,5 +1,7 @@
 package adanaran.mods.ts.entities;
 
+import java.util.logging.Level;
+
 import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.packethandler.TPPacketHandler;
 import net.minecraft.block.Block;
@@ -133,22 +135,17 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 				ChunkCoordinates ziel = TeleportStations.db
 						.getZielByCoords(new ChunkCoordinates(this.xCoord,
 								this.yCoord - 2, this.zCoord));
-				System.out.println("Ziel: x " + ziel.posX + " y " + ziel.posY
-						+ " z " + ziel.posZ);
+				TeleportStations.logger.log(Level.FINE, "Ziel: x " + ziel.posX
+						+ " y " + ziel.posY + " z " + ziel.posZ);
 				ICommandManager commandManager = server.getCommandManager();
-				System.out.println("Executing tp command");
-				commandManager
-						.executeCommand(
-								this,
-								new StringBuilder("/tp ")
-										.append(entity.getEntityName())
-										.append(" ")
-										.append(ziel.posX + 0.5)
-										.append(" ")
-										.append(ziel.posY
-												+ entity.getEyeHeight())
-										.append(" ").append(ziel.posZ + 0.5)
-										.toString());
+				String command = new StringBuilder("/tp ")
+						.append(entity.getEntityName()).append(" ")
+						.append(ziel.posX + 0.5).append(" ")
+						.append(ziel.posY + entity.getEyeHeight()).append(" ")
+						.append(ziel.posZ + 0.5).toString();
+				TeleportStations.logger.log(Level.INFO, "Executing command "
+						+ command);
+				commandManager.executeCommand(this, command);
 			}
 		}
 		porting = false;

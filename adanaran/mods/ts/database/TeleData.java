@@ -80,10 +80,7 @@ public class TeleData extends ChunkCoordinates {
 	 *            String the TeleData.toString of this new teleporter
 	 */
 	public TeleData(String line) {
-		System.out
-				.println("TeleData: Constructor(String) called with: " + line);
 		String[] tdString = line.split(";;");
-		System.out.println("Size of array: " + tdString.length);
 		try {
 			this.name = tdString[0];
 			this.posX = Integer.parseInt(tdString[1]);

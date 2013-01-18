@@ -76,8 +76,7 @@ public class BlockTeleTarget extends Block {
 			int par4, int par5) {
 		update(par1World, par2, par3, par4);
 		if (!par1World.isBlockNormalCube(par2, par3 - 1, par4)) {
-			par1World.setBlock(par2, par3 - 1, par4,
-					par1World.getBlockId(par2, par3 - 1, par4));
+			deleteTP(par1World, par2, par3, par4);
 		}
 	}
 
@@ -88,8 +87,8 @@ public class BlockTeleTarget extends Block {
 
 	@Override
 	public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4) {
-		return !(par1World.getBlockId(par2, par3 - 1, par4) == 3001)
-				&& !(par1World.getBlockId(par2, par3 - 1, par4) == 3002);
+		return !(par1World.getBlockId(par2, par3 - 1, par4) == TeleportStations.blockTeleporter.blockID)
+				&& !(par1World.getBlockId(par2, par3 - 1, par4) == TeleportStations.blockTeleporterAn.blockID);
 	}
 
 	@Override
@@ -132,8 +131,8 @@ public class BlockTeleTarget extends Block {
 	@Override
 	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4,
 			EntityLiving par5EntityLiving) {
-		par1World.setBlock(par2, par3 + 1, par4, 3004);
-		par1World.setBlock(par2, par3 + 2, par4, 3005);
+		par1World.setBlock(par2, par3 + 1, par4, TeleportStations.blockTeleMid.blockID);
+		par1World.setBlock(par2, par3 + 2, par4, TeleportStations.blockTeleTop.blockID);
 		if (par5EntityLiving instanceof EntityPlayer) {
 			((EntityPlayer) par5EntityLiving).openGui(
 					TeleportStations.instance, 0, par1World, par2, par3, par4);
@@ -144,7 +143,6 @@ public class BlockTeleTarget extends Block {
 	public void onEntityCollidedWithBlock(World par1World, int par2, int par3,
 			int par4, Entity par5Entity) {
 		if (par5Entity instanceof EntityMinecart) {
-			System.out.print("MINECART");
 			handleMC(par1World, (EntityMinecart) par5Entity, par2, par3, par4);
 		}
 	}
@@ -283,7 +281,7 @@ public class BlockTeleTarget extends Block {
 				+ 0.05;
 		TeleData quelle = TeleportStations.db.getTeleDataByCoords(i, j, k);
 		ChunkCoordinates ziel = quelle.getZiel();
-		if (ziel != null) {
+		if (ziel != null && world.isBlockIndirectlyGettingPowered(i, j, k)) {
 			i = ziel.posX;
 			j = ziel.posY;
 			k = ziel.posZ;
@@ -295,28 +293,23 @@ public class BlockTeleTarget extends Block {
 			eM.setPosition(i + 0.5, j, k + 1.5);
 			eM.addVelocity(0, 0, speed);
 			break;
-
 		}
 		case 1: {// Streckenende im Westen
 			eM.setPosition(i + 1.5, j, k + 0.5);
 			eM.addVelocity(speed, 0, 0);
 			break;
-
 		}
 		case 2: {// Streckenende im Sueden
 			eM.setPosition(i + 0.5, j, k - 0.5);
 			eM.addVelocity(0, 0, -speed);
 			break;
-
 		}
 		case 3: {// Streckenende im Osten
 			eM.setPosition(i - 0.5, j, k + 0.5);
 			eM.addVelocity(-speed, 0, 0);
 			break;
-
 		}
 		case 4: {// Kurve Sued-Ost
-
 			if (k + 0.5 < ez) { // Cart von Sueden
 				eM.setPosition(i + 1.5, j, k + 0.5);
 				eM.addVelocity(speed, 0, 0);
@@ -331,9 +324,7 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i + 0.5, j, k + 1.5);
 				eM.addVelocity(0, 0, speed);
 			}
-
 			break;
-
 		}
 		case 5: {// Kurve Sued-West
 			if (k + 0.5 < ez) { // Cart von Sueden
@@ -351,7 +342,6 @@ public class BlockTeleTarget extends Block {
 				eM.addVelocity(-speed, 0, 0);
 			}
 			break;
-
 		}
 		case 6: {// Kurve Nord-West
 			if (k + 0.5 < ez) { // Cart von Sueden
@@ -369,7 +359,6 @@ public class BlockTeleTarget extends Block {
 				eM.addVelocity(-speed, 0, 0);
 			}
 			break;
-
 		}
 		case 7: {// Kurve Nord-Ost
 			if (k + 0.5 < ez) { // Cart von Sueden
@@ -387,7 +376,6 @@ public class BlockTeleTarget extends Block {
 				eM.addVelocity(0, 0, -speed);
 			}
 			break;
-
 		}
 		case 8: {// T ohne Nord
 			if (i + 0.5 > ex) {
@@ -400,7 +388,6 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i + 0.5, j, k + 2);
 			eM.addVelocity(0, 0, speed);
 			break;
-
 		}
 		case 9: {// T ohne Ost
 			if (k + 0.5 < ez) {
@@ -413,7 +400,6 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i - 1.5, j, k + 0.5);
 			eM.addVelocity(-speed, 0, 0);
 			break;
-
 		}
 		case 10: {// T ohne Sued
 			if (i + 0.5 > ex) {
@@ -426,7 +412,6 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i + 0.5, j, k - 1.5);
 			eM.addVelocity(0, 0, -speed);
 			break;
-
 		}
 		case 11: {// T ohne West
 			if (k + 0.5 < ez) {
@@ -439,7 +424,6 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i + 2, j, k + 0.5);
 			break;
 		}
-
 		case 12: {// Kreuzung
 			if (k + 0.5 < ez) { // Cart von Sueden
 				eM.setPosition(i + 0.5, j, k - 0.5);
@@ -482,5 +466,4 @@ public class BlockTeleTarget extends Block {
 		}
 		}
 	}
-
 }

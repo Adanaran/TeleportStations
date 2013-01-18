@@ -2,7 +2,7 @@ package adanaran.mods.ts.renderer;
 
 import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.database.TeleData;
-import adanaran.mods.ts.entities.TileEntityTele;
+import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 /**
  * A Thread used to update the teleporter's tile-entities.
@@ -30,7 +30,7 @@ public class UpdateRendererThread extends Thread {
 	public void run() {
 		System.out.println("Trying to update Renderer at " + td.posX + "|"
 				+ td.posY + "|" + td.posZ);
-		while (TeleportStations.proxy.getWorld().getBlockTileEntity(td.posX,
+		while (TeleportStations.proxy.getWorld(td.getWorldType()).getBlockTileEntity(td.posX,
 				td.posY + 1, td.posZ) == null) {
 			try {
 				System.out.println("Waiting for TileEntity...");
@@ -39,12 +39,12 @@ public class UpdateRendererThread extends Thread {
 				e.printStackTrace();
 			}
 		}
-		updateRendererIntern(td);
+		updateRendererIntern();
 	}
 
-	private void updateRendererIntern(TeleData td) {
+	private void updateRendererIntern() {
 		System.out.println("Updating.");
-		((TileEntityTele) TeleportStations.proxy.getWorld().getBlockTileEntity(
+		((TileEntityTeleporter) TeleportStations.proxy.getWorld(td.getWorldType()).getBlockTileEntity(
 				td.posX, td.posY + 1, td.posZ)).setNameAndTarget(td.getName(),
 				TeleportStations.db.getNameByCoords(td.getZiel()));
 	}

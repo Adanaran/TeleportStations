@@ -4,13 +4,14 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import adanaran.mods.ts.TeleportStations;
-import adanaran.mods.ts.packethandler.TPPacketHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
+import adanaran.mods.ts.TeleportStations;
+import adanaran.mods.ts.packethandler.TPPacketHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Database for {@link#TeleportStations}.
@@ -48,7 +49,8 @@ public class TPDatabase {
 	 * @param dim
 	 *            int world dimension
 	 */
-	public void addTP(String name, int x, int y, int z, int meta, int dim) {
+	@SideOnly(Side.CLIENT)
+	public void addNewTP(String name, int x, int y, int z, int meta, int dim) {
 		TeleData td = new TeleData(name, x, y, z, meta, dim);
 		db.put(new ChunkCoordinates(x, y, z), td);
 		if (!TeleportStations.proxy.isSinglePlayer()) {
@@ -111,6 +113,7 @@ public class TPDatabase {
 	 * @param coords
 	 *            ChunkCoordinates coordinates of the new target
 	 */
+	@SideOnly(Side.CLIENT)
 	public void changeTarget(int x, int y, int z, ChunkCoordinates ziel) {
 		ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
 		TeleData td = db.get(coords);

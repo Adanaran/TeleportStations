@@ -2,6 +2,7 @@ package adanaran.mods.ts.gui;
 
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.logging.Level;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
@@ -15,9 +16,9 @@ import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.database.TeleData;
 import adanaran.mods.ts.items.ItemTeleporter;
 
-//TODO JAVADOC!!!
-
 /**
+ * GUI for changing targets.
+ * 
  * @author Demitreus
  */
 public class GUIEditTeleTarget extends GuiScreen {
@@ -32,23 +33,31 @@ public class GUIEditTeleTarget extends GuiScreen {
 	private int metacheck;
 	private int zlSize;
 	private TreeMap<ChunkCoordinates, TeleData> zielliste;
+	private int x, y, z;
 
 	/**
-	 * @param z
-	 * @param y
-	 * @param x
-	 * @param world
+	 * Creates a new GUI.
 	 * 
+	 * @param world
+	 *            World the world the player is in
+	 * @param x
+	 *            int x-coordinate
+	 * @param y
+	 *            int y-coordinate
+	 * @param z
+	 *            int z-coordinate
 	 */
 	public GUIEditTeleTarget(World world, int x, int y, int z) {
 		isScrolling = false;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 		selected = -1;
 		metacheck = y == -1 ? -1 : world.getBlockMetadata(x, y, z);
 		System.out.println("Teleportermeta: " + metacheck);
 		zielliste = (TreeMap<ChunkCoordinates, TeleData>) TeleportStations.db
 				.getDB();
 		self = zielliste.remove(new ChunkCoordinates(x, y, z));
-
 		if (self == null) {
 			self = new TeleData("(mobile)");
 		}
@@ -108,9 +117,10 @@ public class GUIEditTeleTarget extends GuiScreen {
 				TeleportStations.db.changeTarget(self.posX, self.posY,
 						self.posZ, zieldb[selected]);
 			}
-			System.out.println("onGuiClosed: Coords of chosen target: "
-					+ zieldb[selected].posX + ", " + zieldb[selected].posY
-					+ ", " + zieldb[selected].posZ);
+			TeleportStations.logger.log(Level.FINE, "Changed target at " + x
+					+ "|" + y + "|" + z + " to " + zieldb[selected].posX
+					+ "|" + (zieldb[selected].posY) + "|"
+					+ zieldb[selected].posZ);
 		} else {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(null);

@@ -6,29 +6,31 @@ import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 
-import adanaran.mods.ts.entities.TileEntityTele;
-
-//TODO JAVADOC!!!
+import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 /**
+ * Renderer for teleporter tile entity.
+ * <p>
+ * Renders text information at the top block.
  * 
  * @author Demitreus
- *
  */
 public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 
 	private ModelTeleporter teleModel = new ModelTeleporter();
 
+	/**
+	 * Creates a new Object.
+	 */
 	public TileEntityTeleRenderer() {
 	}
 
-	
 	@Override
 	public void renderTileEntityAt(TileEntity entityTele, double var2,
 			double var4, double var6, float var8) {
-		String tName = ((TileEntityTele) entityTele).getName();
-		String tTarget = ((TileEntityTele) entityTele).getTarget();
-		tTarget = tTarget.equals("ziel") ? "" : "( " + tTarget + " )";
+		String tName = ((TileEntityTeleporter) entityTele).getName();
+		String tTarget = ((TileEntityTeleporter) entityTele).getTarget();
+		tTarget = tTarget.equals("") ? "" : "( " + tTarget + " )";
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) var2 + 0.5F, (float) var4 + 1.5f,
@@ -52,19 +54,15 @@ public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 		float var12 = 0.016666668F * var10;
 		float[] xy = { 0, 0.5f, 0, -0.5f };
 		FontRenderer fR = this.getFontRenderer();
-
 		GL11.glTranslatef(xy[i], -0.6F, xy[i + (i != 3 ? 1 : -1)]);
 		GL11.glScalef(var12, -var12, var12);
 		GL11.glRotatef(i * 90, 0, 1, 0);
 		GL11.glNormal3f(0.0F, 0.0F, -1.0F * var12);
 		GL11.glDepthMask(false);
-
 		fR.drawString(tName, -fR.getStringWidth(tName) / 2, 0, 0);
 		fR.drawString(tTarget, -fR.getStringWidth(tTarget) / 2, 20, 0);
-
 		GL11.glDepthMask(true);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glPopMatrix();
 	}
-
 }

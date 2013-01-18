@@ -1,6 +1,9 @@
 package adanaran.mods.ts.items;
 
-import adanaran.mods.ts.TeleportStations;
+import java.util.logging.Level;
+
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
@@ -8,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import adanaran.mods.ts.TeleportStations;
 
 /**
  * Handteleporter zur mobilen Teleportation.
@@ -18,8 +22,9 @@ import net.minecraft.world.World;
  * 
  */
 
-public class ItemTeleporter extends Item {
-	private static ChunkCoordinates ziel;
+public class ItemTeleporter extends Item implements ICommandSender{
+	private static ChunkCoordinates target;
+	private boolean porting = false;
 
 	public ItemTeleporter(int par1) {
 		super(par1);
@@ -32,20 +37,20 @@ public class ItemTeleporter extends Item {
 		// System.out.println(par2World.worldProvider.worldType); //Ergibt 0 bei
 		// normaler Welt, -1 bei Netherwelt :D
 		if (par4 > 71950) {
-			ziel = null;
+			target = null;
 			par3EntityPlayer.openGui(TeleportStations.instance, 1, par2World,
 					-1, -1, -1);
-		} else if (par4 < 71950 && ziel != null && !par2World.isRemote) {
-			par3EntityPlayer.setPositionAndUpdate(ziel.posX + 0.5,
-					ziel.posY, ziel.posZ + 0.5);
+		} else if (par4 < 71950 && target != null && !par2World.isRemote) {
+			par3EntityPlayer.setPositionAndUpdate(target.posX + 0.5,
+					target.posY, target.posZ + 0.5);
 			par1ItemStack.damageItem(1, par3EntityPlayer);
 			par2World.playSoundAtEntity(par3EntityPlayer, "portal.portal",
 					1.0F, 1.0F);
 		}
 	}
 
-	public static void setTarget(ChunkCoordinates zielcc) {
-		ziel = zielcc;
+	public static void setTarget(ChunkCoordinates tarCoords) {
+		target = tarCoords;
 	}
 
 	/**
@@ -69,7 +74,6 @@ public class ItemTeleporter extends Item {
 	 */
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer) {
-		// TODO BlockTeleTarget.updateCC(par2World);
 		par3EntityPlayer.setItemInUse(par1ItemStack,
 				getMaxItemUseDuration(par1ItemStack));
 		return par1ItemStack;
@@ -77,7 +81,6 @@ public class ItemTeleporter extends Item {
 
 	@Override
 	public int getIconFromDamage(int par1) {
-
 		if (ModLoader.getMinecraftInstance().thePlayer.getItemInUseDuration() <= 50) {
 			return 36;
 		} else {
@@ -96,6 +99,55 @@ public class ItemTeleporter extends Item {
 	 */
 	public int getItemEnchantability() {
 		return 1;
+	}
+	
+	/**
+	 * Teleports the player to the target that is set.
+	 * 
+	 * @param entity
+	 *            EntityPlayer to be teleported
+	 */
+	public void tp(EntityPlayer entity) {
+		if (!porting && target != null) {
+			porting = true;
+			ICommandManager cm = TeleportStations.proxy.getServer()
+					.getCommandManager();
+			cm.executeCommand(this,
+					new StringBuilder("/tp ").append(entity.getEntityName())
+							.append(" ").append(target.posX + 0.5)
+							.append(" ").append(target.posY - 2).append(" ")
+							.append(target.posZ + 0.5).toString());
+			TeleportStations.logger.log(Level.FINE,
+					"teleported " + entity.getEntityName() + " from " + entity.posX
+							+ "|" + entity.posY + "|" + entity.posZ + " to "
+							+ target.posX + "|" + (target.posY - 2) + "|"
+							+ target.posZ);
+		}
+		porting = false;
+	}
+
+	@Override
+	public String getCommandSenderName() {
+		return "Teleport Stations";
+	}
+
+	@Override
+	public void sendChatToPlayer(String var1) {
+	}
+
+	@Override
+	public boolean canCommandSenderUseCommand(int var1, String var2) {
+		return true;
+	}
+
+	@Override
+	public String translateString(String var1, Object... var2) {
+		return var1;
+	}
+
+	@Override
+	public ChunkCoordinates getPlayerCoordinates() {
+		return null;
 	}
 }
 

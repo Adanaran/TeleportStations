@@ -20,7 +20,7 @@ import net.minecraft.util.ChunkCoordinates;
  * 
  * @author Demitreus
  */
-public class TileEntityTele extends TileEntity implements ICommandSender {
+public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 
 	/**
 	 * An array of two strings storing the name and the current target of the
@@ -29,11 +29,6 @@ public class TileEntityTele extends TileEntity implements ICommandSender {
 	public String[] nameAndTarget = new String[] { "", "ziel" };
 	// To prevent multiple command execution per teleport
 	private boolean porting = false;
-
-	@Override
-	public Packet getDescriptionPacket() {
-		return TPPacketHandler.getPacket(this);
-	}
 
 	/**
 	 * Updates the Entity, called automatically.

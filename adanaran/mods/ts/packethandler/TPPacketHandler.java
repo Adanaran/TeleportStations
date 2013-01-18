@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 
 import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.database.TeleData;
-import adanaran.mods.ts.entities.TileEntityTele;
+import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -41,14 +41,6 @@ import cpw.mods.fml.common.network.Player;
  */
 public class TPPacketHandler implements IPacketHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * cpw.mods.fml.common.network.IPacketHandler#onPacketData(net.minecraft
-	 * .src.NetworkManager, net.minecraft.src.Packet250CustomPayload,
-	 * cpw.mods.fml.common.network.Player)
-	 */
 	@Override
 	public void onPacketData(INetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
@@ -63,28 +55,9 @@ public class TPPacketHandler implements IPacketHandler {
 		case "tpDB":
 			dbReceived(packet);
 			break;
-		case "tpTileEntity":
-			tpTEread(packet);
-			break;
 		default:
 			break;
 		}
-	}
-
-	private void tpTEread(Packet250CustomPayload packet) {
-		ByteArrayDataInput dat = ByteStreams.newDataInput(packet.data);
-		int x = dat.readInt();
-		int y = dat.readInt();
-		int z = dat.readInt();
-		String s = dat.readLine();
-		World world = TeleportStations.proxy.getWorld();
-		TileEntity te = world.getBlockTileEntity(x, y, z);
-		if (te instanceof TileEntityTele) {
-			TileEntityTele tet = (TileEntityTele) te;
-			String[] nt = convertString(s).split(";;;");
-			tet.setNameAndTarget(nt[0], nt[1]);
-		}
-
 	}
 
 	private void dbReceived(Packet250CustomPayload packet) {
@@ -229,39 +202,6 @@ public class TPPacketHandler implements IPacketHandler {
 		packet.length = packet.data.length;
 		packet.isChunkDataPacket = true;
 		return packet;
-	}
-
-	/**
-	 * Creates a new packet for an added teleporter.
-	 * 
-	 * @param tileEntityTele
-	 *            TileEntityTele the tileEntity to be sent
-	 * @return Packet250CustomPayload the packet to be sent for updating
-	 */
-	public static Packet250CustomPayload getPacket(TileEntityTele tileEntityTele) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(140);
-		DataOutputStream dos = new DataOutputStream(bos);
-		int x = tileEntityTele.xCoord;
-		int y = tileEntityTele.yCoord;
-		int z = tileEntityTele.zCoord;
-		String s = tileEntityTele.getName() + ";;;"
-				+ tileEntityTele.getTarget();
-
-		try {
-			dos.writeInt(x);
-			dos.writeInt(y);
-			dos.writeInt(z);
-			dos.writeChars(s);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		Packet250CustomPayload pkt = new Packet250CustomPayload();
-		pkt.channel = "tpTileEntity";
-		pkt.data = bos.toByteArray();
-		pkt.length = bos.size();
-		pkt.isChunkDataPacket = true;
-		return pkt;
 	}
 
 	public static void sendPacketToClients(Packet packet) {

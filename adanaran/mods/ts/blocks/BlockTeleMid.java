@@ -1,5 +1,6 @@
 package adanaran.mods.ts.blocks;
 
+import adanaran.mods.ts.TeleportStations;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
@@ -31,9 +32,8 @@ public class BlockTeleMid extends Block {
 
 	@Override
 	public boolean canBlockStay(World world, int i, int j, int k) {
-		//block cannot exist without teleporter beneath
-		return ((world.getBlockId(i, j - 1, k) == 3001 || world.getBlockId(i,
-				j - 1, k) == 3002));
+		return ((world.getBlockId(i, j - 1, k) == TeleportStations.blockTeleporter.blockID || world.getBlockId(i,
+				j - 1, k) == TeleportStations.blockTeleporterAn.blockID));
 	}
 
 }

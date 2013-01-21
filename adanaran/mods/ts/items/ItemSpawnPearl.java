@@ -7,11 +7,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 /**
- * Spanwpearl entity.
  * 
- * @author Demitreus
+ * @author Demitreus Client File
  */
 public class ItemSpawnPearl extends Item {
+
 	public ItemSpawnPearl(int par1) {
 		super(par1);
 		maxStackSize = 16;

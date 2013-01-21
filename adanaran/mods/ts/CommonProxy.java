@@ -12,6 +12,7 @@ import cpw.mods.fml.common.network.IGuiHandler;
  * Used for server-side.
  * 
  * @author Adanaran
+ * 
  */
 public class CommonProxy implements IGuiHandler {
 
@@ -36,13 +37,12 @@ public class CommonProxy implements IGuiHandler {
 	}
 
 	/**
-	 * Gets the current world (save) name.
+	 * Gets the current world name.
 	 * 
 	 * @return String the current world name
 	 */
 	public String getWorldName() {
-		return MinecraftServer.getServer().worldServers[0].getSaveHandler()
-				.getSaveDirectoryName();
+		return MinecraftServer.getServer().worldServers[0].getSaveHandler().getSaveDirectoryName();
 	}
 
 	/**

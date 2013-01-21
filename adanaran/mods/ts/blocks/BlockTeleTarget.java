@@ -1,9 +1,7 @@
 package adanaran.mods.ts.blocks;
 
-import java.util.ListIterator;
-import java.util.Random;
-import java.util.logging.Level;
-
+import adanaran.mods.ts.TeleportStations;
+import adanaran.mods.ts.database.TeleData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRail;
 import net.minecraft.block.material.Material;
@@ -11,16 +9,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import adanaran.mods.ts.TeleportStations;
-import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 /**
  * Teleporter-target-block represents valid destination for teleporting.
@@ -29,6 +20,7 @@ import adanaran.mods.ts.entities.TileEntityTeleporter;
  * player.
  * 
  * @author Demitreus
+ * 
  */
 public class BlockTeleTarget extends Block {
 
@@ -83,10 +75,20 @@ public class BlockTeleTarget extends Block {
 	public void onNeighborBlockChange(World par1World, int par2, int par3,
 			int par4, int par5) {
 		update(par1World, par2, par3, par4);
-		 if (!par1World.isBlockNormalCube(par2, par3 - 1, par4)) {
-		 deleteTP(par1World, par2, par3, par4);
-		 dropBlockAsItem(par1World, par2, par3, par4, 0, 0);
-		 }
+		if (!par1World.isBlockNormalCube(par2, par3 - 1, par4)) {
+			deleteTP(par1World, par2, par3, par4);
+		}
+	}
+
+	@Override
+	public boolean canBlockStay(World par1World, int par2, int par3, int par4) {
+		return par1World.isBlockNormalCube(par2, par3 - 1, par4);
+	}
+
+	@Override
+	public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4) {
+		return !(par1World.getBlockId(par2, par3 - 1, par4) == TeleportStations.blockTeleporter.blockID)
+				&& !(par1World.getBlockId(par2, par3 - 1, par4) == TeleportStations.blockTeleporterAn.blockID);
 	}
 
 	@Override
@@ -107,8 +109,8 @@ public class BlockTeleTarget extends Block {
 	/**
 	 * Deletes a whole teleporter with it's data.
 	 * <p>
-	 * The deleted Teleporter is removed and all 3 blocks are filled with air.
-	 * All references to this teleporter are going to be deleted.
+	 * The dleted Teleporter is removed from the database and all 3 blocks are
+	 * filled with air.
 	 * 
 	 * @param world
 	 *            World world
@@ -120,8 +122,7 @@ public class BlockTeleTarget extends Block {
 	 *            int z-coordinate
 	 */
 	protected static void deleteTP(World world, int i, int j, int k) {
-		TileEntityTeleporter tet = (TileEntityTeleporter) world
-				.getBlockTileEntity(i, j + 2, k);
+		TeleportStations.db.removeTP(i, j, k);
 		world.setBlock(i, j + 1, k, 0);
 		world.setBlock(i, j + 2, k, 0);
 		world.setBlock(i, j, k, 0);
@@ -130,13 +131,8 @@ public class BlockTeleTarget extends Block {
 	@Override
 	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4,
 			EntityLiving par5EntityLiving) {
-		TeleportStations.logger.log(Level.FINE, "TP placed, world: "
-				+ par1World + ", dimension: " + par1World.provider.dimensionId);
-		par1World.setBlock(par2, par3 + 1, par4, 3004);
-		par1World.setBlock(par2, par3 + 2, par4, 3005);
-
-		/* TODO Howto force chunk?? */
-
+		par1World.setBlock(par2, par3 + 1, par4, TeleportStations.blockTeleMid.blockID);
+		par1World.setBlock(par2, par3 + 2, par4, TeleportStations.blockTeleTop.blockID);
 		if (par5EntityLiving instanceof EntityPlayer) {
 			((EntityPlayer) par5EntityLiving).openGui(
 					TeleportStations.instance, 0, par1World, par2, par3, par4);
@@ -257,6 +253,7 @@ public class BlockTeleTarget extends Block {
 			meta = 0;
 		}
 		// *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+		TeleportStations.db.updateMeta(i, j, k, meta);
 		world.setBlockAndMetadataWithNotify(i, j, k, world.getBlockId(i, j, k),
 				meta);
 		return meta;
@@ -281,17 +278,13 @@ public class BlockTeleTarget extends Block {
 	 */
 	public void handleMC(World world, EntityMinecart eM, int i, int j, int k) {
 		double ex = eM.posX, ez = eM.posZ, speed = eM.motionX + eM.motionZ
-				+ 0.1;
-		TileEntity quelle = world.getBlockTileEntity(i, j + 2, k);
-		TileEntityTeleporter ziel = null;
-		if (quelle instanceof TileEntityTeleporter
-				&& world.isBlockIndirectlyGettingPowered(i, j, k)) {
-			ziel = ((TileEntityTeleporter) quelle).getZiel();
-		}
-		if (ziel != null) {
-			i = ziel.xCoord;
-			j = ziel.yCoord - 2;
-			k = ziel.zCoord;
+				+ 0.05;
+		TeleData quelle = TeleportStations.db.getTeleDataByCoords(i, j, k);
+		ChunkCoordinates ziel = quelle.getZiel();
+		if (ziel != null && world.isBlockIndirectlyGettingPowered(i, j, k)) {
+			i = ziel.posX;
+			j = ziel.posY;
+			k = ziel.posZ;
 		}
 		int teleMeta = world.getBlockMetadata(i, j, k);
 		teleMeta -= 1;
@@ -300,28 +293,23 @@ public class BlockTeleTarget extends Block {
 			eM.setPosition(i + 0.5, j, k + 1.5);
 			eM.addVelocity(0, 0, speed);
 			break;
-
 		}
 		case 1: {// Streckenende im Westen
 			eM.setPosition(i + 1.5, j, k + 0.5);
 			eM.addVelocity(speed, 0, 0);
 			break;
-
 		}
 		case 2: {// Streckenende im Sueden
 			eM.setPosition(i + 0.5, j, k - 0.5);
 			eM.addVelocity(0, 0, -speed);
 			break;
-
 		}
 		case 3: {// Streckenende im Osten
 			eM.setPosition(i - 0.5, j, k + 0.5);
 			eM.addVelocity(-speed, 0, 0);
 			break;
-
 		}
 		case 4: {// Kurve Sued-Ost
-
 			if (k + 0.5 < ez) { // Cart von Sueden
 				eM.setPosition(i + 1.5, j, k + 0.5);
 				eM.addVelocity(speed, 0, 0);
@@ -336,9 +324,7 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i + 0.5, j, k + 1.5);
 				eM.addVelocity(0, 0, speed);
 			}
-
 			break;
-
 		}
 		case 5: {// Kurve Sued-West
 			if (k + 0.5 < ez) { // Cart von Sueden
@@ -356,7 +342,6 @@ public class BlockTeleTarget extends Block {
 				eM.addVelocity(-speed, 0, 0);
 			}
 			break;
-
 		}
 		case 6: {// Kurve Nord-West
 			if (k + 0.5 < ez) { // Cart von Sueden
@@ -374,7 +359,6 @@ public class BlockTeleTarget extends Block {
 				eM.addVelocity(-speed, 0, 0);
 			}
 			break;
-
 		}
 		case 7: {// Kurve Nord-Ost
 			if (k + 0.5 < ez) { // Cart von Sueden
@@ -392,7 +376,6 @@ public class BlockTeleTarget extends Block {
 				eM.addVelocity(0, 0, -speed);
 			}
 			break;
-
 		}
 		case 8: {// T ohne Nord
 			if (i + 0.5 > ex) {
@@ -405,7 +388,6 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i + 0.5, j, k + 2);
 			eM.addVelocity(0, 0, speed);
 			break;
-
 		}
 		case 9: {// T ohne Ost
 			if (k + 0.5 < ez) {
@@ -418,7 +400,6 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i - 1.5, j, k + 0.5);
 			eM.addVelocity(-speed, 0, 0);
 			break;
-
 		}
 		case 10: {// T ohne Sued
 			if (i + 0.5 > ex) {
@@ -431,7 +412,6 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i + 0.5, j, k - 1.5);
 			eM.addVelocity(0, 0, -speed);
 			break;
-
 		}
 		case 11: {// T ohne West
 			if (k + 0.5 < ez) {
@@ -444,7 +424,6 @@ public class BlockTeleTarget extends Block {
 				eM.setPosition(i + 2, j, k + 0.5);
 			break;
 		}
-
 		case 12: {// Kreuzung
 			if (k + 0.5 < ez) { // Cart von Sueden
 				eM.setPosition(i + 0.5, j, k - 0.5);

@@ -1,27 +1,36 @@
 package adanaran.mods.ts.blocks;
 
-import java.util.ArrayList;
-import java.util.Random;
-
+import adanaran.mods.ts.TeleportStations;
+import adanaran.mods.ts.database.TeleData;
+import adanaran.mods.ts.entities.TileEntityTeleporter;
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.packet.Packet34EntityTeleport;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
-import adanaran.mods.ts.TeleportStations;
-import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 /**
  * Block for teleportation.
  * <p>
- * Can teleport the player and can also act as target. 
+ * Can teleport the player and can also act as target.
  * 
  * @author Demitreus
  */
 public class BlockTeleporter extends BlockTeleTarget {
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param par1
+	 *            int id of this block
+	 */
 	public BlockTeleporter(int par1) {
 		super(par1);
 	}
@@ -29,12 +38,13 @@ public class BlockTeleporter extends BlockTeleTarget {
 	@Override
 	protected int update(World world, int i, int j, int k) {
 		if (power(world, i, j, k)) {
-			world.setBlockWithNotify(i, j, k, 3003);
+			world.setBlockWithNotify(i, j, k,
+					TeleportStations.blockTeleporterAn.blockID);
 		} else {
-			world.setBlockWithNotify(i, j, k, 3002);
+			world.setBlockWithNotify(i, j, k,
+					TeleportStations.blockTeleporter.blockID);
 		}
-		int meta = super.update(world, i, j, k);
-		return meta;
+		return super.update(world, i, j, k);
 	}
 
 	private boolean power(World world, int i, int j, int k) {
@@ -43,24 +53,23 @@ public class BlockTeleporter extends BlockTeleTarget {
 
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int par1, int par2) {
-		return par1 == 1 ? this.blockID == 3002 ? super
+		return par1 == 1 ? this.blockID == TeleportStations.blockTeleporter.blockID ? super
 				.getBlockTextureFromSideAndMetadata(par1, par2) : (super
-				.getBlockTextureFromSideAndMetadata(par1, par2) + 16) : 32;
-	}	
-	
-
-	@Override
-	public int idDropped(int par1, Random par2Random, int par3) {
-		return TeleportStations.blockTeleporter.blockID;
+				.getBlockTextureFromSideAndMetadata(par1, par2) + 16)
+				: 32;
 	}
-	
 
 	@Override
 	public boolean onBlockActivated(World par1World, int par2, int par3,
 			int par4, EntityPlayer par5EntityPlayer, int par6, float par7,
 			float par8, float par9) {
-		par5EntityPlayer.openGui(TeleportStations.instance, 1, par1World, par2,
-				par3, par4);
+		if (TeleportStations.db.isTPInDatabase(par2, par3, par4)) {
+			par5EntityPlayer.openGui(TeleportStations.instance, 1, par1World,
+					par2, par3, par4);
+		} else {
+			par5EntityPlayer.openGui(TeleportStations.instance, 0, par1World,
+					par2, par3, par4);
+		}
 		return true;
 	}
 
@@ -81,14 +90,15 @@ public class BlockTeleporter extends BlockTeleTarget {
 
 	private void teleportPlayer(EntityPlayer entity, World world, int i, int j,
 			int k) {
+		TeleData quelle = TeleportStations.db.getTeleDataByCoords(i, j, k);
+		ChunkCoordinates ziel = quelle.getZiel();
 		TileEntity te = world.getBlockTileEntity(i, j + 2, k);
-		
 		if (te != null
 				&& te instanceof TileEntityTeleporter
 				&& (TeleportStations.proxy.isServer() || TeleportStations.proxy
 						.isSinglePlayer())) {
 			TileEntityTeleporter tet = (TileEntityTeleporter) te;
-			if (tet.getTarget() != null && !entity.isRiding()) {
+			if (tet.getTarget() != null) {
 				tet.tp(entity);
 			}
 		}

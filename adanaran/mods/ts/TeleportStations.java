@@ -4,22 +4,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.ForgeChunkManager;
 import adanaran.mods.ts.blocks.BlockTeleMid;
 import adanaran.mods.ts.blocks.BlockTeleTarget;
 import adanaran.mods.ts.blocks.BlockTeleTop;
 import adanaran.mods.ts.blocks.BlockTeleporter;
+import adanaran.mods.ts.database.TPDatabase;
+import adanaran.mods.ts.database.TPFileHandler;
 import adanaran.mods.ts.entities.EntitySpawnPearl;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 import adanaran.mods.ts.items.ItemSpawnPearl;
 import adanaran.mods.ts.items.ItemTeleporter;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLLog;
+import adanaran.mods.ts.packethandler.TPPacketHandler;
+import adanaran.mods.ts.packethandler.TPPlayerTracker;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -43,16 +43,22 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
  * @author Adanaran
  * @author Demitreus
  */
-@Mod(modid = "TeleportStations", name = "Teleport Stations", version = "1.0")
-@NetworkMod(channels = { "tpname", "tptarget" }, versionBounds = "[1.0,)", clientSideRequired = true, serverSideRequired = false, packetHandler = TPPacketHandler.class)
+@Mod(modid = "TeleportStations", name = "Teleport Stations", version = "0.1")
+@NetworkMod(channels = { "tpChange", "tpRemove", "tpDB" }, versionBounds = "[0.1,)", clientSideRequired = true, serverSideRequired = false, packetHandler = TPPacketHandler.class)
 public class TeleportStations {
 
 	// The mod instance
-	@Instance("TeleportStations")
+	@Instance
 	public static TeleportStations instance;
 	// The sided Proxy instance
 	@SidedProxy(clientSide = "adanaran.mods.ts.ClientProxy", serverSide = "adanaran.mods.ts.CommonProxy")
 	public static CommonProxy proxy;
+	// The database
+	public static TPDatabase db;
+	// The filehandler
+	public static TPFileHandler fh;
+	// The playertracker
+	public static TPPlayerTracker pt;
 	// The blocks
 	public static BlockTeleTarget blockTeleTarget;
 	public static BlockTeleporter blockTeleporter;
@@ -62,6 +68,10 @@ public class TeleportStations {
 	// The items
 	public static ItemTeleporter itemTele;
 	public static ItemSpawnPearl itemSpawnPearl;
+	// The Minecraft dir
+	public static String dir;
+	// The Logger
+	public static Logger logger;
 	// The IDs
 	private int idBlockTeleTarget;
 	private int idBlockTeleporter;
@@ -70,8 +80,6 @@ public class TeleportStations {
 	private int idBlockTeleTop;
 	private int idHandtele;
 	private int idSpawnPearl;
-
-	public static Logger logger;
 
 	/**
 	 * The pre-initialization method.
@@ -83,6 +91,8 @@ public class TeleportStations {
 	 */
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
+		dir = event.getModConfigurationDirectory().getPath()
+				.replace("config", "");
 		logger = event.getModLog();
 		NetworkRegistry.instance().registerGuiHandler(this, proxy);
 		Configuration cfg = new Configuration(
@@ -126,6 +136,10 @@ public class TeleportStations {
 		registerSpawnPearl(idSpawnPearl);
 		registerHandtele(idHandtele);
 		proxy.registerRenderInformation();
+		db = new TPDatabase();
+		fh = new TPFileHandler(db);
+		pt = new TPPlayerTracker(db, fh);
+		GameRegistry.registerPlayerTracker(pt);
 	}
 
 	private void registerSpawnPearl(int i) {
@@ -166,8 +180,6 @@ public class TeleportStations {
 	 */
 	@PostInit
 	public void modsLoaded(FMLPostInitializationEvent evt) {
-		ForgeChunkManager.setForcedChunkLoadingCallback(instance,
-				new LoadCallback());
 		logger.log(Level.FINE, "done loading");
 	}
 
@@ -180,7 +192,7 @@ public class TeleportStations {
 				"Teleporterziel");
 		GameRegistry.registerBlock(blockTeleTarget,
 				blockTeleTarget.getBlockName());
-		
+
 		GameRegistry.addRecipe(new ItemStack(blockTeleTarget), new Object[] {
 				"DOD", "ORO", "DOD", Character.valueOf('D'), Block.glass,
 				Character.valueOf('O'), Block.obsidian, Character.valueOf('R'),

@@ -4,6 +4,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import adanaran.mods.ts.TeleportStations;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 /**
@@ -55,7 +56,7 @@ public class BlockTeleTop extends BlockContainer {
 
 	@Override
 	public boolean canBlockStay(World par1World, int par2, int par3, int par4) {
-		return par1World.getBlockId(par2, par3 - 1, par4) == 3003;
+		return par1World.getBlockId(par2, par3 - 1, par4) == TeleportStations.blockTeleMid.blockID;
 	}
 
 	@Override

@@ -2,99 +2,92 @@ package adanaran.mods.ts.entities;
 
 import java.util.logging.Level;
 
+import adanaran.mods.ts.TeleportStations;
+import adanaran.mods.ts.packethandler.TPPacketHandler;
+import net.minecraft.block.Block;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.common.ForgeChunkManager.Type;
-import adanaran.mods.ts.TeleportStations;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
- * TileEntity for TeleportStations
+ * Tileentity for teleporters, placed in top of it.
  * <p>
- * Stores the data of one teleporter.
+ * TileEntity that stores name and target as stringarray for rendering at the
+ * top of the teleporter.
  * 
- * @author Adanaran
+ * @author Demitreus
  */
 public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 
-	// Data storage
-	private String name = "";
-	private TileEntityTeleporter target = null;
-	private int worldType;
+	/**
+	 * An array of two strings storing the name and the current target of the
+	 * teleporter.
+	 */
+	public String[] nameAndTarget = new String[] { "", "ziel" };
 	// To prevent multiple command execution per teleport
 	private boolean porting = false;
-	private Ticket ticket;
 
+	/**
+	 * Updates the Entity, called automatically.
+	 * 
+	 * The entity looks up name and target in database and stores it.
+	 */
 	@Override
-	public Packet getDescriptionPacket() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		writeToNBT(nbt);
-		Packet132TileEntityData packet = new Packet132TileEntityData(xCoord,
-				yCoord, zCoord, 5, nbt);
-		return packet;
-	}
-
-	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		readFromNBT(pkt.customParam1);
+	public void updateEntity() {
+		super.updateEntity();
+		try {
+			nameAndTarget[0] = TeleportStations.db.getNameByCoords(this.xCoord,
+					this.yCoord - 2, this.zCoord);
+			nameAndTarget[1] = TeleportStations.db
+					.getNameByCoords(TeleportStations.db
+							.getZielByCoords(new ChunkCoordinates(this.xCoord,
+									this.yCoord - 2, this.zCoord)));
+		} catch (Exception e) {
+			// Can cause Nullpointer, can be ignored
+		}
 	}
 
 	/**
 	 * Writes a tile entity to NBT.
+	 * 
+	 * Necessary?
 	 */
-	@Override
 	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
 		super.writeToNBT(par1NBTTagCompound);
-
-		par1NBTTagCompound.setString("Name", name.equals("") ? "knochkeinname"
-				: name);
-		par1NBTTagCompound.setString("Ziel", target == null ? "knochkeinziel"
-				: "khateinziel");
-		if (target != null) {
-			par1NBTTagCompound.setInteger("target_x", target.xCoord);
-			par1NBTTagCompound.setInteger("target_y", target.yCoord);
-			par1NBTTagCompound.setInteger("target_z", target.zCoord);
-		}
+		par1NBTTagCompound.setString("Name",
+				this.nameAndTarget[0].isEmpty() ? "knochkeinname"
+						: this.nameAndTarget[0]);
+		par1NBTTagCompound.setString("Ziel", this.nameAndTarget[1]);
 	}
 
 	/**
 	 * Reads a tile entity from NBT.
+	 * 
+	 * Necessary?
 	 */
-	@Override
 	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
 		super.readFromNBT(par1NBTTagCompound);
-		name = par1NBTTagCompound.getString("Name");
-		String s = par1NBTTagCompound.getString("Ziel");
-		if (s.equals("khateinziel")) {
-			int tx = par1NBTTagCompound.getInteger("target_x");
-			int ty = par1NBTTagCompound.getInteger("target_y");
-			int tz = par1NBTTagCompound.getInteger("target_z");
-			new UpdateTargetThread(this, tx, ty, tz).start();
-		} else {
-			target = null;
-		}
+		this.nameAndTarget[0] = par1NBTTagCompound.getString("Name");
+		this.nameAndTarget[1] = par1NBTTagCompound.getString("Ziel");
 	}
 
 	/**
-	 * Updates the entity.
+	 * Sets name and target of teleporter in tileentity name stringarray.
 	 * 
-	 * @param worldType
-	 *            int world type
+	 * @param String
+	 *            name
+	 * @param String
+	 *            target
 	 */
-	@SideOnly(Side.CLIENT)
-	public void update(int worldType) {
-		this.worldType = worldType;
+
+	public void setNameAndTarget(String name, String target) {
+		nameAndTarget[0] = name;
+		nameAndTarget[1] = target;
 	}
 
 	/**
@@ -102,58 +95,30 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 * 
 	 * @return String name
 	 */
+
 	public String getName() {
-		return name;
+		this.updateEntity();
+		return nameAndTarget[0];
 	}
 
 	/**
 	 * Gets the teleporter's target.
 	 * 
-	 * @return
+	 * @return String target
 	 */
-	public TileEntityTeleporter getTarget() {
-		return this.target;
+
+	public String getTarget() {
+		return nameAndTarget[1];
 	}
 
-	/**
-	 * Gets the teleporter's worldtype.
-	 * 
-	 * @return int the world type
-	 */
-	public int getWorldType() {
-		return worldType;
+	@Override
+	public int getBlockMetadata() {
+		return super.getBlockMetadata();
 	}
 
-	/**
-	 * Sets the teleporter's name.
-	 * 
-	 * @param name
-	 *            String the name to be set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * Sets the teleporter's target.
-	 * 
-	 * @param target
-	 *            {@link#TileEntityTeleporter} the target to be set
-	 */
-	public void setTarget(TileEntityTeleporter target) {
-		this.target = target;
-	}
-
-	/**
-	 * Gets the teleporter's target's name.
-	 * 
-	 * @return String target name
-	 */
-	public String getTargetName() {
-		if (target != null) {
-			return target.getName();
-		} else
-			return "";
+	@Override
+	public Block getBlockType() {
+		return super.getBlockType();
 	}
 
 	/**
@@ -163,47 +128,27 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 *            EntityPlayer to be teleported
 	 */
 	public void tp(EntityPlayer entity) {
-		if (!target.hasTP())
-			target = null;
-		if (!porting && target != null) {
+		if (!porting) {
 			porting = true;
-			ICommandManager cm = TeleportStations.proxy.getServer()
-					.getCommandManager();
-			cm.executeCommand(this,
-					new StringBuilder("/tp ").append(entity.getEntityName())
-							.append(" ").append(target.xCoord + 0.5)
-							.append(" ").append(target.yCoord - 2).append(" ")
-							.append(target.zCoord + 0.5).toString());
-			TeleportStations.logger.log(Level.FINE,
-					"teleported " + entity.getEntityName() + " from " + xCoord
-							+ "|" + yCoord + "|" + zCoord + " to "
-							+ target.xCoord + "|" + (target.yCoord - 2) + "|"
-							+ target.zCoord);
+			MinecraftServer server = TeleportStations.proxy.getServer();
+			if (server != null) {
+				ChunkCoordinates ziel = TeleportStations.db
+						.getZielByCoords(new ChunkCoordinates(this.xCoord,
+								this.yCoord - 2, this.zCoord));
+				TeleportStations.logger.log(Level.FINE, "Ziel: x " + ziel.posX
+						+ " y " + ziel.posY + " z " + ziel.posZ);
+				ICommandManager commandManager = server.getCommandManager();
+				String command = new StringBuilder("/tp ")
+						.append(entity.getEntityName()).append(" ")
+						.append(ziel.posX + 0.5).append(" ")
+						.append(ziel.posY + entity.getEyeHeight()).append(" ")
+						.append(ziel.posZ + 0.5).toString();
+				TeleportStations.logger.log(Level.INFO, "Executing command "
+						+ command);
+				commandManager.executeCommand(this, command);
+			}
 		}
 		porting = false;
-	}
-
-	/**
-	 * Converts the data of this tile entity into a String.
-	 * <p>
-	 * Overriding object's toString()-method.
-	 * 
-	 * @return String name;;i;;j;;k;;meta;;null oder
-	 *         name;;i;;j;;k;;target.i;;target.j;;target.k
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(name).append(";;").append(this.xCoord).append(";;")
-				.append(this.yCoord).append(";;").append(this.yCoord)
-				.append(";;").append(worldType).append(";;");
-		if (target != null) {
-			builder.append(target.xCoord).append(";;").append(target.yCoord)
-					.append(";;").append(target.zCoord);
-		} else {
-			builder.append("null");
-		}
-		return builder.toString();
 	}
 
 	@Override
@@ -228,66 +173,5 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	@Override
 	public ChunkCoordinates getPlayerCoordinates() {
 		return new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof TileEntityTeleporter)) {
-			return false;
-		} else {
-			TileEntityTeleporter te = (TileEntityTeleporter) obj;
-			return this.xCoord == te.xCoord && this.yCoord == te.yCoord
-					&& this.zCoord == te.zCoord;
-		}
-	}
-
-	@Override
-	public void onChunkUnload() {
-		System.out.println("Unloading Chunk of a teleporter...");
-	}
-
-	public TileEntityTeleporter getZiel() {
-		return target;
-	}
-
-	/**
-	 * Returns metadata of teleporter owning this tileentity.
-	 * <p>
-	 *
-	 * @return int meta
-	 */
-	public int getMeta() {
-		return worldObj.getBlockMetadata(xCoord, yCoord - 2, zCoord);
-	}
-
-	private boolean hasTP() {
-		int bID = worldObj.getBlockId(xCoord, yCoord - 2, zCoord);
-		boolean hasTP = (bID == TeleportStations.blockTeleTarget.blockID
-				|| bID == TeleportStations.blockTeleporter.blockID 
-				|| bID == TeleportStations.blockTeleporterAn.blockID);
-		return hasTP;
-	}
-
-	public void forceChunkLoading(Ticket t) {
-		System.out.println("forcing chunk load");
-		if (ticket == null) {
-			if (t == null) {
-				System.out.println("creating new ticket");
-				ticket = ForgeChunkManager
-						.requestTicket(TeleportStations.instance,
-								TeleportStations.proxy.getWorld(worldType),
-								Type.NORMAL);
-			} else {
-				System.out.println("using given ticket");
-				ticket = t;
-			}
-		}
-		ticket.getModData().setInteger("tpX", xCoord);
-		ticket.getModData().setInteger("tpY", yCoord);
-		ticket.getModData().setInteger("tpZ", zCoord);
-		ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(xCoord >> 4,
-				zCoord >> 4));
-		System.out.println("forced chunk load @(" + xCoord + "|" + yCoord + "|"
-				+ zCoord + ") with ticket " + ticket);
 	}
 }

@@ -131,8 +131,10 @@ public class BlockTeleTarget extends Block {
 	@Override
 	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4,
 			EntityLiving par5EntityLiving) {
-		par1World.setBlock(par2, par3 + 1, par4, TeleportStations.blockTeleMid.blockID);
-		par1World.setBlock(par2, par3 + 2, par4, TeleportStations.blockTeleTop.blockID);
+		par1World.setBlock(par2, par3 + 1, par4,
+				TeleportStations.blockTeleMid.blockID);
+		par1World.setBlock(par2, par3 + 2, par4,
+				TeleportStations.blockTeleTop.blockID);
 		if (par5EntityLiving instanceof EntityPlayer) {
 			((EntityPlayer) par5EntityLiving).openGui(
 					TeleportStations.instance, 0, par1World, par2, par3, par4);
@@ -466,4 +468,9 @@ public class BlockTeleTarget extends Block {
 		}
 		}
 	}
+
+	protected boolean power(World world, int i, int j, int k) {
+		return world.isBlockIndirectlyGettingPowered(i, j, k);
+	}
+
 }

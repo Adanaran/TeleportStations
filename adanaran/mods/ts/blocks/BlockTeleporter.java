@@ -47,10 +47,6 @@ public class BlockTeleporter extends BlockTeleTarget {
 		return super.update(world, i, j, k);
 	}
 
-	private boolean power(World world, int i, int j, int k) {
-		return world.isBlockIndirectlyGettingPowered(i, j, k);
-	}
-
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int par1, int par2) {
 		return par1 == 1 ? this.blockID == TeleportStations.blockTeleporter.blockID ? super

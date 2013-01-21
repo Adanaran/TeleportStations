@@ -128,13 +128,13 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 *            EntityPlayer to be teleported
 	 */
 	public void tp(EntityPlayer entity) {
-		if (!porting) {
+		ChunkCoordinates ziel = TeleportStations.db
+				.getZielByCoords(new ChunkCoordinates(this.xCoord,
+						this.yCoord - 2, this.zCoord));
+		if (!porting && ziel != null) {
 			porting = true;
 			MinecraftServer server = TeleportStations.proxy.getServer();
 			if (server != null) {
-				ChunkCoordinates ziel = TeleportStations.db
-						.getZielByCoords(new ChunkCoordinates(this.xCoord,
-								this.yCoord - 2, this.zCoord));
 				TeleportStations.logger.log(Level.FINE, "Ziel: x " + ziel.posX
 						+ " y " + ziel.posY + " z " + ziel.posZ);
 				ICommandManager commandManager = server.getCommandManager();

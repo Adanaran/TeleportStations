@@ -163,6 +163,8 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 *            EntityPlayer to be teleported
 	 */
 	public void tp(EntityPlayer entity) {
+		if (!target.hasTP())
+			target = null;
 		if (!porting && target != null) {
 			porting = true;
 			ICommandManager cm = TeleportStations.proxy.getServer()
@@ -170,12 +172,8 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 			cm.executeCommand(this,
 					new StringBuilder("/tp ").append(entity.getEntityName())
 							.append(" ").append(target.xCoord + 0.5)
-							.append(" ").append(target.yCoord - 2 /*
-																 * + entity.
-																 * getEyeHeight
-																 * ()
-																 */)
-							.append(" ").append(target.zCoord + 0.5).toString());
+							.append(" ").append(target.yCoord - 2).append(" ")
+							.append(target.zCoord + 0.5).toString());
 			TeleportStations.logger.log(Level.FINE,
 					"teleported " + entity.getEntityName() + " from " + xCoord
 							+ "|" + yCoord + "|" + zCoord + " to "
@@ -191,7 +189,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 * Overriding object's toString()-method.
 	 * 
 	 * @return String name;;i;;j;;k;;meta;;null oder
-	 *         name;;i;;j;;k;;meta;;target.i;;target.j;;target.k
+	 *         name;;i;;j;;k;;target.i;;target.j;;target.k
 	 */
 	@Override
 	public String toString() {
@@ -252,8 +250,22 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 		return target;
 	}
 
+	/**
+	 * Returns metadata of teleporter owning this tileentity.
+	 * <p>
+	 *
+	 * @return int meta
+	 */
 	public int getMeta() {
 		return worldObj.getBlockMetadata(xCoord, yCoord - 2, zCoord);
+	}
+
+	private boolean hasTP() {
+		int bID = worldObj.getBlockId(xCoord, yCoord - 2, zCoord);
+		boolean hasTP = (bID == TeleportStations.blockTeleTarget.blockID
+				|| bID == TeleportStations.blockTeleporter.blockID 
+				|| bID == TeleportStations.blockTeleporterAn.blockID);
+		return hasTP;
 	}
 
 	public void forceChunkLoading(Ticket t) {

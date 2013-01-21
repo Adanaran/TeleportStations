@@ -85,13 +85,8 @@ public class BlockTeleTarget extends Block {
 		update(par1World, par2, par3, par4);
 		 if (!par1World.isBlockNormalCube(par2, par3 - 1, par4)) {
 		 deleteTP(par1World, par2, par3, par4);
+		 dropBlockAsItem(par1World, par2, par3, par4, 0, 0);
 		 }
-	}
-
-	@Override
-	public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4) {
-		return !(par1World.getBlockId(par2, par3 - 1, par4) == 3001)
-				&& !(par1World.getBlockId(par2, par3 - 1, par4) == 3002);
 	}
 
 	@Override
@@ -130,16 +125,6 @@ public class BlockTeleTarget extends Block {
 		world.setBlock(i, j + 1, k, 0);
 		world.setBlock(i, j + 2, k, 0);
 		world.setBlock(i, j, k, 0);
-		ListIterator iterator = world.loadedTileEntityList.listIterator();
-		while (tet != null && iterator.hasNext()) {
-			TileEntity te = (TileEntity) iterator.next();
-			if (te instanceof TileEntityTeleporter) {
-				TileEntityTeleporter tetp = (TileEntityTeleporter) te;
-				if (tet.equals(tetp.getTarget())) {
-					tetp.setTarget(null);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -296,7 +281,7 @@ public class BlockTeleTarget extends Block {
 	 */
 	public void handleMC(World world, EntityMinecart eM, int i, int j, int k) {
 		double ex = eM.posX, ez = eM.posZ, speed = eM.motionX + eM.motionZ
-				+ 0.05;
+				+ 0.1;
 		TileEntity quelle = world.getBlockTileEntity(i, j + 2, k);
 		TileEntityTeleporter ziel = null;
 		if (quelle instanceof TileEntityTeleporter

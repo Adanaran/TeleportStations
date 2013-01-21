@@ -1,8 +1,12 @@
 package adanaran.mods.ts.blocks;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
@@ -42,7 +46,14 @@ public class BlockTeleporter extends BlockTeleTarget {
 		return par1 == 1 ? this.blockID == 3002 ? super
 				.getBlockTextureFromSideAndMetadata(par1, par2) : (super
 				.getBlockTextureFromSideAndMetadata(par1, par2) + 16) : 32;
+	}	
+	
+
+	@Override
+	public int idDropped(int par1, Random par2Random, int par3) {
+		return TeleportStations.blockTeleporter.blockID;
 	}
+	
 
 	@Override
 	public boolean onBlockActivated(World par1World, int par2, int par3,
@@ -71,12 +82,13 @@ public class BlockTeleporter extends BlockTeleTarget {
 	private void teleportPlayer(EntityPlayer entity, World world, int i, int j,
 			int k) {
 		TileEntity te = world.getBlockTileEntity(i, j + 2, k);
+		
 		if (te != null
 				&& te instanceof TileEntityTeleporter
 				&& (TeleportStations.proxy.isServer() || TeleportStations.proxy
 						.isSinglePlayer())) {
 			TileEntityTeleporter tet = (TileEntityTeleporter) te;
-			if (tet.getTarget() != null) {
+			if (tet.getTarget() != null && !entity.isRiding()) {
 				tet.tp(entity);
 			}
 		}

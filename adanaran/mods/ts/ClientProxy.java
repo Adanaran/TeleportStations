@@ -1,7 +1,6 @@
 package adanaran.mods.ts;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -28,16 +27,13 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void registerRenderInformation() {
-		MinecraftForgeClient
-				.preloadTexture("/adanaran/mods/ts/textures/TS.png");
+		MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/TS.png");
 		MinecraftForgeClient
 				.preloadTexture("/adanaran/mods/ts/textures/TeleporterFrame.png");
-		MinecraftForgeClient
-				.preloadTexture("/adanaran/mods/ts/textures/TPGUI.png");
-		MinecraftForgeClient
-				.preloadTexture("/adanaran/mods/ts/textures/Frame.png");
-		ClientRegistry.bindTileEntitySpecialRenderer(
-				TileEntityTeleporter.class, new TileEntityTeleRenderer());
+		MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/TPGUI.png");
+		MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/Frame.png");
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTeleporter.class,
+				new TileEntityTeleRenderer());
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpawnPearl.class, new RenderSpawnPearl(38));
 	}
 

@@ -12,70 +12,66 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import adanaran.mods.ts.TeleportStations;
-import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 /**
- * Mobile teleporter item.
+ * Handteleporter zur mobilen Teleportation.
  * <p>
- * Cannot act as a target for teleportation.
+ * Client File
  * 
  * @author Demitreus
+ * 
  */
 
 public class ItemTeleporter extends Item implements ICommandSender {
-	private static TileEntityTeleporter target;
+	private static ChunkCoordinates target;
 	private boolean porting = false;
 
-	/**
-	 * Creates a new item.
-	 * 
-	 * @param par1
-	 *            int ID
-	 */
 	public ItemTeleporter(int par1) {
 		super(par1);
 		maxStackSize = 1;
 		setMaxDamage(200);
 	}
 
-	@Override
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer, int par4) {
-		// par2World.provider.dimensionId Ergibt 0 bei normaler Welt, -1 bei
-		// Netherwelt, 1 bei The End :D
+		// par2World.worldProvider.worldType; //Ergibt 0 bei normaler Welt, -1
+		// bei Netherwelt :D
 		if (par4 > 71950) {
 			target = null;
 			par3EntityPlayer.openGui(TeleportStations.instance, 1, par2World,
 					-1, -1, -1);
 		} else if (par4 < 71950 && target != null && !par2World.isRemote) {
-			tp(par3EntityPlayer);
+			par3EntityPlayer.setPositionAndUpdate(target.posX + 0.5,
+					target.posY, target.posZ + 0.5);
 			par1ItemStack.damageItem(1, par3EntityPlayer);
 			par2World.playSoundAtEntity(par3EntityPlayer, "portal.portal",
 					1.0F, 1.0F);
 		}
 	}
 
-	/**
-	 * Sets the target.
-	 * 
-	 * @param ziel
-	 *            {@link#TileEntityTeleporter} the target to be set.
-	 */
-	public static void setTarget(TileEntityTeleporter ziel) {
-		target = ziel;
+	public static void setTarget(ChunkCoordinates tarCoords) {
+		target = tarCoords;
 	}
 
-	@Override
+	/**
+	 * How long it takes to use or consume an item
+	 */
 	public int getMaxItemUseDuration(ItemStack par1ItemStack) {
 		return 0x11940;
 	}
 
-	@Override
+	/**
+	 * returns the action that specifies what animation to play when the items
+	 * is being used
+	 */
 	public EnumAction getItemUseAction(ItemStack par1ItemStack) {
 		return EnumAction.block;
 	}
 
-	@Override
+	/**
+	 * Called whenever this item is equipped and the right mouse button is
+	 * pressed. Args: itemStack, world, entityPlayer
+	 */
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer) {
 		par3EntityPlayer.setItemInUse(par1ItemStack,
@@ -85,7 +81,6 @@ public class ItemTeleporter extends Item implements ICommandSender {
 
 	@Override
 	public int getIconFromDamage(int par1) {
-
 		if (ModLoader.getMinecraftInstance().thePlayer.getItemInUseDuration() <= 50) {
 			return 36;
 		} else {
@@ -98,7 +93,10 @@ public class ItemTeleporter extends Item implements ICommandSender {
 		return "/adanaran/mods/ts/textures/TS.png";
 	}
 
-	@Override
+	/**
+	 * Return the enchantability factor of the item, most of the time is based
+	 * on material.
+	 */
 	public int getItemEnchantability() {
 		return 1;
 	}
@@ -114,16 +112,17 @@ public class ItemTeleporter extends Item implements ICommandSender {
 			porting = true;
 			ICommandManager cm = TeleportStations.proxy.getServer()
 					.getCommandManager();
-			cm.executeCommand(this,
+			cm.executeCommand(
+					this,
 					new StringBuilder("/tp ").append(entity.getEntityName())
-							.append(" ").append(target.xCoord + 0.5)
-							.append(" ").append(target.yCoord - 2).append(" ")
-							.append(target.zCoord + 0.5).toString());
+							.append(" ").append(target.posX + 0.5).append(" ")
+							.append(target.posY - 2).append(" ")
+							.append(target.posZ + 0.5).toString());
 			TeleportStations.logger.log(Level.FINE,
-					"teleported " + entity.getEntityName() + " from " + entity.posX
-							+ "|" + entity.posY + "|" + entity.posZ + " to "
-							+ target.xCoord + "|" + (target.yCoord - 2) + "|"
-							+ target.zCoord);
+					"teleported " + entity.getEntityName() + " from "
+							+ entity.posX + "|" + entity.posY + "|"
+							+ entity.posZ + " to " + target.posX + "|"
+							+ (target.posY - 2) + "|" + target.posZ);
 		}
 		porting = false;
 	}

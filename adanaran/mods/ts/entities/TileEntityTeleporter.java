@@ -28,7 +28,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 * An array of two strings storing the name and the current target of the
 	 * teleporter.
 	 */
-	public String[] nameAndTarget = new String[] { "", "ziel" };
+	public String[] nameAndTarget = new String[] { "", "" };
 	// To prevent multiple command execution per teleport
 	private boolean porting = false;
 
@@ -59,9 +59,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 */
 	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
 		super.writeToNBT(par1NBTTagCompound);
-		par1NBTTagCompound.setString("Name",
-				this.nameAndTarget[0].isEmpty() ? "knochkeinname"
-						: this.nameAndTarget[0]);
+		par1NBTTagCompound.setString("Name", this.nameAndTarget[0]);
 		par1NBTTagCompound.setString("Ziel", this.nameAndTarget[1]);
 	}
 

@@ -38,7 +38,6 @@ import cpw.mods.fml.common.network.Player;
  * Handles all send and received packets.
  * 
  * @author Adanaran
- * 
  */
 public class TPPacketHandler implements IPacketHandler {
 

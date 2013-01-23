@@ -74,17 +74,18 @@ public class GUIEditTeleTarget extends GuiScreen {
 			for (Entry<ChunkCoordinates, TeleData> entry : zielliste.entrySet()) {
 				TeleData LName = entry.getValue();
 				if (LName.getWorldType() == world.getWorldInfo().getDimension()) {
-					TeleportStations.logger.log(Level.FINER, LName.getMeta() + " meta Lname");
+					TeleportStations.logger.log(Level.FINER, LName.getMeta()
+							+ " meta Lname");
 					if (metacheck <= 0 && LName.getMeta() == 0) {
 						zieldb[i] = entry.getKey();
 						zielNames[i] = new StringBuilder(LName.getName());
-						TeleportStations.logger.log(Level.FINER, i + " benannt: "
-								+ zielNames[i].toString());
+						TeleportStations.logger.log(Level.FINER, i
+								+ " benannt: " + zielNames[i].toString());
 					} else if (metacheck > 0 && LName.getMeta() > 0) {
 						zieldb[i] = entry.getKey();
 						zielNames[i] = new StringBuilder(LName.getName());
-						TeleportStations.logger.log(Level.FINER, i + " benannt: "
-								+ zielNames[i].toString());
+						TeleportStations.logger.log(Level.FINER, i
+								+ " benannt: " + zielNames[i].toString());
 					}
 
 					if (LName.getZiel() != null) {
@@ -118,9 +119,8 @@ public class GUIEditTeleTarget extends GuiScreen {
 						self.posZ, zieldb[selected]);
 			}
 			TeleportStations.logger.log(Level.FINE, "Changed target at " + x
-					+ "|" + y + "|" + z + " to " + zieldb[selected].posX
-					+ "|" + (zieldb[selected].posY) + "|"
-					+ zieldb[selected].posZ);
+					+ "|" + y + "|" + z + " to " + zieldb[selected].posX + "|"
+					+ (zieldb[selected].posY) + "|" + zieldb[selected].posZ);
 		} else {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(null);
@@ -154,7 +154,8 @@ public class GUIEditTeleTarget extends GuiScreen {
 		handleKeyboardInput();
 		int k = width - width >> 1;
 		int l = height - height >> 1;
-		int i1 = mc.renderEngine.getTexture("/adanaran/mods/ts/textures/TPGUI.png");
+		int i1 = mc.renderEngine
+				.getTexture("/adanaran/mods/ts/textures/TPGUI.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i1);
 		int j1 = k;

@@ -36,7 +36,7 @@ public class BlockTeleporter extends BlockTeleTarget {
 	}
 
 	@Override
-	protected int update(World world, int i, int j, int k) {
+	public int update(World world, int i, int j, int k) {
 		if (power(world, i, j, k)) {
 			world.setBlockWithNotify(i, j, k,
 					TeleportStations.blockTeleporterAn.blockID);

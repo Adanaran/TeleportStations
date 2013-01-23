@@ -1,5 +1,7 @@
 package adanaran.mods.ts.gui;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -59,7 +61,16 @@ public class GUIEditTeleTarget extends GuiScreen {
 				.getDB();
 		self = zielliste.remove(new ChunkCoordinates(x, y, z));
 		if (self == null) {
-			self = new TeleData("(mobile)");
+			self = new TeleData("(mobile);;0;;0;;0;;0;;0;;null");
+		}
+		for (Iterator<Map.Entry<ChunkCoordinates, TeleData>> entry = zielliste
+				.entrySet().iterator(); entry.hasNext();) {
+			TeleData LName = entry.next().getValue();
+			if (LName.getWorldType() != world.getWorldInfo().getDimension()
+					|| (metacheck <= 0 && LName.getMeta() > 0)
+					|| (metacheck > 0 && LName.getMeta() == 0)) {
+				entry.remove();
+			}
 		}
 		zlSize = zielliste.size();
 		if (zlSize > 0) {
@@ -73,30 +84,21 @@ public class GUIEditTeleTarget extends GuiScreen {
 			int i = 0;
 			for (Entry<ChunkCoordinates, TeleData> entry : zielliste.entrySet()) {
 				TeleData LName = entry.getValue();
-				if (LName.getWorldType() == world.getWorldInfo().getDimension()) {
-					TeleportStations.logger.log(Level.FINER, LName.getMeta() + " meta Lname");
-					if (metacheck <= 0 && LName.getMeta() == 0) {
-						zieldb[i] = entry.getKey();
-						zielNames[i] = new StringBuilder(LName.getName());
-						TeleportStations.logger.log(Level.FINER, i + " benannt: "
-								+ zielNames[i].toString());
-					} else if (metacheck > 0 && LName.getMeta() > 0) {
-						zieldb[i] = entry.getKey();
-						zielNames[i] = new StringBuilder(LName.getName());
-						TeleportStations.logger.log(Level.FINER, i + " benannt: "
-								+ zielNames[i].toString());
+				TeleportStations.logger.log(Level.FINER, LName.getMeta()
+						+ " meta Lname");
+				zieldb[i] = entry.getKey();
+				zielNames[i] = new StringBuilder(LName.getName());
+				TeleportStations.logger.log(Level.FINER, i + " benannt: "
+						+ zielNames[i].toString());
+				if (LName.getZiel() != null) {
+					ChunkCoordinates tZiel = LName.getZiel();
+					String ttName = TeleportStations.db.getNameByCoords(
+							tZiel.posX, tZiel.posY, tZiel.posZ);
+					if (ttName != null) {
+						zielNames[i].append(" (" + ttName + ")");
 					}
-
-					if (LName.getZiel() != null) {
-						ChunkCoordinates tZiel = LName.getZiel();
-						String ttName = TeleportStations.db.getNameByCoords(
-								tZiel.posX, tZiel.posY, tZiel.posZ);
-						if (ttName != null) {
-							zielNames[i].append(" (" + ttName + ")");
-						}
-					}
-					i++;
 				}
+				i++;
 			}
 			try {
 				sortArrays();
@@ -118,9 +120,8 @@ public class GUIEditTeleTarget extends GuiScreen {
 						self.posZ, zieldb[selected]);
 			}
 			TeleportStations.logger.log(Level.FINE, "Changed target at " + x
-					+ "|" + y + "|" + z + " to " + zieldb[selected].posX
-					+ "|" + (zieldb[selected].posY) + "|"
-					+ zieldb[selected].posZ);
+					+ "|" + y + "|" + z + " to " + zieldb[selected].posX + "|"
+					+ (zieldb[selected].posY) + "|" + zieldb[selected].posZ);
 		} else {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(null);
@@ -154,7 +155,8 @@ public class GUIEditTeleTarget extends GuiScreen {
 		handleKeyboardInput();
 		int k = width - width >> 1;
 		int l = height - height >> 1;
-		int i1 = mc.renderEngine.getTexture("/adanaran/mods/ts/textures/TPGUI.png");
+		int i1 = mc.renderEngine
+				.getTexture("/adanaran/mods/ts/textures/TPGUI.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(i1);
 		int j1 = k;

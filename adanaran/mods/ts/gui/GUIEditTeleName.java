@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
 import adanaran.mods.ts.TeleportStations;
+import adanaran.mods.ts.blocks.BlockTeleTarget;
 import adanaran.mods.ts.entities.TileEntityTeleporter;
 
 
@@ -98,7 +99,5 @@ public class GUIEditTeleName extends GuiScreen {
 	public void onGuiClosed() {
 		TeleportStations.db.addNewTP(name, i, j, k,
 			world.getBlockMetadata(i, j, k), world.provider.dimensionId);
-//		TeleportStations.db.addTP(tet.nameAndTarget[0], i, j, k,
-//				world.getBlockMetadata(i, j, k), world.getWorldInfo().getDimension());
 	}
 }

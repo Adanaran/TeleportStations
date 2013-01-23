@@ -87,8 +87,7 @@ public class BlockTeleTarget extends Block {
 
 	@Override
 	public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4) {
-		return !(par1World.getBlockId(par2, par3 - 1, par4) == TeleportStations.blockTeleporter.blockID)
-				&& !(par1World.getBlockId(par2, par3 - 1, par4) == TeleportStations.blockTeleporterAn.blockID);
+		return par1World.isBlockNormalCube(par2, par3 - 1, par4);
 	}
 
 	@Override
@@ -133,12 +132,13 @@ public class BlockTeleTarget extends Block {
 			EntityLiving par5EntityLiving) {
 		par1World.setBlock(par2, par3 + 1, par4,
 				TeleportStations.blockTeleMid.blockID);
-		par1World.setBlock(par2, par3 + 2, par4,
+		par1World.setBlockWithNotify(par2, par3 + 2, par4,
 				TeleportStations.blockTeleTop.blockID);
 		if (par5EntityLiving instanceof EntityPlayer) {
 			((EntityPlayer) par5EntityLiving).openGui(
 					TeleportStations.instance, 0, par1World, par2, par3, par4);
 		}
+		update(par1World, par2, par3, par4);
 	}
 
 	@Override
@@ -165,7 +165,7 @@ public class BlockTeleTarget extends Block {
 	 *            int z-coordinate
 	 * @return int new meta value
 	 */
-	protected int update(World world, int i, int j, int k) {
+	public int update(World world, int i, int j, int k) {
 
 		int meta = 0;
 		int ostId = world.getBlockId(i + 1, j, k);
@@ -181,23 +181,19 @@ public class BlockTeleTarget extends Block {
 		boolean ost = false, west = false, nord = false, sued = false;
 		int connects = 0;
 
-		if (BlockRail.isRailBlockAt(world, i + 1, j, k)
-				&& (ostMd == 1 || ostMd == 7 || ostMd == 8 || ostMd == 3)) {
+		if (BlockRail.isRailBlockAt(world, i + 1, j, k) && ostMd == 1) {
 			connects++;
 			ost = true;
 		}
-		if (BlockRail.isRailBlockAt(world, i - 1, j, k)
-				&& (westMd == 1 || westMd == 6 || westMd == 9 || westMd == 2)) {
+		if (BlockRail.isRailBlockAt(world, i - 1, j, k) && westMd == 1) {
 			connects++;
 			west = true;
 		}
-		if (BlockRail.isRailBlockAt(world, i, j, k - 1)
-				&& (nordMd == 0 || nordMd == 7 || nordMd == 6 || nordMd == 5)) {
+		if (BlockRail.isRailBlockAt(world, i, j, k - 1) && nordMd == 0) {
 			connects++;
 			nord = true;
 		}
-		if (BlockRail.isRailBlockAt(world, i, j, k + 1)
-				&& (suedMd == 0 || suedMd == 9 || suedMd == 8 || suedMd == 4)) {
+		if (BlockRail.isRailBlockAt(world, i, j, k + 1) && suedMd == 0) {
 			connects++;
 			sued = true;
 		}
@@ -255,7 +251,11 @@ public class BlockTeleTarget extends Block {
 			meta = 0;
 		}
 		// *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
-		TeleportStations.db.updateMeta(i, j, k, meta);
+		try {
+			TeleportStations.db.updateMeta(i, j, k, meta);
+		} catch (Exception e) {
+			// Wenn das Gui mal zu lange braucht...
+		}
 		world.setBlockAndMetadataWithNotify(i, j, k, world.getBlockId(i, j, k),
 				meta);
 		return meta;

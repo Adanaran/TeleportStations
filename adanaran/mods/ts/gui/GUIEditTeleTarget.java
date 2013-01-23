@@ -1,5 +1,7 @@
 package adanaran.mods.ts.gui;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -59,7 +61,16 @@ public class GUIEditTeleTarget extends GuiScreen {
 				.getDB();
 		self = zielliste.remove(new ChunkCoordinates(x, y, z));
 		if (self == null) {
-			self = new TeleData("(mobile)");
+			self = new TeleData("(mobile);;0;;0;;0;;0;;0;;null");
+		}
+		for (Iterator<Map.Entry<ChunkCoordinates, TeleData>> entry = zielliste
+				.entrySet().iterator(); entry.hasNext();) {
+			TeleData LName = entry.next().getValue();
+			if (LName.getWorldType() != world.getWorldInfo().getDimension()
+					|| (metacheck <= 0 && LName.getMeta() > 0)
+					|| (metacheck > 0 && LName.getMeta() == 0)) {
+				entry.remove();
+			}
 		}
 		zlSize = zielliste.size();
 		if (zlSize > 0) {
@@ -73,31 +84,21 @@ public class GUIEditTeleTarget extends GuiScreen {
 			int i = 0;
 			for (Entry<ChunkCoordinates, TeleData> entry : zielliste.entrySet()) {
 				TeleData LName = entry.getValue();
-				if (LName.getWorldType() == world.getWorldInfo().getDimension()) {
-					TeleportStations.logger.log(Level.FINER, LName.getMeta()
-							+ " meta Lname");
-					if (metacheck <= 0 && LName.getMeta() == 0) {
-						zieldb[i] = entry.getKey();
-						zielNames[i] = new StringBuilder(LName.getName());
-						TeleportStations.logger.log(Level.FINER, i
-								+ " benannt: " + zielNames[i].toString());
-					} else if (metacheck > 0 && LName.getMeta() > 0) {
-						zieldb[i] = entry.getKey();
-						zielNames[i] = new StringBuilder(LName.getName());
-						TeleportStations.logger.log(Level.FINER, i
-								+ " benannt: " + zielNames[i].toString());
+				TeleportStations.logger.log(Level.FINER, LName.getMeta()
+						+ " meta Lname");
+				zieldb[i] = entry.getKey();
+				zielNames[i] = new StringBuilder(LName.getName());
+				TeleportStations.logger.log(Level.FINER, i + " benannt: "
+						+ zielNames[i].toString());
+				if (LName.getZiel() != null) {
+					ChunkCoordinates tZiel = LName.getZiel();
+					String ttName = TeleportStations.db.getNameByCoords(
+							tZiel.posX, tZiel.posY, tZiel.posZ);
+					if (ttName != null) {
+						zielNames[i].append(" (" + ttName + ")");
 					}
-
-					if (LName.getZiel() != null) {
-						ChunkCoordinates tZiel = LName.getZiel();
-						String ttName = TeleportStations.db.getNameByCoords(
-								tZiel.posX, tZiel.posY, tZiel.posZ);
-						if (ttName != null) {
-							zielNames[i].append(" (" + ttName + ")");
-						}
-					}
-					i++;
 				}
+				i++;
 			}
 			try {
 				sortArrays();

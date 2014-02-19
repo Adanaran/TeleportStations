@@ -9,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.packet.Packet34EntityTeleport;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityCommandBlock;
@@ -27,33 +26,30 @@ public class BlockTeleporter extends BlockTeleTarget {
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param par1
-	 *            int id of this block
 	 */
-	public BlockTeleporter(int par1) {
-		super(par1);
+	public BlockTeleporter() {
+		super();
 	}
 
 	@Override
 	public int update(World world, int i, int j, int k) {
 		if (power(world, i, j, k)) {
-			world.setBlockWithNotify(i, j, k,
-					TeleportStations.blockTeleporterAn.blockID);
+			// TODO world.setBlockWithNotify(i, j, k,
+			// TeleportStations.blockTeleporterAn);
 		} else {
-			world.setBlockWithNotify(i, j, k,
-					TeleportStations.blockTeleporter.blockID);
+			// TODO world.setBlockWithNotify(i, j, k,
+			// TeleportStations.blockTeleporter);
 		}
 		return super.update(world, i, j, k);
 	}
 
-	@Override
-	public int getBlockTextureFromSideAndMetadata(int par1, int par2) {
-		return par1 == 1 ? this.blockID == TeleportStations.blockTeleporter.blockID ? super
-				.getBlockTextureFromSideAndMetadata(par1, par2) : (super
-				.getBlockTextureFromSideAndMetadata(par1, par2) + 16)
-				: 32;
-	}
+	// TODO Textures
+	// @Override
+	// public int getBlockTextureFromSideAndMetadata(int par1, int par2) {
+	// return par1 == 1 ? this == TeleportStations.blockTeleporter ? super
+	// .getBlockTextureFromSideAndMetadata(par1, par2) : (super
+	// .getBlockTextureFromSideAndMetadata(par1, par2) + 16) : 32;
+	// }
 
 	@Override
 	public boolean onBlockActivated(World par1World, int par2, int par3,
@@ -88,7 +84,7 @@ public class BlockTeleporter extends BlockTeleTarget {
 			int k) {
 		TeleData quelle = TeleportStations.db.getTeleDataByCoords(i, j, k);
 		ChunkCoordinates ziel = quelle.getZiel();
-		TileEntity te = world.getBlockTileEntity(i, j + 2, k);
+		TileEntity te = world.getTileEntity(i, j + 2, k);
 		if (te != null
 				&& te instanceof TileEntityTeleporter
 				&& (TeleportStations.proxy.isServer() || TeleportStations.proxy

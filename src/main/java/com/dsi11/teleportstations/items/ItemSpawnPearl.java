@@ -12,10 +12,10 @@ import net.minecraft.world.World;
  */
 public class ItemSpawnPearl extends Item {
 
-	public ItemSpawnPearl(int par1) {
-		super(par1);
+	public ItemSpawnPearl() {
+		super();
 		maxStackSize = 16;
-		this.iconIndex = 38;
+		// TODO: this.iconIndex = 38;
 	}
 
 	@Override
@@ -35,8 +35,9 @@ public class ItemSpawnPearl extends Item {
 		return par1ItemStack;
 	}
 
-	@Override
-	public String getTextureFile() {
-		return "/adanaran/mods/ts/textures/TS.png";
-	}
+	// TODO textures
+	// @Override
+	// public String getTextureFile() {
+	// return "/adanaran/mods/ts/textures/TS.png";
+	// }
 }

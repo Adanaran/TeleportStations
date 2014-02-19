@@ -3,14 +3,15 @@ package com.dsi11.teleportstations.database;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
+
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.packethandler.TPPacketHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -54,12 +55,12 @@ public class TPDatabase {
 		TeleData td = new TeleData(name, x, y, z, meta, dim);
 		db.put(new ChunkCoordinates(x, y, z), td);
 		if (!TeleportStations.proxy.isSinglePlayer()) {
-			PacketDispatcher.sendPacketToServer(TPPacketHandler
-					.getNewAddTPPacket(td));
+			// TODO Netty: PacketDispatcher.sendPacketToServer(TPPacketHandler
+			// .getNewAddTPPacket(td));
 		} else {
-			TeleportStations.fh.writeToFile();
-			TPPacketHandler.sendPacketToClients(TPPacketHandler
-					.getNewAddTPPacket(td));
+			// TODO Netty: TeleportStations.fh.writeToFile();
+			// TPPacketHandler.sendPacketToClients(TPPacketHandler
+			// .getNewAddTPPacket(td));
 		}
 	}
 
@@ -73,10 +74,10 @@ public class TPDatabase {
 	public void addTP(TeleData td) {
 		if (TeleportStations.proxy.isServer()
 				|| TeleportStations.proxy.isSinglePlayer()) {
-			TeleportStations.logger.log(Level.FINE, "Received  " + td
+			TeleportStations.logger.log(Level.TRACE, "Received  " + td
 					+ " from flatfile database");
 			db.put(new ChunkCoordinates(td.posX, td.posY, td.posZ), td);
-			TeleportStations.logger.log(Level.FINE, "Groesse der Datenbank: "
+			TeleportStations.logger.log(Level.TRACE, "Groesse der Datenbank: "
 					+ db.size() + " Eintraege.");
 		}
 	}
@@ -96,8 +97,8 @@ public class TPDatabase {
 		TeleData td = db.remove(coords);
 		if (TeleportStations.proxy.isServer()
 				|| TeleportStations.proxy.isSinglePlayer()) {
-			TPPacketHandler.sendPacketToClients(TPPacketHandler
-					.getNewRemoveTPPacket(td));
+			// TODO Netty: TPPacketHandler.sendPacketToClients(TPPacketHandler
+			// .getNewRemoveTPPacket(td));
 			deleteReferencesAfterTPRemoved(coords);
 		}
 	}
@@ -121,8 +122,8 @@ public class TPDatabase {
 		td.setZiel(ziel);
 		db.put(coords, td);
 		if (!TeleportStations.proxy.isSinglePlayer()) {
-			PacketDispatcher.sendPacketToServer(TPPacketHandler
-					.getNewAddTPPacket(td));
+			// TODO Netty: PacketDispatcher.sendPacketToServer(TPPacketHandler
+			// .getNewAddTPPacket(td));
 		} else {
 			TeleportStations.fh.writeToFile();
 		}
@@ -145,11 +146,12 @@ public class TPDatabase {
 	 */
 	public void sendDB(EntityPlayer player) {
 		if (db.size() > 0) {
-			TeleportStations.logger.log(Level.INFO, "Sending databse to "
-					+ player.getEntityName() + ", size: " + db.size());
-			PacketDispatcher.sendPacketToPlayer(
-					TPPacketHandler.getNewDatabaseSyncPacket(this.getDB()),
-					(Player) player);
+			TeleportStations.logger.log(Level.INFO,
+					"Sending databse to " + player.getGameProfile().getName()
+							+ ", size: " + db.size());
+			// TODO Netty: PacketDispatcher.sendPacketToPlayer(
+			// TPPacketHandler.getNewDatabaseSyncPacket(this.getDB()),
+			// (Player) player);
 		} else {
 			TeleportStations.logger.log(Level.INFO,
 					"Database empty, not sending.");
@@ -174,8 +176,8 @@ public class TPDatabase {
 	 */
 	public void receiveChangedTPFromClient(TeleData td) {
 		db.put(new ChunkCoordinates(td.posX, td.posY, td.posZ), td);
-		TPPacketHandler.sendPacketToClients(TPPacketHandler
-				.getNewAddTPPacket(td));
+		// TODO Netty: TPPacketHandler.sendPacketToClients(TPPacketHandler
+		// .getNewAddTPPacket(td));
 		TeleportStations.fh.writeToFile();
 	}
 
@@ -306,20 +308,21 @@ public class TPDatabase {
 	}
 
 	private void deleteReferencesAfterTPRemoved(ChunkCoordinates coords) {
-		TeleportStations.logger.log(Level.FINE, "Removing references in DB...");
+		TeleportStations.logger
+				.log(Level.TRACE, "Removing references in DB...");
 		for (Map.Entry<ChunkCoordinates, TeleData> entry : db.entrySet()) {
 			if (entry.getValue().getZiel() == coords) {
-				TeleportStations.logger.log(Level.FINER,
+				TeleportStations.logger.log(Level.TRACE,
 						"Deleting reference to removed teleporter.");
 				entry.getValue().setZiel(null);
 			}
 		}
 		TeleportStations.fh.writeToFile();
-		TeleportStations.logger.log(Level.FINE, "All references removed.");
+		TeleportStations.logger.log(Level.TRACE, "All references removed.");
 	}
 
 	private void deleteReferencesAfterMetaChange(ChunkCoordinates coords) {
-		TeleportStations.logger.log(Level.FINE,
+		TeleportStations.logger.log(Level.TRACE,
 				"Checking for references in DB...");
 		TeleData td = db.get(coords);
 		int meta = td.getMeta();
@@ -330,13 +333,13 @@ public class TPDatabase {
 			if (refZiel == coords) {
 				if ((meta > 0 && refMeta == 0) || (meta == 0 && refMeta > 0)) {
 					refTD.setZiel(null);
-					TeleportStations.logger.log(Level.FINER,
+					TeleportStations.logger.log(Level.TRACE,
 							"Removed wrong reference");
 				}
 			}
 		}
 		TeleportStations.fh.writeToFile();
-		TeleportStations.logger
-				.log(Level.FINE, "All wrong references deleted.");
+		TeleportStations.logger.log(Level.TRACE,
+				"All wrong references deleted.");
 	}
 }

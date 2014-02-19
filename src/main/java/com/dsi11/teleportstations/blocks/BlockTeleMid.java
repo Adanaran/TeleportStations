@@ -19,10 +19,11 @@ public class BlockTeleMid extends Block {
 	/**
 	 * Constuctor of middle block of teleporter.
 	 * 
-	 * @param par1 int ID
+	 * @param par1
+	 *            int ID
 	 */
-	public BlockTeleMid(int par1) {
-		super(par1, Material.portal);
+	public BlockTeleMid() {
+		super(Material.portal);
 	}
 
 	@Override
@@ -32,8 +33,8 @@ public class BlockTeleMid extends Block {
 
 	@Override
 	public boolean canBlockStay(World world, int i, int j, int k) {
-		return ((world.getBlockId(i, j - 1, k) == TeleportStations.blockTeleporter.blockID || world.getBlockId(i,
-				j - 1, k) == TeleportStations.blockTeleporterAn.blockID));
+		return ((world.getBlock(i, j - 1, k) == TeleportStations.blockTeleporter || world
+				.getBlock(i, j - 1, k) == TeleportStations.blockTeleporterAn));
 	}
 
 }

@@ -11,7 +11,7 @@ import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 /**
  * Renderer for teleporter tile entity.
  * <p>
- * Renders text information at the top block.
+ * Renders text information at the top Blocks.
  * 
  * @author Demitreus
  */
@@ -37,7 +37,7 @@ public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 				(float) var6 + 0.5F);
 		GL11.glScalef(1f, 1f, 1f);
 
-		this.bindTextureByName("/adanaran/mods/ts/textures/Frame.png");
+		// TODO this.bindTextureByName("/adanaran/mods/ts/textures/Frame.png");
 		teleModel.render();
 
 		for (int i = 0; i < 4; i++) {
@@ -53,7 +53,8 @@ public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 		float var10 = 0.6666667F;
 		float var12 = 0.016666668F * var10;
 		float[] xy = { 0, 0.5f, 0, -0.5f };
-		FontRenderer fR = this.getFontRenderer();
+		FontRenderer fR = this.func_147498_b(); // obfuscated for:
+												// getFontRenderer();
 		GL11.glTranslatef(xy[i], -0.6F, xy[i + (i != 3 ? 1 : -1)]);
 		GL11.glScalef(var12, -var12, var12);
 		GL11.glRotatef(i * 90, 0, 1, 0);

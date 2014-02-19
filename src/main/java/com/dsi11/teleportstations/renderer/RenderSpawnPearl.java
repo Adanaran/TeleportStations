@@ -5,13 +5,13 @@ import org.lwjgl.opengl.GL12;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.EntityPotion;
 import net.minecraft.potion.PotionHelper;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * Renderer for Spawnpearl-Entity.
@@ -49,7 +49,7 @@ public class RenderSpawnPearl extends Render {
 		GL11.glTranslatef((float) par2, (float) par4, (float) par6);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glScalef(0.5F, 0.5F, 0.5F);
-		this.loadTexture("/adanaran/mods/ts/textures/TS.png");
+		// TODO this.loadTexture("/adanaran/mods/ts/textures/TS.png");
 		Tessellator var10 = Tessellator.instance;
 		this.func_77026_a(var10, this.itemIconIndex);
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -78,5 +78,11 @@ public class RenderSpawnPearl extends Render {
 		par1Tessellator.addVertexWithUV((double) (0.0F - var8),
 				(double) (var7 - var9), 0.0D, (double) var3, (double) var5);
 		par1Tessellator.draw();
+	}
+
+	@Override
+	protected ResourceLocation getEntityTexture(Entity var1) {
+		// TODO neu, muss implementiert werden!
+		return null;
 	}
 }

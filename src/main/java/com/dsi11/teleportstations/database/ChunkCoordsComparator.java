@@ -21,7 +21,7 @@ public class ChunkCoordsComparator implements Comparator<ChunkCoordinates> {
 
 	@Override
 	public int compare(ChunkCoordinates arg0, ChunkCoordinates arg1) {
-		return arg0.compareChunkCoordinate(arg1);
+		return arg0.compareTo(arg1);
 	}
 
 }

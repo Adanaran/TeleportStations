@@ -1,13 +1,13 @@
 package com.dsi11.teleportstations;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.Configuration;
+
 import com.dsi11.teleportstations.blocks.BlockTeleMid;
 import com.dsi11.teleportstations.blocks.BlockTeleTarget;
 import com.dsi11.teleportstations.blocks.BlockTeleTop;
@@ -18,18 +18,15 @@ import com.dsi11.teleportstations.entities.EntitySpawnPearl;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 import com.dsi11.teleportstations.items.ItemSpawnPearl;
 import com.dsi11.teleportstations.items.ItemTeleporter;
-import com.dsi11.teleportstations.packethandler.TPPacketHandler;
 import com.dsi11.teleportstations.packethandler.TPPlayerTracker;
+
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -44,7 +41,10 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
  * @author Demitreus
  */
 @Mod(modid = "TeleportStations", name = "Teleport Stations", version = "0.1")
-@NetworkMod(channels = { "tpChange", "tpRemove", "tpDB" }, versionBounds = "[0.1,)", clientSideRequired = true, serverSideRequired = false, packetHandler = TPPacketHandler.class)
+// TODO existiert nicht mehr, channel gehen anders: @NetworkMod(channels = {
+// "tpChange", "tpRemove", "tpDB" }, versionBounds = "[0.1,)",
+// clientSideRequired = true, serverSideRequired = false, packetHandler =
+// TPPacketHandler.class)
 public class TeleportStations {
 
 	// The mod instance
@@ -72,50 +72,10 @@ public class TeleportStations {
 	public static String dir;
 	// The Logger
 	public static Logger logger;
-	// The IDs
-	private int idBlockTeleTarget;
-	private int idBlockTeleporter;
-	private int idBlockTeleporterAn;
-	private int idBlockTeleMid;
-	private int idBlockTeleTop;
-	private int idHandtele;
-	private int idSpawnPearl;
 
-	/**
-	 * The pre-initialization method.
-	 * <p>
-	 * Registers the (client-)GUI-handler.
-	 * 
-	 * @param event
-	 *            FMLPreInitializationEvent
-	 */
-	@PreInit
-	public void preInit(FMLPreInitializationEvent event) {
-		dir = event.getModConfigurationDirectory().getPath()
-				.replace("config", "");
-		logger = event.getModLog();
-		NetworkRegistry.instance().registerGuiHandler(this, proxy);
-		Configuration cfg = new Configuration(
-				event.getSuggestedConfigurationFile());
-		try {
-			cfg.load();
-			idBlockTeleTarget = cfg.getBlock("blockteletarget", 3001).getInt(
-					3001);
-			idBlockTeleporter = cfg.getBlock("blockteleporter", 3002).getInt(
-					3002);
-			idBlockTeleporterAn = cfg.getBlock("blockteleporteron", 3003)
-					.getInt(3003);
-			idBlockTeleMid = cfg.getBlock("blocktelemid", 3004).getInt(3004);
-			idBlockTeleTop = cfg.getBlock("blockteletop", 3005).getInt(3005);
-			idHandtele = cfg.getBlock("mobileteleporter", 3006).getInt(3006);
-			idSpawnPearl = cfg.getBlock("spawmpearl", 3007).getInt(3007);
-			logger.log(Level.INFO, "TeleportStations configuration loaded.");
-		} catch (Exception e) {
-			logger.log(Level.SEVERE,
-					"Failed loading TeleportStations configuration", e);
-		} finally {
-			cfg.save();
-		}
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent evt) {
+		logger = evt.getModLog();
 	}
 
 	/**
@@ -126,99 +86,92 @@ public class TeleportStations {
 	 * @param evt
 	 *            FMLInitializationEvent
 	 */
-	@Init
+	@EventHandler
 	public void load(FMLInitializationEvent evt) {
-		logger.log(Level.FINE, "Registering blocks and items");
-		registerBlockTeleTarget(idBlockTeleTarget);
-		registerBlockTeleporter(idBlockTeleporter, idBlockTeleporterAn);
-		registerBlockTeleMid(idBlockTeleMid);
-		registerBlockTeleTop(idBlockTeleTop);
-		registerSpawnPearl(idSpawnPearl);
-		registerHandtele(idHandtele);
+		logger.log(Level.TRACE, "Registering blocks and items");
+		registerBlockTeleTarget();
+		registerBlockTeleporter();
+		registerBlockTeleMid();
+		registerBlockTeleTop();
+		registerSpawnPearl();
+		registerHandtele();
 		proxy.registerRenderInformation();
 		db = new TPDatabase();
 		fh = new TPFileHandler(db);
 		pt = new TPPlayerTracker(db, fh);
-		GameRegistry.registerPlayerTracker(pt);
+		// TODO fix: GameRegistry.registerPlayerTracker(pt);
 	}
 
-	private void registerSpawnPearl(int i) {
-		itemSpawnPearl = new ItemSpawnPearl(i);
-		itemSpawnPearl.setCreativeTab(CreativeTabs.tabTransport).setItemName("Spawnpearl");
+	private void registerSpawnPearl() {
+		itemSpawnPearl = new ItemSpawnPearl();
+		itemSpawnPearl.setCreativeTab(CreativeTabs.tabTransport)
+				.setUnlocalizedName("Spawnpearl");
 		EntityRegistry.registerModEntity(EntitySpawnPearl.class, "Spawnpearl",
 				3, this, 164, 10, true);
+		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(itemSpawnPearl, "Spawnpearl");
-		GameRegistry.registerItem(itemSpawnPearl, itemSpawnPearl.getItemName());
-		GameRegistry.addRecipe(
-				new ItemStack(itemSpawnPearl),
+		GameRegistry.registerItem(itemSpawnPearl,
+				itemSpawnPearl.getUnlocalizedName());
+		GameRegistry.addRecipe(new ItemStack(itemSpawnPearl),
 				new Object[] { "K", "E", Character.valueOf('E'),
-								Item.enderPearl, Character.valueOf('K'),
-								Item.compass });
+						Items.ender_pearl, Character.valueOf('K'),
+						Items.compass });
 	}
 
-	private void registerHandtele(int i) {
-		itemTele = new ItemTeleporter(i);
-		itemTele.setCreativeTab(CreativeTabs.tabTransport).setItemName("Handteleporter");
+	private void registerHandtele() {
+		itemTele = new ItemTeleporter();
+		itemTele.setCreativeTab(CreativeTabs.tabTransport).setUnlocalizedName(
+				"Handteleporter");
+		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(itemTele, "Handteleporter");
-		GameRegistry.registerItem(itemTele, itemTele.getItemName());
-		GameRegistry.addRecipe(
-				new ItemStack(itemTele),
-				new Object[] { "EPE", "EKE","ETE", Character.valueOf('E'),
-								Item.ingotIron, Character.valueOf('T'),
-								blockTeleporter, Character.valueOf('P'),
-								itemSpawnPearl, Character.valueOf('K'),
-								Item.coal });
+		GameRegistry.registerItem(itemTele, itemTele.getUnlocalizedName());
+		GameRegistry.addRecipe(new ItemStack(itemTele), new Object[] { "EPE",
+				"EKE", "ETE", Character.valueOf('E'), Items.iron_ingot,
+				Character.valueOf('T'), blockTeleporter,
+				Character.valueOf('P'), itemSpawnPearl, Character.valueOf('K'),
+				Items.coal });
 	}
 
-	/**
-	 * The post-init method.
-	 * <p>
-	 * Registers the LoadCallback-handler.
-	 * 
-	 * @param evt
-	 *            FMLPostInitializationEvent
-	 */
-	@PostInit
-	public void modsLoaded(FMLPostInitializationEvent evt) {
-		logger.log(Level.FINE, "done loading");
-	}
-
-	private void registerBlockTeleTarget(int id) {
-		blockTeleTarget = new BlockTeleTarget(id);
+	private void registerBlockTeleTarget() {
+		blockTeleTarget = new BlockTeleTarget();
 		blockTeleTarget.setBlockName("Teleporterziel");
 		blockTeleTarget.setCreativeTab(CreativeTabs.tabTransport);
+		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleTarget, "Teleporterziel");
+		// TODO localization auf assets umstellen!
 		LanguageRegistry.instance().addNameForObject(blockTeleTarget, "de_DE",
 				"Teleporterziel");
 		GameRegistry.registerBlock(blockTeleTarget,
-				blockTeleTarget.getBlockName());
+				blockTeleTarget.getUnlocalizedName());
 
 		GameRegistry.addRecipe(new ItemStack(blockTeleTarget), new Object[] {
-				"DOD", "ORO", "DOD", Character.valueOf('D'), Block.glass,
-				Character.valueOf('O'), Block.obsidian, Character.valueOf('R'),
-				Item.redstone });
+				"DOD", "ORO", "DOD", Character.valueOf('D'), Blocks.glass,
+				Character.valueOf('O'), Blocks.obsidian,
+				Character.valueOf('R'), Items.redstone });
 	}
 
-	private void registerBlockTeleporter(int id, int idAn) {
-		blockTeleporter = new BlockTeleporter(id);
-		blockTeleporterAn = new BlockTeleporter(idAn);
+	private void registerBlockTeleporter() {
+		blockTeleporter = new BlockTeleporter();
+		blockTeleporterAn = new BlockTeleporter();
 		blockTeleporter.setBlockName("Teleporter");
 		blockTeleporterAn.setBlockUnbreakable();
 		blockTeleporter.setCreativeTab(CreativeTabs.tabTransport);
 		GameRegistry.registerBlock(blockTeleporter,
-				blockTeleporter.getBlockName());
+				blockTeleporter.getUnlocalizedName());
 		GameRegistry.registerBlock(blockTeleporterAn,
-				blockTeleporterAn.getBlockName());
+				blockTeleporterAn.getUnlocalizedName());
+		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleporter, "Teleporter");
 		GameRegistry.addRecipe(new ItemStack(blockTeleporter), new Object[] {
-				"DOD", "ORO", "DOD", Character.valueOf('D'), Item.diamond,
-				Character.valueOf('O'), Block.obsidian, Character.valueOf('R'),
-				Item.redstone });
+				"DOD", "ORO", "DOD", Character.valueOf('D'), Items.diamond,
+				Character.valueOf('O'), Blocks.obsidian,
+				Character.valueOf('R'), Items.redstone });
 	}
 
-	private void registerBlockTeleTop(int id) {
-		blockTeleTop = new BlockTeleTop(id);
+	private void registerBlockTeleTop() {
+		blockTeleTop = new BlockTeleTop();
 		GameRegistry.registerBlock(blockTeleTop, "Teleporterdeckel");
+		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleTop, "Teleporterdeckel");
 		blockTeleTop.setBlockUnbreakable().setBlockBounds(0.01f, 0.5f, 0.01f,
 				0.99f, 1f, 0.99f);
@@ -226,9 +179,10 @@ public class TeleportStations {
 				"TileEntityTeleporter");
 	}
 
-	private void registerBlockTeleMid(int id) {
-		blockTeleMid = new BlockTeleMid(id);
+	private void registerBlockTeleMid() {
+		blockTeleMid = new BlockTeleMid();
 		GameRegistry.registerBlock(blockTeleMid, "Teleportermitte");
+		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleMid, "Teleportermitte");
 		blockTeleMid.setBlockUnbreakable().setBlockBounds(0.5f, 1.5F, 0.5f,
 				0.5f, 1.5f, 0.5f);

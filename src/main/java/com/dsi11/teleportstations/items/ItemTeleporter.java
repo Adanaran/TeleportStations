@@ -1,6 +1,6 @@
 package com.dsi11.teleportstations.items;
 
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
@@ -8,9 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
 import com.dsi11.teleportstations.TeleportStations;
 
 /**
@@ -26,8 +28,8 @@ public class ItemTeleporter extends Item implements ICommandSender {
 	private static ChunkCoordinates target;
 	private boolean porting = false;
 
-	public ItemTeleporter(int par1) {
-		super(par1);
+	public ItemTeleporter() {
+		super();
 		maxStackSize = 1;
 		setMaxDamage(200);
 	}
@@ -80,18 +82,21 @@ public class ItemTeleporter extends Item implements ICommandSender {
 	}
 
 	@Override
-	public int getIconFromDamage(int par1) {
-		if (ModLoader.getMinecraftInstance().thePlayer.getItemInUseDuration() <= 50) {
-			return 36;
-		} else {
-			return 37;
-		}
+	public IIcon getIconFromDamage(int par1) {
+		// TODO fix Modloader reference
+		// if (ModLoader.getMinecraftInstance().thePlayer.getItemInUseDuration()
+		// <= 50) {
+		// return 36;
+		// } else {
+		// return 37;
+		// }
+		return null;
 	}
 
-	@Override
-	public String getTextureFile() {
-		return "/adanaran/mods/ts/textures/TS.png";
-	}
+	// @Override
+	// public String getTextureFile() {
+	// return "/adanaran/mods/ts/textures/TS.png";
+	// }
 
 	/**
 	 * Return the enchantability factor of the item, most of the time is based
@@ -114,15 +119,16 @@ public class ItemTeleporter extends Item implements ICommandSender {
 					.getCommandManager();
 			cm.executeCommand(
 					this,
-					new StringBuilder("/tp ").append(entity.getEntityName())
+					new StringBuilder("/tp ")
+							.append(entity.getGameProfile().getName())
 							.append(" ").append(target.posX + 0.5).append(" ")
 							.append(target.posY - 2).append(" ")
 							.append(target.posZ + 0.5).toString());
-			TeleportStations.logger.log(Level.FINE,
-					"teleported " + entity.getEntityName() + " from "
-							+ entity.posX + "|" + entity.posY + "|"
-							+ entity.posZ + " to " + target.posX + "|"
-							+ (target.posY - 2) + "|" + target.posZ);
+			TeleportStations.logger.log(Level.INFO, "teleported "
+					+ entity.getGameProfile().getName() + " from "
+					+ entity.posX + "|" + entity.posY + "|" + entity.posZ
+					+ " to " + target.posX + "|" + (target.posY - 2) + "|"
+					+ target.posZ);
 		}
 		porting = false;
 	}
@@ -133,21 +139,26 @@ public class ItemTeleporter extends Item implements ICommandSender {
 	}
 
 	@Override
-	public void sendChatToPlayer(String var1) {
-	}
-
-	@Override
 	public boolean canCommandSenderUseCommand(int var1, String var2) {
 		return true;
 	}
 
 	@Override
-	public String translateString(String var1, Object... var2) {
-		return var1;
+	public ChunkCoordinates getPlayerCoordinates() {
+		return null;
 	}
 
 	@Override
-	public ChunkCoordinates getPlayerCoordinates() {
+	public IChatComponent func_145748_c_() {
+		return null;
+	}
+
+	@Override
+	public void addChatMessage(IChatComponent var1) {
+	}
+
+	@Override
+	public World getEntityWorld() {
 		return null;
 	}
 }

@@ -1,18 +1,20 @@
 package com.dsi11.teleportstations.entities;
 
-import java.util.logging.Level;
+import org.apache.logging.log4j.Level;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.packethandler.TPPacketHandler;
+
 import net.minecraft.block.Block;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.world.World;
 
 /**
  * Tileentity for teleporters, placed in top of it.
@@ -133,11 +135,11 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 			porting = true;
 			MinecraftServer server = TeleportStations.proxy.getServer();
 			if (server != null) {
-				TeleportStations.logger.log(Level.FINE, "Ziel: x " + ziel.posX
+				TeleportStations.logger.log(Level.INFO, "Ziel: x " + ziel.posX
 						+ " y " + ziel.posY + " z " + ziel.posZ);
 				ICommandManager commandManager = server.getCommandManager();
 				String command = new StringBuilder("/tp ")
-						.append(entity.getEntityName()).append(" ")
+						.append(entity.getGameProfile().getName()).append(" ")
 						.append(ziel.posX + 0.5).append(" ")
 						.append(ziel.posY + entity.getEyeHeight()).append(" ")
 						.append(ziel.posZ + 0.5).toString();
@@ -155,21 +157,26 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	}
 
 	@Override
-	public void sendChatToPlayer(String var1) {
-	}
-
-	@Override
 	public boolean canCommandSenderUseCommand(int var1, String var2) {
 		return true;
 	}
 
 	@Override
-	public String translateString(String var1, Object... var2) {
-		return var1;
+	public ChunkCoordinates getPlayerCoordinates() {
+		return new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord);
 	}
 
 	@Override
-	public ChunkCoordinates getPlayerCoordinates() {
-		return new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord);
+	public IChatComponent func_145748_c_() {
+		return null;
+	}
+
+	@Override
+	public void addChatMessage(IChatComponent var1) {
+	}
+
+	@Override
+	public World getEntityWorld() {
+		return this.worldObj;
 	}
 }

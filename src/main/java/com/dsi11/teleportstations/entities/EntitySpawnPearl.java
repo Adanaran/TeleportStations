@@ -2,10 +2,11 @@ package com.dsi11.teleportstations.entities;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.src.ModLoader;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
@@ -36,7 +37,7 @@ public class EntitySpawnPearl extends EntityThrowable {
 	 * @param par2EntityLiving
 	 *            EntityLiving an entity
 	 */
-	public EntitySpawnPearl(World par1World, EntityLiving par2EntityLiving) {
+	public EntitySpawnPearl(World par1World, EntityLivingBase par2EntityLiving) {
 		super(par1World, par2EntityLiving);
 	}
 
@@ -59,9 +60,11 @@ public class EntitySpawnPearl extends EntityThrowable {
 
 	@Override
 	protected void onImpact(MovingObjectPosition par1MovingObjectPosition) {
-		World theWorld = ModLoader.getMinecraftInstance().theWorld;
-		EntityPlayer thePlayer = ModLoader.getMinecraftInstance().thePlayer;
-		Minecraft mc = ModLoader.getMinecraftInstance();
+		World theWorld = null; // TODO
+								// ModLoader.getMinecraftInstance().theWorld;
+		EntityPlayer thePlayer = null; // TODO
+										// ModLoader.getMinecraftInstance().thePlayer;
+		Minecraft mc = null; // TODO ModLoader.getMinecraftInstance();
 		InventoryPlayer inv = thePlayer.inventory;
 		if (par1MovingObjectPosition.entityHit != null) {
 			if (!par1MovingObjectPosition.entityHit.attackEntityFrom(
@@ -78,9 +81,8 @@ public class EntitySpawnPearl extends EntityThrowable {
 				if (SC == null) {
 					SC = theWorld.getSpawnPoint();
 					while (SC.posY < 66
-							|| theWorld.getBlockId(SC.posX, SC.posY, SC.posZ) != 0
-							|| theWorld.getBlockId(SC.posX, SC.posY + 1,
-									SC.posZ) != 0) {
+							|| theWorld.getBlock(SC.posX, SC.posY, SC.posZ) != Blocks.air
+							|| theWorld.getBlock(SC.posX, SC.posY + 1, SC.posZ) != Blocks.air) {
 						SC.posY++;
 					}
 				}

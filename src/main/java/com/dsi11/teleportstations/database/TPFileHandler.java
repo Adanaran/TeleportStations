@@ -7,7 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Level;
+
+import org.apache.logging.log4j.Level;
 
 import com.dsi11.teleportstations.TeleportStations;
 
@@ -53,12 +54,12 @@ public class TPFileHandler {
 		if (file != null) {
 			if (read) {
 				try {
-					TeleportStations.logger.log(Level.FINE,
+					TeleportStations.logger.log(Level.DEBUG,
 							"Writing flatfile database to disk...");
 					writer = new BufferedWriter(new FileWriter(file));
 					for (Map.Entry<ChunkCoordinates, TeleData> entry : TeleportStations.db
 							.getDB().entrySet()) {
-						TeleportStations.logger.log(Level.FINER, "Writing: "
+						TeleportStations.logger.log(Level.TRACE, "Writing: "
 								+ entry.getValue().toString());
 						writer.write(entry.getValue().toString());
 						writer.newLine();
@@ -80,12 +81,12 @@ public class TPFileHandler {
 				return true;
 			} else {
 				TeleportStations.logger
-						.log(Level.SEVERE,
+						.log(Level.FATAL,
 								"Database was not read before saving - nearly impossible -.-");
 				return false;
 			}
 		} else {
-			TeleportStations.logger.log(Level.SEVERE,
+			TeleportStations.logger.log(Level.FATAL,
 					"Ouch - something went terribly wrong");
 			return false;
 		}
@@ -106,9 +107,10 @@ public class TPFileHandler {
 		TeleportStations.logger.log(Level.INFO, "Checking world sync...");
 		if (!worldName.equals(TeleportStations.proxy.getWorldName())
 				|| file == null) {
-			TeleportStations.logger.log(Level.FINE, "World out of sync! Resync!");
+			TeleportStations.logger.log(Level.DEBUG,
+					"World out of sync! Resync!");
 			worldName = TeleportStations.proxy.getWorldName();
-			TeleportStations.logger.log(Level.FINER, "Worldname: " + worldName);
+			TeleportStations.logger.log(Level.TRACE, "Worldname: " + worldName);
 			if (!TeleportStations.proxy.isServer()) {
 				file = new File(TeleportStations.dir + "/saves/"
 						+ worldName.replaceAll("\\.", "_") + "/TPDatabase.txt");
@@ -117,7 +119,8 @@ public class TPFileHandler {
 				file = new File(TeleportStations.dir + "/" + worldName
 						+ "/TPDatabase.txt");
 			}
-			TeleportStations.logger.log(Level.FINER, "Filepath: " + file.getAbsolutePath());
+			TeleportStations.logger.log(Level.TRACE,
+					"Filepath: " + file.getAbsolutePath());
 			if (!file.exists()) {
 				try {
 					file.createNewFile();
@@ -137,27 +140,31 @@ public class TPFileHandler {
 
 	private boolean readFromFileWithOutCheck() {
 		if (!read) {
-			TeleportStations.logger.log(Level.INFO, "Reading database from file...");
+			TeleportStations.logger.log(Level.INFO,
+					"Reading database from file...");
 			BufferedReader reader = null;
 			TeleData td;
 			if (file != null) {
 				String line;
-				TeleportStations.logger.log(Level.FINE, "Reading new data");
+				TeleportStations.logger.log(Level.DEBUG, "Reading new data");
 				try {
 					reader = new BufferedReader(new FileReader(file));
 					db.clearDB();
 					while ((line = reader.readLine()) != null) {
-						TeleportStations.logger.log(Level.FINER, "Read data: " + line);
+						TeleportStations.logger.log(Level.TRACE, "Read data: "
+								+ line);
 						td = new TeleData(line);
 						int meta = td.getMeta();
 						db.addTP(td);
 					}
-					TeleportStations.logger.log(Level.INFO, "Finished reading database from file");
+					TeleportStations.logger.log(Level.INFO,
+							"Finished reading database from file");
 					read = true;
 					return true;
 				} catch (Exception e) {
-					TeleportStations.logger.log(Level.SEVERE, "Reader crashed: "+e.getMessage()); 
-//					e.printStackTrace();
+					TeleportStations.logger.log(Level.FATAL, "Reader crashed: "
+							+ e.getMessage());
+					// e.printStackTrace();
 				} finally {
 					if (reader != null) {
 						try {

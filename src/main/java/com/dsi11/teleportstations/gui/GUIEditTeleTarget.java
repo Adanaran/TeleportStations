@@ -4,13 +4,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.logging.Level;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
+import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -56,7 +56,8 @@ public class GUIEditTeleTarget extends GuiScreen {
 		this.z = z;
 		selected = -1;
 		metacheck = y == -1 ? -1 : world.getBlockMetadata(x, y, z);
-		TeleportStations.logger.log(Level.FINE, "Teleportermeta: " + metacheck);
+		TeleportStations.logger
+				.log(Level.TRACE, "Teleportermeta: " + metacheck);
 		zielliste = (TreeMap<ChunkCoordinates, TeleData>) TeleportStations.db
 				.getDB();
 		self = zielliste.remove(new ChunkCoordinates(x, y, z));
@@ -66,7 +67,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 		for (Iterator<Map.Entry<ChunkCoordinates, TeleData>> entry = zielliste
 				.entrySet().iterator(); entry.hasNext();) {
 			TeleData LName = entry.next().getValue();
-			if (LName.getWorldType() != world.getWorldInfo().getDimension()
+			if (LName.getWorldType() != world.provider.dimensionId
 					|| (metacheck <= 0 && LName.getMeta() > 0)
 					|| (metacheck > 0 && LName.getMeta() == 0)) {
 				entry.remove();
@@ -84,11 +85,11 @@ public class GUIEditTeleTarget extends GuiScreen {
 			int i = 0;
 			for (Entry<ChunkCoordinates, TeleData> entry : zielliste.entrySet()) {
 				TeleData LName = entry.getValue();
-				TeleportStations.logger.log(Level.FINER, LName.getMeta()
+				TeleportStations.logger.log(Level.TRACE, LName.getMeta()
 						+ " meta Lname");
 				zieldb[i] = entry.getKey();
 				zielNames[i] = new StringBuilder(LName.getName());
-				TeleportStations.logger.log(Level.FINER, i + " benannt: "
+				TeleportStations.logger.log(Level.TRACE, i + " benannt: "
 						+ zielNames[i].toString());
 				if (LName.getZiel() != null) {
 					ChunkCoordinates tZiel = LName.getZiel();
@@ -119,7 +120,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 				TeleportStations.db.changeTarget(self.posX, self.posY,
 						self.posZ, zieldb[selected]);
 			}
-			TeleportStations.logger.log(Level.FINE, "Changed target at " + x
+			TeleportStations.logger.log(Level.TRACE, "Changed target at " + x
 					+ "|" + y + "|" + z + " to " + zieldb[selected].posX + "|"
 					+ (zieldb[selected].posY) + "|" + zieldb[selected].posZ);
 		} else {
@@ -155,10 +156,11 @@ public class GUIEditTeleTarget extends GuiScreen {
 		handleKeyboardInput();
 		int k = width - width >> 1;
 		int l = height - height >> 1;
-		int i1 = mc.renderEngine
-				.getTexture("/adanaran/mods/ts/textures/TPGUI.png");
+		int i1 = 0;
+		// TODO int i1 =
+		// mc.renderEngine.getTexture("/adanaran/mods/ts/textures/TPGUI.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i1);
+		// TODO mc.renderEngine.bindTexture(i1);
 		int j1 = k;
 		int l1 = l;
 		drawTexturedModalRect(j1, l1, 0, 0, width, height);
@@ -228,13 +230,14 @@ public class GUIEditTeleTarget extends GuiScreen {
 	}
 
 	private void c() {
-		fontRenderer.drawString("Teleporter " + self.getName(), 8, 6, 0x404040);
+		fontRendererObj.drawString("Teleporter " + self.getName(), 8, 6,
+				0x404040);
 		for (int i = 0; i < zlSize; i++) {
 			int j = 20;
 			int k = (14 * i + 20) - scrollY;
 			if (k >= 20 && k + 9 < 159) {
-				fontRenderer
-						.drawString(zielNames[i].toString(), j, k, 0xdddddd);
+				fontRendererObj.drawString(zielNames[i].toString(), j, k,
+						0xdddddd);
 			}
 		}
 	}
@@ -257,7 +260,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 	@Override
 	protected void keyTyped(char c, int i) {
 		if (mc.gameSettings.keyBindInventory.isPressed()
-				|| i == mc.gameSettings.keyBindInventory.keyCode) {
+				|| i == mc.gameSettings.keyBindInventory.getKeyCode()) {
 			mc.displayGuiScreen(null);
 		}
 	}

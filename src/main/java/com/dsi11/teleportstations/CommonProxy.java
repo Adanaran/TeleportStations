@@ -42,7 +42,8 @@ public class CommonProxy implements IGuiHandler {
 	 * @return String the current world name
 	 */
 	public String getWorldName() {
-		return MinecraftServer.getServer().worldServers[0].getSaveHandler().getSaveDirectoryName();
+		return MinecraftServer.getServer().worldServers[0].getSaveHandler()
+				.getWorldDirectoryName();
 	}
 
 	/**

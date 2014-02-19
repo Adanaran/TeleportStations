@@ -1,0 +1,16 @@
+[
+{
+  "modid": "teleportstations",
+  "name": "TeleportStations",
+  "description": "Mod for teleporting the player.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["Adanaran", "Demitreus"],
+  "credits": "Forge",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

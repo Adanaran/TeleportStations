@@ -34,22 +34,12 @@ public class BlockTeleporter extends BlockTeleTarget {
 	@Override
 	public int update(World world, int i, int j, int k) {
 		if (power(world, i, j, k)) {
-			// TODO world.setBlockWithNotify(i, j, k,
-			// TeleportStations.blockTeleporterAn);
+		 world.setBlock(i, j, k,TeleportStations.blockTeleporterAn);
 		} else {
-			// TODO world.setBlockWithNotify(i, j, k,
-			// TeleportStations.blockTeleporter);
+			world.setBlock(i, j, k,TeleportStations.blockTeleporter);
 		}
 		return super.update(world, i, j, k);
 	}
-
-	// TODO Textures
-	// @Override
-	// public int getBlockTextureFromSideAndMetadata(int par1, int par2) {
-	// return par1 == 1 ? this == TeleportStations.blockTeleporter ? super
-	// .getBlockTextureFromSideAndMetadata(par1, par2) : (super
-	// .getBlockTextureFromSideAndMetadata(par1, par2) + 16) : 32;
-	// }
 
 	@Override
 	public boolean onBlockActivated(World par1World, int par2, int par3,

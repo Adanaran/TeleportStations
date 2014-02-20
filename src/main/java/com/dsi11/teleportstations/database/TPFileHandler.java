@@ -112,8 +112,8 @@ public class TPFileHandler {
 			worldName = TeleportStations.proxy.getWorldName();
 			TeleportStations.logger.log(Level.TRACE, "Worldname: " + worldName);
 			if (!TeleportStations.proxy.isServer()) {
-				file = new File(TeleportStations.dir + "/saves/"
-						+ worldName.replaceAll("\\.", "_") + "/TPDatabase.txt");
+				file = new File("saves/" + worldName.replaceAll("\\.", "_")
+						+ "/TPDatabase.txt");
 
 			} else {
 				file = new File(TeleportStations.dir + "/" + worldName
@@ -155,7 +155,7 @@ public class TPFileHandler {
 								+ line);
 						td = new TeleData(line);
 						int meta = td.getMeta();
-						db.addTP(td);
+						db.addTeleDataToDatabaseWithOutNotification(td);
 					}
 					TeleportStations.logger.log(Level.INFO,
 							"Finished reading database from file");

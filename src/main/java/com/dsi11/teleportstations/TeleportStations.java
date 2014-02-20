@@ -7,6 +7,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 
 import com.dsi11.teleportstations.blocks.BlockTeleMid;
 import com.dsi11.teleportstations.blocks.BlockTeleTarget;
@@ -18,8 +19,13 @@ import com.dsi11.teleportstations.entities.EntitySpawnPearl;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 import com.dsi11.teleportstations.items.ItemSpawnPearl;
 import com.dsi11.teleportstations.items.ItemTeleporter;
-import com.dsi11.teleportstations.packethandler.TPPlayerTracker;
+import com.dsi11.teleportstations.network.PacketPipeline;
+import com.dsi11.teleportstations.network.TPPacketHandler;
+import com.dsi11.teleportstations.network.TPPlayerTracker;
+import com.dsi11.teleportstations.network.packets.TPAddPacket;
+import com.dsi11.teleportstations.network.packets.TPRemovePacket;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -28,6 +34,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -41,10 +48,6 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
  * @author Demitreus
  */
 @Mod(modid = "TeleportStations", name = "Teleport Stations", version = "0.1")
-// TODO existiert nicht mehr, channel gehen anders: @NetworkMod(channels = {
-// "tpChange", "tpRemove", "tpDB" }, versionBounds = "[0.1,)",
-// clientSideRequired = true, serverSideRequired = false, packetHandler =
-// TPPacketHandler.class)
 public class TeleportStations {
 
 	// The mod instance
@@ -72,6 +75,12 @@ public class TeleportStations {
 	public static String dir;
 	// The Logger
 	public static Logger logger;
+	// PacketPipeline
+	public static final PacketPipeline packetPipeline = new PacketPipeline();
+
+	@EventHandler
+	public void initialise(FMLInitializationEvent evt) {
+	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -95,11 +104,21 @@ public class TeleportStations {
 		registerBlockTeleTop();
 		registerSpawnPearl();
 		registerHandtele();
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 		proxy.registerRenderInformation();
-		db = new TPDatabase();
+		db = new TPDatabase(new TPPacketHandler());
 		fh = new TPFileHandler(db);
 		pt = new TPPlayerTracker(db, fh);
-		// TODO fix: GameRegistry.registerPlayerTracker(pt);
+		FMLCommonHandler.instance().bus().register(pt);
+		packetPipeline.initialise();
+		// register packets
+		packetPipeline.registerPacket(TPAddPacket.class);
+		packetPipeline.registerPacket(TPRemovePacket.class);
+	}
+
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent evt) {
+		packetPipeline.postInitialise();
 	}
 
 	private void registerSpawnPearl() {

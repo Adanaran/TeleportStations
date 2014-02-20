@@ -57,6 +57,16 @@ public class CommonProxy implements IGuiHandler {
 	public World getWorld(int dim) {
 		return DimensionManager.getWorld(dim);
 	}
+	
+	/**
+	 * Gets the client world.
+	 * 
+	 * @return World the client world (null at server side)
+	 */
+    public World getClientWorld()
+    {
+        return null;
+    }
 
 	/**
 	 * Determines if client or dedicated server.

@@ -1,5 +1,7 @@
 package com.dsi11.teleportstations.entities;
 
+import com.dsi11.teleportstations.TeleportStations;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -60,11 +62,13 @@ public class EntitySpawnPearl extends EntityThrowable {
 
 	@Override
 	protected void onImpact(MovingObjectPosition par1MovingObjectPosition) {
-		World theWorld = null; // TODO
-								// ModLoader.getMinecraftInstance().theWorld;
-		EntityPlayer thePlayer = null; // TODO
-										// ModLoader.getMinecraftInstance().thePlayer;
-		Minecraft mc = null; // TODO ModLoader.getMinecraftInstance();
+		World theWorld = null;
+		// TODO Modloader-Referenzen
+		// ModLoader.getMinecraftInstance().theWorld;
+		EntityPlayer thePlayer = null;
+		// ModLoader.getMinecraftInstance().thePlayer;
+		Minecraft mc = null;
+		// ModLoader.getMinecraftInstance();
 		InventoryPlayer inv = thePlayer.inventory;
 		if (par1MovingObjectPosition.entityHit != null) {
 			if (!par1MovingObjectPosition.entityHit.attackEntityFrom(

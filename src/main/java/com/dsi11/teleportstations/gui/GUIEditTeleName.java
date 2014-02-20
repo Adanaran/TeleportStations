@@ -11,6 +11,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.blocks.BlockTeleTarget;
+import com.dsi11.teleportstations.database.TeleData;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 
 /**
@@ -107,7 +108,7 @@ public class GUIEditTeleName extends GuiScreen {
 
 	@Override
 	public void onGuiClosed() {
-		TeleportStations.db.addNewTP(name, i, j, k,
-				world.getBlockMetadata(i, j, k), world.provider.dimensionId);
+		TeleportStations.db.addTeleDataToDatabaseWithNotificationAtClient(new TeleData(name, i, j, k,
+				world.getBlockMetadata(i, j, k), world.provider.dimensionId));
 	}
 }

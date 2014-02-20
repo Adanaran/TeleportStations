@@ -4,16 +4,15 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.logging.log4j.Level;
-
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChunkCoordinates;
 
+import org.apache.logging.log4j.Level;
+
 import com.dsi11.teleportstations.TeleportStations;
-import com.dsi11.teleportstations.packethandler.TPPacketHandler;
+import com.dsi11.teleportstations.network.TPPacketHandler;
 
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Database for {@link#TeleportStations}.
@@ -23,184 +22,140 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author Adanaran
  */
 public class TPDatabase {
-	private static TreeMap<ChunkCoordinates, TeleData> db = new TreeMap<ChunkCoordinates, TeleData>(
+	private TreeMap<ChunkCoordinates, TeleData> db = new TreeMap<ChunkCoordinates, TeleData>(
 			new ChunkCoordsComparator());
+	private TPPacketHandler packetHandler;
 
 	/**
 	 * Creates a new Database.
 	 * <p>
 	 * Does nothing else.
 	 */
-	public TPDatabase() {
+	public TPDatabase(TPPacketHandler packetHandler) {
+		this.packetHandler = packetHandler;
 	}
 
 	/**
-	 * Adds a teleporter to the database.
+	 * Used from TPAddPacket, FileHander, this.
 	 * 
-	 * @param name
-	 *            String teleporter's name
-	 * @param x
-	 *            int x-coordinate
-	 * @param y
-	 *            int y-coordinate
-	 * @param z
-	 *            int z-coordinate
-	 * @param meta
-	 *            int meta
-	 * @param dim
-	 *            int world dimension
+	 * @param teleData
+	 *            TeleData
 	 */
-	@SideOnly(Side.CLIENT)
-	public void addNewTP(String name, int x, int y, int z, int meta, int dim) {
-		TeleData td = new TeleData(name, x, y, z, meta, dim);
-		db.put(new ChunkCoordinates(x, y, z), td);
-		if (!TeleportStations.proxy.isSinglePlayer()) {
-			// TODO Netty: PacketDispatcher.sendPacketToServer(TPPacketHandler
-			// .getNewAddTPPacket(td));
-		} else {
-			// TODO Netty: TeleportStations.fh.writeToFile();
-			// TPPacketHandler.sendPacketToClients(TPPacketHandler
-			// .getNewAddTPPacket(td));
-		}
+	public void addTeleDataToDatabaseWithOutNotification(TeleData teleData) {
+		this.db.put(new ChunkCoordinates(teleData.posX, teleData.posY,
+				teleData.posZ), teleData);
 	}
 
 	/**
-	 * Adds a teleporter to the database.
-	 * <p>
-	 * Not for use outside of {@link TPFileHandler}.
+	 * Used from Packet.
 	 * 
-	 * @param td
+	 * @param teleData
+	 *            TeleData
 	 */
-	public void addTP(TeleData td) {
-		if (TeleportStations.proxy.isServer()
-				|| TeleportStations.proxy.isSinglePlayer()) {
-			TeleportStations.logger.log(Level.TRACE, "Received  " + td
-					+ " from flatfile database");
-			db.put(new ChunkCoordinates(td.posX, td.posY, td.posZ), td);
-			TeleportStations.logger.log(Level.TRACE, "Groesse der Datenbank: "
-					+ db.size() + " Eintraege.");
-		}
+	public void addTeleDataToDatabaseWithNotificationAtServer(TeleData teleData) {
+		addTeleDataToDatabaseWithOutNotification(teleData);
+		// notify all
+		packetHandler.SendTPAddPacket(teleData, Side.CLIENT);
 	}
 
 	/**
-	 * Removes a teleporter from the database.
+	 * GuiEditTeleName
 	 * 
-	 * @param x
-	 *            int x-coordinate
-	 * @param y
-	 *            int y-coordinate
-	 * @param z
-	 *            int z-coordinate
+	 * @param teleData
 	 */
-	public void removeTP(int x, int y, int z) {
-		ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
+	public void addTeleDataToDatabaseWithNotificationAtClient(TeleData teleData) {
+		addTeleDataToDatabaseWithOutNotification(teleData);
+		// notify server
+		packetHandler.SendTPAddPacket(teleData, Side.SERVER);
+	}
+
+	/**
+	 * Block
+	 * 
+	 * @param i
+	 * @param j
+	 * @param k
+	 * @return
+	 */
+	public boolean isTPInDatabase(int i, int j, int k) {
+		return db.containsKey(new ChunkCoordinates(i, j, k));
+	}
+
+	/**
+	 * Block
+	 * 
+	 * @param i
+	 * @param j
+	 * @param k
+	 * @return
+	 */
+	public TeleData getTeleDataByCoords(int i, int j, int k) {
+		return getTeleDataByCoords(new ChunkCoordinates(i, j, k));
+	}
+
+	/**
+	 * this
+	 * 
+	 * @param chunkCoordinates
+	 * @return
+	 */
+	public TeleData getTeleDataByCoords(ChunkCoordinates chunkCoordinates) {
+		return db.get(chunkCoordinates);
+	}
+
+	/**
+	 * Block
+	 * 
+	 * @param i
+	 * @param j
+	 * @param k
+	 */
+	public void removeTP(int i, int j, int k) {
+		ChunkCoordinates coords = new ChunkCoordinates(i, j, k);
 		TeleData td = db.remove(coords);
 		if (TeleportStations.proxy.isServer()
 				|| TeleportStations.proxy.isSinglePlayer()) {
-			// TODO Netty: TPPacketHandler.sendPacketToClients(TPPacketHandler
-			// .getNewRemoveTPPacket(td));
+			packetHandler.SendTPRemovePacket(td, Side.CLIENT);
 			deleteReferencesAfterTPRemoved(coords);
 		}
 	}
 
 	/**
-	 * Changes a teleporter's target in the database.
+	 * Block
 	 * 
-	 * @param x
-	 *            int x-coordinate
-	 * @param y
-	 *            int y-coordinate
-	 * @param z
-	 *            int z-coordinate
-	 * @param coords
-	 *            ChunkCoordinates coordinates of the new target
+	 * @param i
+	 * @param j
+	 * @param k
+	 * @param meta
 	 */
-	@SideOnly(Side.CLIENT)
-	public void changeTarget(int x, int y, int z, ChunkCoordinates ziel) {
-		ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
+	public void updateMeta(int i, int j, int k, int meta) {
+		ChunkCoordinates coords = new ChunkCoordinates(i, j, k);
 		TeleData td = db.get(coords);
-		td.setZiel(ziel);
+		td.setMeta(meta);
 		db.put(coords, td);
-		if (!TeleportStations.proxy.isSinglePlayer()) {
-			// TODO Netty: PacketDispatcher.sendPacketToServer(TPPacketHandler
-			// .getNewAddTPPacket(td));
-		} else {
-			TeleportStations.fh.writeToFile();
-		}
+		TeleportStations.fh.writeToFile();
 	}
 
 	/**
-	 * Clears the database.
-	 * <p>
-	 * Use with caution.
+	 * FileHandler
+	 * 
+	 * @return
+	 */
+	public TreeMap<ChunkCoordinates, TeleData> getDB() {
+		return db;
+	}
+
+	/**
+	 * FileHandler
 	 */
 	public void clearDB() {
 		db.clear();
 	}
 
 	/**
-	 * Send the database to all connected players.
+	 * GuiEditTeleName
 	 * 
-	 * @param player
-	 *            EntityPlayer the player the database should be send to
-	 */
-	public void sendDB(EntityPlayer player) {
-		if (db.size() > 0) {
-			TeleportStations.logger.log(Level.INFO,
-					"Sending databse to " + player.getGameProfile().getName()
-							+ ", size: " + db.size());
-			// TODO Netty: PacketDispatcher.sendPacketToPlayer(
-			// TPPacketHandler.getNewDatabaseSyncPacket(this.getDB()),
-			// (Player) player);
-		} else {
-			TeleportStations.logger.log(Level.INFO,
-					"Database empty, not sending.");
-		}
-	}
-
-	/**
-	 * Processes changed teleporters from server.
-	 * 
-	 * @param td
-	 *            TeleData the changed dataobject
-	 */
-	public void receiveChangedTPFromServer(TeleData td) {
-		db.put(new ChunkCoordinates(td.posX, td.posY, td.posZ), td);
-	}
-
-	/**
-	 * Processes changed teleporters from clients.
-	 * 
-	 * @param td
-	 *            TeleData the changed data-object
-	 */
-	public void receiveChangedTPFromClient(TeleData td) {
-		db.put(new ChunkCoordinates(td.posX, td.posY, td.posZ), td);
-		// TODO Netty: TPPacketHandler.sendPacketToClients(TPPacketHandler
-		// .getNewAddTPPacket(td));
-		TeleportStations.fh.writeToFile();
-	}
-
-	/**
-	 * Processes removed teleporters from servers.
-	 * 
-	 * @param x
-	 *            int x-coordinate
-	 * @param y
-	 *            int y-coordinate
-	 * @param z
-	 *            int z-coordinate
-	 */
-	public void receiveRemovedTPFromServer(int x, int y, int z) {
-		ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
-		db.remove(coords);
-		deleteReferencesAfterTPRemoved(coords);
-	}
-
-	/**
-	 * Gets the names of all teleporters.
-	 * 
-	 * @return LinkedList list of all teleporter names
+	 * @return
 	 */
 	public LinkedList getAllNames() {
 		LinkedList<String> names = new LinkedList();
@@ -211,102 +166,62 @@ public class TPDatabase {
 	}
 
 	/**
-	 * Gets access to the internal database.
+	 * TileEntityTeleporter
 	 * 
-	 * @return TreeMap<ChunkCoordinates, TeleData> the internal database
+	 * @param chunkCoordinates
+	 * @return
 	 */
-	public static TreeMap<ChunkCoordinates, TeleData> getDB() {
-		return (TreeMap<ChunkCoordinates, TeleData>) db.clone();
+	public TeleData getZielByCoords(ChunkCoordinates chunkCoordinates) {
+		TeleData teleData = db.get(chunkCoordinates);
+		if (teleData.getZiel() == null) {
+			return null;
+		}
+		TeleData target = db.get(teleData.getZiel());
+		return target;
 	}
 
 	/**
-	 * Gets a teleporters name.
+	 * GuiEditTeleTarget
+	 * 
+	 * @param chunkCoordinates
+	 * @param chunkCoordinates2
+	 */
+	public void changeTarget(ChunkCoordinates self, ChunkCoordinates target) {
+		TeleData td = db.get(self);
+		td.setZiel(target);
+		db.put(self, td);
+		if (!TeleportStations.proxy.isSinglePlayer()) {
+			packetHandler.sendTPUpdatePacket(td, Side.SERVER);
+		} else {
+			TeleportStations.fh.writeToFile();
+		}
+	}
+
+	/**
+	 * TPPlayerTracker
+	 * 
+	 * @param player
+	 */
+	public void sendDBToPlayer(EntityPlayerMP player) {
+		packetHandler.sendTPDatabasePacket(db, player);
+	}
+
+	/**
+	 * TPRemovePacket
+	 * 
+	 * @param teleData
+	 */
+	public void removeTeleDataFromDatabaseWithOutNotification(TeleData teleData) {
+		TeleData td = db.remove(new ChunkCoordinates(teleData.posX,
+				teleData.posY, teleData.posZ));
+		deleteReferencesAfterTPRemoved(td);
+	}
+
+	/**
+	 * this only serverside
 	 * 
 	 * @param coords
-	 *            ChunkCoordinates of the teleporter
-	 * @return String the teleporter's name
 	 */
-	public String getNameByCoords(ChunkCoordinates coords) {
-		return db.get(coords).getName();
-	}
-
-	/**
-	 * Gets the teleporter's name for the given coordinates.
-	 * 
-	 * @param x
-	 *            int x-coordinate
-	 * @param y
-	 *            int y-coordinate
-	 * @param z
-	 *            int z-coordinate
-	 * @return String name of the teleporter at given coordinates or
-	 *         {@code null}
-	 */
-	public String getNameByCoords(int x, int y, int z) {
-		return getNameByCoords(new ChunkCoordinates(x, y, z));
-	}
-
-	/**
-	 * Gets the TeleData object for the given coordinates.
-	 * 
-	 * @param x
-	 *            int x-coordinate
-	 * @param y
-	 *            int y-coordinate
-	 * @param z
-	 *            int z-coordinate
-	 * @return TeleData dataobject at given coordinates or {@code null}
-	 */
-	public TeleData getTeleDataByCoords(int x, int y, int z) {
-		return db.get(new ChunkCoordinates(x, y, z));
-	}
-
-	/**
-	 * Gets a teleporters target.
-	 * 
-	 * @param coords
-	 *            ChunkCoordinates of the teleporter
-	 * @return ChunkCoordinates the teleporter's target
-	 */
-	public ChunkCoordinates getZielByCoords(ChunkCoordinates coords) {
-		return db.get(coords).getZiel();
-	}
-
-	/**
-	 * Checks if teleporter at given coordinates is listed in the database.
-	 * 
-	 * @param x
-	 *            int the x coordinate
-	 * @param y
-	 *            int the y coordinate
-	 * @param z
-	 *            int the z coordinate
-	 * @return true if in database
-	 */
-	public boolean isTPInDatabase(int x, int y, int z) {
-		return db.containsKey(new ChunkCoordinates(x, y, z));
-	}
-
-	/**
-	 * Updates the meta of the teleporter at given coordinates.
-	 * 
-	 * @param x
-	 *            int the x coordinate
-	 * @param y
-	 *            int the y coordinate
-	 * @param z
-	 *            int the z coordinate
-	 * @param meta
-	 *            int the new meta value
-	 */
-	public void updateMeta(int x, int y, int z, int meta) {
-		ChunkCoordinates coords = new ChunkCoordinates(x, y, z);
-		TeleData td = db.get(coords);
-		td.setMeta(meta);
-		db.put(coords, td);
-		TeleportStations.fh.writeToFile();
-	}
-
 	private void deleteReferencesAfterTPRemoved(ChunkCoordinates coords) {
 		TeleportStations.logger
 				.log(Level.TRACE, "Removing references in DB...");
@@ -321,6 +236,11 @@ public class TPDatabase {
 		TeleportStations.logger.log(Level.TRACE, "All references removed.");
 	}
 
+	/**
+	 * this only serverside
+	 * 
+	 * @param coords
+	 */
 	private void deleteReferencesAfterMetaChange(ChunkCoordinates coords) {
 		TeleportStations.logger.log(Level.TRACE,
 				"Checking for references in DB...");
@@ -341,5 +261,36 @@ public class TPDatabase {
 		TeleportStations.fh.writeToFile();
 		TeleportStations.logger.log(Level.TRACE,
 				"All wrong references deleted.");
+	}
+
+	/**
+	 * Packet, this
+	 * 
+	 * @param teleData
+	 */
+	public void updateTeleDataInDataBaseWithoutNotification(TeleData teleData) {
+		ChunkCoordinates coords = new ChunkCoordinates(teleData.posX,
+				teleData.posY, teleData.posZ);
+		db.put(coords, teleData);
+	}
+
+	/**
+	 * Packet
+	 * 
+	 * @param teleData
+	 */
+	public void updateTeleDataInDataBaseWithNotificationAtServer(
+			TeleData teleData) {
+		updateTeleDataInDataBaseWithoutNotification(teleData);
+		packetHandler.sendTPUpdatePacket(teleData, Side.CLIENT);
+	}
+
+	/**
+	 * Packet
+	 * 
+	 * @param dataBase
+	 */
+	public void receiveDB(TreeMap<ChunkCoordinates, TeleData> dataBase) {
+		this.db = dataBase;
 	}
 }

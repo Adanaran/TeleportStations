@@ -93,8 +93,8 @@ public class GUIEditTeleTarget extends GuiScreen {
 						+ zielNames[i].toString());
 				if (LName.getZiel() != null) {
 					ChunkCoordinates tZiel = LName.getZiel();
-					String ttName = TeleportStations.db.getNameByCoords(
-							tZiel.posX, tZiel.posY, tZiel.posZ);
+					String ttName = TeleportStations.db.getTeleDataByCoords(
+							tZiel.posX, tZiel.posY, tZiel.posZ).getName();
 					if (ttName != null) {
 						zielNames[i].append(" (" + ttName + ")");
 					}
@@ -117,8 +117,8 @@ public class GUIEditTeleTarget extends GuiScreen {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(zieldb[selected]);
 			} else {
-				TeleportStations.db.changeTarget(self.posX, self.posY,
-						self.posZ, zieldb[selected]);
+				TeleportStations.db.changeTarget(new ChunkCoordinates(
+						self.posX, self.posY, self.posZ), zieldb[selected]);
 			}
 			TeleportStations.logger.log(Level.TRACE, "Changed target at " + x
 					+ "|" + y + "|" + z + " to " + zieldb[selected].posX + "|"
@@ -127,8 +127,8 @@ public class GUIEditTeleTarget extends GuiScreen {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(null);
 			} else {
-				TeleportStations.db.changeTarget(self.posX, self.posY,
-						self.posZ, null);
+				TeleportStations.db.changeTarget(new ChunkCoordinates(
+						self.posX, self.posY, self.posZ), null);
 			}
 		}
 	}

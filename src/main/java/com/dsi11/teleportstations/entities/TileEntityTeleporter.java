@@ -3,7 +3,7 @@ package com.dsi11.teleportstations.entities;
 import org.apache.logging.log4j.Level;
 
 import com.dsi11.teleportstations.TeleportStations;
-import com.dsi11.teleportstations.packethandler.TPPacketHandler;
+import com.dsi11.teleportstations.database.TeleData;
 
 import net.minecraft.block.Block;
 import net.minecraft.command.ICommandManager;
@@ -43,12 +43,13 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	public void updateEntity() {
 		super.updateEntity();
 		try {
-			nameAndTarget[0] = TeleportStations.db.getNameByCoords(this.xCoord,
-					this.yCoord - 2, this.zCoord);
-			nameAndTarget[1] = TeleportStations.db
-					.getNameByCoords(TeleportStations.db
-							.getZielByCoords(new ChunkCoordinates(this.xCoord,
-									this.yCoord - 2, this.zCoord)));
+			TeleData self = TeleportStations.db.getTeleDataByCoords(
+					this.xCoord, this.yCoord - 2, this.zCoord);
+			TeleData target = TeleportStations.db
+					.getZielByCoords(new ChunkCoordinates(xCoord, yCoord,
+							zCoord));
+			nameAndTarget[0] = self.getName();
+			nameAndTarget[1] = target.getName();
 		} catch (Exception e) {
 			// Can cause Nullpointer, can be ignored
 		}

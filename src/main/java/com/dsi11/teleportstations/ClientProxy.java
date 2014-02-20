@@ -14,6 +14,7 @@ import com.dsi11.teleportstations.gui.GUIEditTeleTarget;
 import com.dsi11.teleportstations.renderer.RenderSpawnPearl;
 import com.dsi11.teleportstations.renderer.TileEntityTeleRenderer;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
@@ -65,6 +66,12 @@ public class ClientProxy extends CommonProxy {
 		return DimensionManager.getWorld(dim);
 	}
 
+	@Override
+    public World getClientWorld()
+    {
+        return FMLClientHandler.instance().getClient().theWorld;
+    }
+	
 	@Override
 	public boolean isSinglePlayer() {
 		return Minecraft.getMinecraft().isSingleplayer();

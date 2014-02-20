@@ -2,15 +2,20 @@ package com.dsi11.teleportstations.blocks;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRail;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 /**
@@ -48,15 +53,15 @@ public class BlockTeleTarget extends Block {
 		return false;
 	}
 
-	// @Override
-	// public boolean isBlockNormalCube(World world, int x, int y, int z) {
-	// return false;
-	// }
-
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i,
 			int j, int k) {
 		return null;
+	}
+
+	@Override
+	public boolean isBlockNormalCube() {
+		return false;
 	}
 
 	@Override
@@ -70,29 +75,24 @@ public class BlockTeleTarget extends Block {
 	// return "/adanaran/mods/ts/textures/TS.png";
 	// }
 
-	// TODO NeighborBlockChange
-	// @Override
-	// public void onNeighborBlockChange(World par1World, int par2, int par3,
-	// int par4, int par5) {
-	// update(par1World, par2, par3, par4);
-	// if (!par1World.isBlockNormalCube(par2, par3 - 1, par4)) {
-	// deleteTP(par1World, par2, par3, par4);
-	// }
-	// }
+	@Override
+	public void onNeighborBlockChange(World world, int i, int j, int k,
+			Block blockChanged) {
+		update(world, i, j, k);
+		if (!this.canBlockStay(world, i, j, k)) {
+			deleteTP(world, i, j, k);
+		}
+	}
 
-	// TODO CanBlockStay
-	// @Override
-	// public boolean canBlockStay(World par1World, int par2, int par3, int
-	// par4) {
-	// return par1World.isBlockNormalCube(par2, par3 - 1, par4);
-	// }
+	@Override
+	public boolean canBlockStay(World world, int i, int j, int k) {
+		return world.getBlock(i, j - 1, k).isBlockNormalCube();
+	}
 
-	// TODO CanPlaceBlockAt
-	// @Override
-	// public boolean canPlaceBlockAt(World par1World, int par2, int par3, int
-	// par4) {
-	// return par1World.isBlockNormalCube(par2, par3 - 1, par4);
-	// }
+	@Override
+	public boolean canPlaceBlockAt(World world, int i, int j, int k) {
+		return canBlockStay(world, i, j, k);
+	}
 
 	@Override
 	public void onBlockDestroyedByPlayer(World par1World, int par2, int par3,
@@ -102,13 +102,12 @@ public class BlockTeleTarget extends Block {
 
 	}
 
-	// TODO OnBlockDestroyedByExplosion
-	// @Override
-	// public void onBlockDestroyedByExplosion(World par1World, int par2,
-	// int par3, int par4) {
-	// deleteTP(par1World, par2, par3, par4);
-	// super.onBlockDestroyedByExplosion(par1World, par2, par3, par4);
-	// }
+	@Override
+	public void onBlockDestroyedByExplosion(World world, int i, int j, int k,
+			Explosion explosion) {
+		deleteTP(world, i, j, k);
+		super.onBlockDestroyedByExplosion(world, i, j, k, explosion);
+	}
 
 	/**
 	 * Deletes a whole teleporter with it's data.
@@ -127,27 +126,22 @@ public class BlockTeleTarget extends Block {
 	 */
 	protected static void deleteTP(World world, int i, int j, int k) {
 		TeleportStations.db.removeTP(i, j, k);
-		// TODO world.SetBlock
-		// world.setBlock(i, j + 1, k, 0);
-		// world.setBlock(i, j + 2, k, 0);
-		// world.setBlock(i, j, k, 0);
+		world.setBlock(i, j + 1, k, Blocks.air, 0, 2);
+		world.setBlock(i, j + 2, k, Blocks.air, 0, 2);
+		world.setBlock(i, j, k, Blocks.air, 0, 2);
 	}
 
-	// TODO onBlockPlacedBy
-	// @Override
-	// public void onBlockPlacedBy(World par1World, int par2, int par3, int
-	// par4,
-	// EntityLiving par5EntityLiving) {
-	// par1World.setBlock(par2, par3 + 1, par4,
-	// TeleportStations.blockTeleMid.blockID);
-	// par1World.setBlockWithNotify(par2, par3 + 2, par4,
-	// TeleportStations.blockTeleTop.blockID);
-	// if (par5EntityLiving instanceof EntityPlayer) {
-	// ((EntityPlayer) par5EntityLiving).openGui(
-	// TeleportStations.instance, 0, par1World, par2, par3, par4);
-	// }
-	// update(par1World, par2, par3, par4);
-	// }
+	@Override
+	public void onBlockPlacedBy(World par1World, int i, int j, int k,
+			EntityLivingBase player, ItemStack itemStack) {
+		par1World.setBlock(i, j + 1, k, TeleportStations.blockTeleMid, 0, 2);
+		par1World.setBlock(i, j + 2, k, TeleportStations.blockTeleTop, 0, 2);
+		if (player instanceof EntityPlayer) {
+			((EntityPlayer) player).openGui(TeleportStations.instance, 0,
+					par1World, i, j, k);
+		}
+		update(par1World, i, j, k);
+	}
 
 	@Override
 	public void onEntityCollidedWithBlock(World par1World, int par2, int par3,
@@ -265,8 +259,7 @@ public class BlockTeleTarget extends Block {
 		} catch (Exception e) {
 			// Wenn das Gui mal zu lange braucht...
 		}
-		// TODO world.setBlockAndMetadataWithNotify(i, j, k, world.getBlock(i,
-		// j, k), meta);
+		world.setBlock(i, j, k, world.getBlock(i, j, k), meta, 2);
 		return meta;
 	}
 

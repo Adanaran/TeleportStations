@@ -3,7 +3,9 @@ package com.dsi11.teleportstations.blocks;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 
@@ -46,13 +48,13 @@ public class BlockTeleTop extends BlockContainer {
 		BlockTeleTarget.deleteTP(par1World, par2, par3 - 2, par4);
 	}
 
-	// TODO onBlockDestroyedByExplosion
-	// @Override
-	// public void onBlockDestroyedByExplosion(World par1World, int par2,
-	// int par3, int par4) {
-	// BlockTeleTarget.deleteTP(par1World, par2, par3 - 2, par4);
-	// super.onBlockDestroyedByExplosion(par1World, par2, par3, par4);
-	// }
+	@Override
+	public void onBlockDestroyedByExplosion(World par1World, int par2,
+			int par3, int par4, Explosion explosion) {
+		BlockTeleTarget.deleteTP(par1World, par2, par3 - 2, par4);
+		super.onBlockDestroyedByExplosion(par1World, par2, par3, par4,
+				explosion);
+	}
 
 	@Override
 	public boolean canBlockStay(World par1World, int par2, int par3, int par4) {

@@ -13,17 +13,17 @@ import com.dsi11.teleportstations.blocks.BlockTeleMid;
 import com.dsi11.teleportstations.blocks.BlockTeleTarget;
 import com.dsi11.teleportstations.blocks.BlockTeleTop;
 import com.dsi11.teleportstations.blocks.BlockTeleporter;
-import com.dsi11.teleportstations.database.TPDatabase;
-import com.dsi11.teleportstations.database.TPFileHandler;
+import com.dsi11.teleportstations.database.Database;
+import com.dsi11.teleportstations.database.FileHandler;
 import com.dsi11.teleportstations.entities.EntitySpawnPearl;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 import com.dsi11.teleportstations.items.ItemSpawnPearl;
 import com.dsi11.teleportstations.items.ItemTeleporter;
 import com.dsi11.teleportstations.network.PacketPipeline;
-import com.dsi11.teleportstations.network.TPPacketHandler;
-import com.dsi11.teleportstations.network.TPPlayerTracker;
-import com.dsi11.teleportstations.network.packets.TPAddPacket;
-import com.dsi11.teleportstations.network.packets.TPRemovePacket;
+import com.dsi11.teleportstations.network.PacketHandler;
+import com.dsi11.teleportstations.network.PlayerTracker;
+import com.dsi11.teleportstations.network.packets.AddPacket;
+import com.dsi11.teleportstations.network.packets.RemovePacket;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -57,11 +57,11 @@ public class TeleportStations {
 	@SidedProxy(clientSide = "com.dsi11.teleportstations.ClientProxy", serverSide = "com.dsi11.teleportstations.CommonProxy")
 	public static CommonProxy proxy;
 	// The database
-	public static TPDatabase db;
+	public static Database db;
 	// The filehandler
-	public static TPFileHandler fh;
+	public static FileHandler fh;
 	// The playertracker
-	public static TPPlayerTracker pt;
+	public static PlayerTracker pt;
 	// The blocks
 	public static BlockTeleTarget blockTeleTarget;
 	public static BlockTeleporter blockTeleporter;
@@ -106,14 +106,14 @@ public class TeleportStations {
 		registerHandtele();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 		proxy.registerRenderInformation();
-		db = new TPDatabase(new TPPacketHandler());
-		fh = new TPFileHandler(db);
-		pt = new TPPlayerTracker(db, fh);
+		db = new Database(new PacketHandler());
+		fh = new FileHandler(db);
+		pt = new PlayerTracker(db, fh);
 		FMLCommonHandler.instance().bus().register(pt);
 		packetPipeline.initialise();
 		// register packets
-		packetPipeline.registerPacket(TPAddPacket.class);
-		packetPipeline.registerPacket(TPRemovePacket.class);
+		packetPipeline.registerPacket(AddPacket.class);
+		packetPipeline.registerPacket(RemovePacket.class);
 	}
 
 	@EventHandler

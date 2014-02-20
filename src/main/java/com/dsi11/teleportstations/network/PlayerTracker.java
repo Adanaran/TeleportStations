@@ -3,8 +3,8 @@ package com.dsi11.teleportstations.network;
 import org.apache.logging.log4j.Level;
 
 import com.dsi11.teleportstations.TeleportStations;
-import com.dsi11.teleportstations.database.TPDatabase;
-import com.dsi11.teleportstations.database.TPFileHandler;
+import com.dsi11.teleportstations.database.Database;
+import com.dsi11.teleportstations.database.FileHandler;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -19,10 +19,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
  * 
  * @author Adanaran
  */
-public class TPPlayerTracker {
+public class PlayerTracker {
 
-	private static TPDatabase db;
-	private static TPFileHandler fh;
+	private static Database db;
+	private static FileHandler fh;
 
 	/**
 	 * Creates a new TPPlayerTracker.
@@ -32,7 +32,7 @@ public class TPPlayerTracker {
 	 * @param fh
 	 *            TPFileHandler the fileHandler
 	 */
-	public TPPlayerTracker(TPDatabase db, TPFileHandler fh) {
+	public PlayerTracker(Database db, FileHandler fh) {
 		this.db = db;
 		this.fh = fh;
 	}

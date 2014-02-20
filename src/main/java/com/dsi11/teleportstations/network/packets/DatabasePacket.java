@@ -13,11 +13,11 @@ import com.dsi11.teleportstations.database.TeleData;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 
-public class TPDatabasePacket extends AbstractPacket {
+public class DatabasePacket extends AbstractPacket {
 
 	private TreeMap<ChunkCoordinates, TeleData> dataBase;
 
-	public TPDatabasePacket(TreeMap<ChunkCoordinates, TeleData> dataBase) {
+	public DatabasePacket(TreeMap<ChunkCoordinates, TeleData> dataBase) {
 		this.dataBase = dataBase;
 	}
 

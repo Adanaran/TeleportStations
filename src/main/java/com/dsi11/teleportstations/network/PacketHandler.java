@@ -9,10 +9,10 @@ import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
 import com.dsi11.teleportstations.network.packets.AbstractPacket;
 import com.dsi11.teleportstations.network.packets.AbstractTeleDataPacket;
-import com.dsi11.teleportstations.network.packets.TPAddPacket;
-import com.dsi11.teleportstations.network.packets.TPDatabasePacket;
-import com.dsi11.teleportstations.network.packets.TPRemovePacket;
-import com.dsi11.teleportstations.network.packets.TPUpdatePacket;
+import com.dsi11.teleportstations.network.packets.AddPacket;
+import com.dsi11.teleportstations.network.packets.DatabasePacket;
+import com.dsi11.teleportstations.network.packets.RemovePacket;
+import com.dsi11.teleportstations.network.packets.UpdatePacket;
 
 import cpw.mods.fml.relauncher.Side;
 
@@ -23,26 +23,26 @@ import cpw.mods.fml.relauncher.Side;
  * 
  * @author Adanaran
  */
-public class TPPacketHandler {
+public class PacketHandler {
 
 	public void SendTPAddPacket(TeleData payload, Side targetSide) {
-		TPAddPacket packet = new TPAddPacket(payload);
+		AddPacket packet = new AddPacket(payload);
 		send(packet, targetSide);
 	}
 
 	public void SendTPRemovePacket(TeleData payload, Side targetSide) {
-		TPRemovePacket packet = new TPRemovePacket(payload);
+		RemovePacket packet = new RemovePacket(payload);
 		send(packet, targetSide);
 	}
 
 	public void sendTPUpdatePacket(TeleData payload, Side targetSide) {
-		TPUpdatePacket packet = new TPUpdatePacket(payload);
+		UpdatePacket packet = new UpdatePacket(payload);
 		send(packet, targetSide);
 	}
 
 	public void sendTPDatabasePacket(
 			TreeMap<ChunkCoordinates, TeleData> database, EntityPlayerMP player) {
-		TPDatabasePacket packet = new TPDatabasePacket(database);
+		DatabasePacket packet = new DatabasePacket(database);
 		send(packet, player);
 	}
 

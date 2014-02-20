@@ -5,9 +5,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
 
-public class TPUpdatePacket extends AbstractTeleDataPacket {
+public class UpdatePacket extends AbstractTeleDataPacket {
 
-	public TPUpdatePacket(TeleData teleData) {
+	public UpdatePacket(TeleData teleData) {
 		super(teleData);
 	}
 

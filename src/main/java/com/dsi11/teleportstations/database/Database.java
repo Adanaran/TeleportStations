@@ -10,7 +10,7 @@ import net.minecraft.util.ChunkCoordinates;
 import org.apache.logging.log4j.Level;
 
 import com.dsi11.teleportstations.TeleportStations;
-import com.dsi11.teleportstations.network.TPPacketHandler;
+import com.dsi11.teleportstations.network.PacketHandler;
 
 import cpw.mods.fml.relauncher.Side;
 
@@ -21,17 +21,17 @@ import cpw.mods.fml.relauncher.Side;
  * 
  * @author Adanaran
  */
-public class TPDatabase {
+public class Database {
 	private TreeMap<ChunkCoordinates, TeleData> db = new TreeMap<ChunkCoordinates, TeleData>(
 			new ChunkCoordsComparator());
-	private TPPacketHandler packetHandler;
+	private PacketHandler packetHandler;
 
 	/**
 	 * Creates a new Database.
 	 * <p>
 	 * Does nothing else.
 	 */
-	public TPDatabase(TPPacketHandler packetHandler) {
+	public Database(PacketHandler packetHandler) {
 		this.packetHandler = packetHandler;
 	}
 

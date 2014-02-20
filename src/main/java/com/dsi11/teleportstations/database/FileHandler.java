@@ -24,9 +24,9 @@ import net.minecraft.util.ChunkCoordinates;
  * @author Adanaran
  * 
  */
-public class TPFileHandler {
+public class FileHandler {
 
-	private TPDatabase db;
+	private Database db;
 	private File file;
 	private String worldName = "";
 	private boolean worldHasOldDatabase = false;
@@ -38,7 +38,7 @@ public class TPFileHandler {
 	 * @param db
 	 *            TPDatabase the database object
 	 */
-	public TPFileHandler(TPDatabase db) {
+	public FileHandler(Database db) {
 		this.db = db;
 	}
 

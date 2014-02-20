@@ -5,7 +5,7 @@ import net.minecraft.util.ChunkCoordinates;
 /**
  * TeleData is a dataset storing all required data for one teleporter.
  * <p>
- * Used by {@link TPDatabase} for internal saving.
+ * Used by {@link Database} for internal saving.
  * 
  * @author Adanaran
  * 

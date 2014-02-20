@@ -9,22 +9,24 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChunkCoordinates;
 
-public class TPRemovePacket extends AbstractTeleDataPacket {
+/**
+ * @author Adanaran
+ * 
+ */
+public class AddPacket extends AbstractTeleDataPacket {
 
-	public TPRemovePacket(TeleData teleData) {
+	public AddPacket(TeleData teleData) {
 		super(teleData);
 	}
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
-		// TODO Auto-generated method stub
-		TeleportStations.db
-				.removeTeleDataFromDatabaseWithOutNotification(teleData);
+		TeleportStations.db.addTeleDataToDatabaseWithOutNotification(teleData);
 	}
 
 	@Override
 	public void handleServerSide(EntityPlayer player) {
-		throw new RuntimeException("This packet is not allowed at server side.");
+		TeleportStations.db.addTeleDataToDatabaseWithNotificationAtServer(teleData);
 	}
 
 }

@@ -129,7 +129,7 @@ public class PacketPipeline extends
 
 	// Method to call from FMLInitializationEvent
 	public void initialise() {
-		this.channels = NetworkRegistry.INSTANCE.newChannel("TUT", this);
+		this.channels = NetworkRegistry.INSTANCE.newChannel("TeleportStations", this);
 	}
 
 	// Method to call from FMLPostInitializationEvent

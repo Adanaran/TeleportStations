@@ -23,7 +23,9 @@ import com.dsi11.teleportstations.network.PacketPipeline;
 import com.dsi11.teleportstations.network.PacketHandler;
 import com.dsi11.teleportstations.network.PlayerTracker;
 import com.dsi11.teleportstations.network.packets.AddPacket;
+import com.dsi11.teleportstations.network.packets.DatabasePacket;
 import com.dsi11.teleportstations.network.packets.RemovePacket;
+import com.dsi11.teleportstations.network.packets.UpdatePacket;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -113,7 +115,9 @@ public class TeleportStations {
 		packetPipeline.initialise();
 		// register packets
 		packetPipeline.registerPacket(AddPacket.class);
+		packetPipeline.registerPacket(UpdatePacket.class);
 		packetPipeline.registerPacket(RemovePacket.class);
+		packetPipeline.registerPacket(DatabasePacket.class);
 	}
 
 	@EventHandler

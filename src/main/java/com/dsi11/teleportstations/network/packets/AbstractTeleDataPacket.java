@@ -18,6 +18,9 @@ public abstract class AbstractTeleDataPacket extends AbstractPacket {
 
 	protected TeleData teleData;
 
+	public AbstractTeleDataPacket() {
+	}
+	
 	public AbstractTeleDataPacket(TeleData teleData) {
 		this.teleData = teleData;
 	}

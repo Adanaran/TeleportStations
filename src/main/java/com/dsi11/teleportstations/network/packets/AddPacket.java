@@ -15,6 +15,9 @@ import net.minecraft.util.ChunkCoordinates;
  */
 public class AddPacket extends AbstractTeleDataPacket {
 
+	public AddPacket() {
+	}
+
 	public AddPacket(TeleData teleData) {
 		super(teleData);
 	}
@@ -26,7 +29,8 @@ public class AddPacket extends AbstractTeleDataPacket {
 
 	@Override
 	public void handleServerSide(EntityPlayer player) {
-		TeleportStations.db.addTeleDataToDatabaseWithNotificationAtServer(teleData);
+		TeleportStations.db
+				.addTeleDataToDatabaseWithNotificationAtServer(teleData);
 	}
 
 }

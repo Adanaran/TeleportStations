@@ -7,6 +7,9 @@ import com.dsi11.teleportstations.database.TeleData;
 
 public class UpdatePacket extends AbstractTeleDataPacket {
 
+	public UpdatePacket() {
+	}
+
 	public UpdatePacket(TeleData teleData) {
 		super(teleData);
 	}

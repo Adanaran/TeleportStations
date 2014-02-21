@@ -54,7 +54,6 @@ public class Database {
 	 */
 	public void addTeleDataToDatabaseWithNotificationAtServer(TeleData teleData) {
 		addTeleDataToDatabaseWithOutNotification(teleData);
-		// notify all
 		packetHandler.SendTPAddPacket(teleData, Side.CLIENT);
 	}
 
@@ -65,7 +64,6 @@ public class Database {
 	 */
 	public void addTeleDataToDatabaseWithNotificationAtClient(TeleData teleData) {
 		addTeleDataToDatabaseWithOutNotification(teleData);
-		// notify server
 		packetHandler.SendTPAddPacket(teleData, Side.SERVER);
 	}
 

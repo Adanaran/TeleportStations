@@ -11,13 +11,15 @@ import net.minecraft.util.ChunkCoordinates;
 
 public class RemovePacket extends AbstractTeleDataPacket {
 
+	public RemovePacket() {
+	}
+
 	public RemovePacket(TeleData teleData) {
 		super(teleData);
 	}
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
-		// TODO Auto-generated method stub
 		TeleportStations.db
 				.removeTeleDataFromDatabaseWithOutNotification(teleData);
 	}

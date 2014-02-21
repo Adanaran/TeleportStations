@@ -17,6 +17,9 @@ public class DatabasePacket extends AbstractPacket {
 
 	private TreeMap<ChunkCoordinates, TeleData> dataBase;
 
+	public DatabasePacket() {
+	}
+
 	public DatabasePacket(TreeMap<ChunkCoordinates, TeleData> dataBase) {
 		this.dataBase = dataBase;
 	}

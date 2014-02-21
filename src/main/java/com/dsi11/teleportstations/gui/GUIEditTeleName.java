@@ -1,5 +1,8 @@
 package com.dsi11.teleportstations.gui;
 
+import java.awt.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import net.minecraft.client.gui.GuiButton;
@@ -28,7 +31,8 @@ public class GUIEditTeleName extends GuiScreen {
 	private String type = "";
 	// private TileEntityTeleporter tet;
 	private String name = "";
-	private static final char[] allowedCharacters = ChatAllowedCharacters.allowedCharacters;
+	private static final ArrayList<Character> allowedCharacters = new ArrayList(
+			Arrays.asList(ChatAllowedCharacters.allowedCharacters));
 	private static LinkedList namenListe;
 
 	/**
@@ -57,11 +61,10 @@ public class GUIEditTeleName extends GuiScreen {
 	@Override
 	public void initGui() {
 		namenListe = TeleportStations.db.getAllNames();
-		// TODO Controls
-		// controlList.clear();
-		// Keyboard.enableRepeatEvents(true);
-		// controlList.add(new GuiButton(0, width / 2 - 100, height / 4 + 120,
-		// "Done"));
+		this.buttonList.clear();
+		Keyboard.enableRepeatEvents(true);
+		this.buttonList.add(new GuiButton(0, width / 2 - 100, height / 4 + 120,
+				"Done"));
 	}
 
 	@Override
@@ -82,19 +85,20 @@ public class GUIEditTeleName extends GuiScreen {
 
 	@Override
 	protected void keyTyped(char c, int i) {
+		if (Character.valueOf(';').equals(c)) {
+			return;
+		}
 		if (i == 28 && name.length() > 0 && !namenListe.contains(name)) {
 			mc.displayGuiScreen(null);
 		}
 		if (i == 14 && name.length() > 0) {
 			name = name.substring(0, name.length() - 1);
 		}
-
-		// TODO bitte prüfen, allowedCharacters jetzt char[]
-		for (int j = 0; j < allowedCharacters.length; j++) {
-			if (allowedCharacters[j] == c && c != ';' && name.length() < 20) {
-				name += c;
-				break;
-			}
+		if (Character.isSpaceChar(c) || Character.isLetterOrDigit(c)
+				|| allowedCharacters.contains(c)
+				|| allowedCharacters.contains(c)) {
+			name += c;
+			return;
 		}
 	}
 
@@ -108,7 +112,9 @@ public class GUIEditTeleName extends GuiScreen {
 
 	@Override
 	public void onGuiClosed() {
-		TeleportStations.db.addTeleDataToDatabaseWithNotificationAtClient(new TeleData(name, i, j, k,
-				world.getBlockMetadata(i, j, k), world.provider.dimensionId));
+		TeleportStations.db
+				.addTeleDataToDatabaseWithNotificationAtClient(new TeleData(
+						name, i, j, k, world.getBlockMetadata(i, j, k),
+						world.provider.dimensionId));
 	}
 }

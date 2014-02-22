@@ -7,6 +7,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.dsi11.teleportstations.blocks.BlockTeleMid;
@@ -79,6 +80,7 @@ public class TeleportStations {
 	public static Logger logger;
 	// PacketPipeline
 	public static final PacketPipeline packetPipeline = new PacketPipeline();
+	public static final ResourceLocation tileEntityTexture = new ResourceLocation("teleportstations","textures/model/Frame.png");
 
 	@EventHandler
 	public void initialise(FMLInitializationEvent evt) {
@@ -87,6 +89,13 @@ public class TeleportStations {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		logger = evt.getModLog();
+		logger.log(Level.TRACE, "Registering blocks and items");
+		registerBlockTeleTarget();
+		registerBlockTeleporter();
+		registerBlockTeleMid();
+		registerBlockTeleTop();
+		registerSpawnPearl();
+		registerHandtele();
 	}
 
 	/**
@@ -99,13 +108,7 @@ public class TeleportStations {
 	 */
 	@EventHandler
 	public void load(FMLInitializationEvent evt) {
-		logger.log(Level.TRACE, "Registering blocks and items");
-		registerBlockTeleTarget();
-		registerBlockTeleporter();
-		registerBlockTeleMid();
-		registerBlockTeleTop();
-		registerSpawnPearl();
-		registerHandtele();
+
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 		proxy.registerRenderInformation();
 		db = new Database(new PacketHandler());
@@ -174,8 +177,8 @@ public class TeleportStations {
 	}
 
 	private void registerBlockTeleporter() {
-		blockTeleporter = new BlockTeleporter();
-		blockTeleporterAn = new BlockTeleporter();
+		blockTeleporter = new BlockTeleporter(false);
+		blockTeleporterAn = new BlockTeleporter(true);
 		blockTeleporter.setBlockName("Teleporter");
 		blockTeleporterAn.setBlockUnbreakable();
 		blockTeleporter.setCreativeTab(CreativeTabs.tabTransport);

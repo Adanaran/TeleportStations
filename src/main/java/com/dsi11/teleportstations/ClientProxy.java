@@ -8,6 +8,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.DimensionManager;
 
 import com.dsi11.teleportstations.entities.EntitySpawnPearl;
+import com.dsi11.teleportstations.entities.TileEntityTeleTarget;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 import com.dsi11.teleportstations.gui.GUIEditTeleName;
 import com.dsi11.teleportstations.gui.GUIEditTeleTarget;
@@ -37,7 +38,9 @@ public class ClientProxy extends CommonProxy {
 		// MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/TPGUI.png");
 		// MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/Frame.png");
 		ClientRegistry.bindTileEntitySpecialRenderer(
-				TileEntityTeleporter.class, new TileEntityTeleRenderer());
+				TileEntityTeleporter.class, new TileEntityTeleRenderer(0));
+		ClientRegistry.bindTileEntitySpecialRenderer(
+				TileEntityTeleTarget.class, new TileEntityTeleRenderer(2));
 		RenderingRegistry.registerEntityRenderingHandler(
 				EntitySpawnPearl.class, new RenderSpawnPearl(38));
 	}

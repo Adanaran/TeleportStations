@@ -2,10 +2,16 @@ package com.dsi11.teleportstations.blocks;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
+import com.dsi11.teleportstations.entities.TileEntityTeleTarget;
+import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockRail;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,8 +19,10 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
@@ -27,8 +35,17 @@ import net.minecraft.world.World;
  * @author Demitreus
  * 
  */
-public class BlockTeleTarget extends Block {
+public class BlockTeleTarget extends BlockContainer {
 
+	/**
+	 * Icon of the block
+	 */
+	@SideOnly(Side.CLIENT)
+	protected IIcon iconTeleBlockSide;
+	@SideOnly(Side.CLIENT)
+	protected IIcon[] iconTeleBlockTop = new IIcon[16];
+
+	
 	/**
 	 * Constructor of teleportertarget-Blocks.
 	 */
@@ -37,14 +54,41 @@ public class BlockTeleTarget extends Block {
 		this.setBlockBounds(0.0f, 0f, 0.0f, 1.0f, 0.125f, 1.0f);
 	}
 
-	// TODO Textures!
-	// @Override
-	// public int getBlockTextureFromSideAndMetadata(int par1, int par2) {
-	// return par1 == 1 ? par2 : 32;
-	// }
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister IIR) {
+		iconTeleBlockTop[0] = IIR.registerIcon("teleportstations:TeleporterAus");
+		iconTeleBlockTop[1] = IIR.registerIcon("teleportstations:TeleAusS");
+		iconTeleBlockTop[2] = IIR.registerIcon("teleportstations:TeleAusO");
+		iconTeleBlockTop[3] = IIR.registerIcon("teleportstations:TeleAusN");
+		iconTeleBlockTop[4] = IIR.registerIcon("teleportstations:TeleAusW");
+		iconTeleBlockTop[5] = IIR.registerIcon("teleportstations:TeleAus2OS");
+		iconTeleBlockTop[6] = IIR.registerIcon("teleportstations:TeleAus2WS");
+		iconTeleBlockTop[7] = IIR.registerIcon("teleportstations:TeleAus2WN");
+		iconTeleBlockTop[8] = IIR.registerIcon("teleportstations:TeleAus2ON");
+		iconTeleBlockTop[9] = IIR.registerIcon("teleportstations:TeleAus3S");
+		iconTeleBlockTop[10] = IIR.registerIcon("teleportstations:TeleAus3W");
+		iconTeleBlockTop[11] = IIR.registerIcon("teleportstations:TeleAus3N");
+		iconTeleBlockTop[12] = IIR.registerIcon("teleportstations:TeleAus3O");
+		iconTeleBlockTop[13] = IIR.registerIcon("teleportstations:TeleAus4");
+		iconTeleBlockTop[14] = IIR.registerIcon("teleportstations:TeleAus2NS");
+		iconTeleBlockTop[15] = IIR.registerIcon("teleportstations:TeleAus2OW");
+		iconTeleBlockSide = IIR.registerIcon("teleportstations:TeleporterSeite");
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public IIcon getIcon(int side, int meta) {
+
+		if(side != 1){
+			return iconTeleBlockSide;	
+		}
+		return iconTeleBlockTop[meta];
+	}
 
 	@Override
 	public boolean isOpaqueCube() {
+		
 		return false;
 	}
 
@@ -69,11 +113,6 @@ public class BlockTeleTarget extends Block {
 		return 2;
 	}
 
-	// TODO Textures!
-	// @Override
-	// public String getTextureFile() {
-	// return "/adanaran/mods/ts/textures/TS.png";
-	// }
 
 	@Override
 	public void onNeighborBlockChange(World world, int i, int j, int k,
@@ -473,6 +512,10 @@ public class BlockTeleTarget extends Block {
 
 	protected boolean power(World world, int i, int j, int k) {
 		return world.isBlockIndirectlyGettingPowered(i, j, k);
+	}
+	@Override
+	public TileEntity createNewTileEntity(World var1, int var2) {
+		return new TileEntityTeleTarget();
 	}
 
 }

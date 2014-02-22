@@ -1,11 +1,15 @@
 package com.dsi11.teleportstations.renderer;
 
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
+import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 
 /**
@@ -18,32 +22,39 @@ import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 
 	private ModelTeleporter teleModel = new ModelTeleporter();
+	private int pos = 0;
 
 	/**
 	 * Creates a new Object.
+	 * 
+	 * @param i
 	 */
-	public TileEntityTeleRenderer() {
+	public TileEntityTeleRenderer(int i) {
+		super();
+		this.pos = i;
 	}
 
 	@Override
 	public void renderTileEntityAt(TileEntity entityTele, double var2,
 			double var4, double var6, float var8) {
-		String tName = ((TileEntityTeleporter) entityTele).getName();
-		String tTarget = ((TileEntityTeleporter) entityTele).getTarget();
-		tTarget = tTarget.equals("") ? "" : "( " + tTarget + " )";
 
 		GL11.glPushMatrix();
-		GL11.glTranslatef((float) var2 + 0.5F, (float) var4 + 1.5f,
+		GL11.glTranslatef((float) var2 + 0.5F, (float) var4 + 1.5f + pos,
 				(float) var6 + 0.5F);
 		GL11.glScalef(1f, 1f, 1f);
 
-		// TODO this.bindTextureByName("/adanaran/mods/ts/textures/Frame.png");
+		this.bindTexture(TeleportStations.tileEntityTexture);
 		teleModel.render();
 
-		for (int i = 0; i < 4; i++) {
-			drawText(i, tName, tTarget);
-		}
+		if (pos == 0) {
+			String tName = ((TileEntityTeleporter) entityTele).getName();
+			String tTarget = ((TileEntityTeleporter) entityTele).getTarget();
+			tTarget = tTarget.equals("") ? "" : "( " + tTarget + " )";
 
+			for (int i = 0; i < 4; i++) {
+				drawText(i, tName, tTarget);
+			}
+		}
 		GL11.glPopMatrix();
 
 	}

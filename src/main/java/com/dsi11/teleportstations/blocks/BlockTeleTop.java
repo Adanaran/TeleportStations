@@ -2,12 +2,20 @@ package com.dsi11.teleportstations.blocks;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Top-block of a teleporter containing a {@link TitleEntityTele}.
@@ -17,7 +25,17 @@ import com.dsi11.teleportstations.entities.TileEntityTeleporter;
  * @author Demitreus
  */
 public class BlockTeleTop extends BlockContainer {
-
+	
+	/**
+	 * Icon of the block
+	 */
+	@SideOnly(Side.CLIENT)
+	protected IIcon iconTeleBlockSide;
+	@SideOnly(Side.CLIENT)
+	protected IIcon iconTeleBlockTop;
+	@SideOnly(Side.CLIENT)
+	protected IIcon iconTeleBlockTopButtom;
+	
 	/**
 	 * Constructs the BlockContainer BlockTeleTop.
 	 */
@@ -25,22 +43,37 @@ public class BlockTeleTop extends BlockContainer {
 		super(Material.portal);
 	}
 
+	
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister IIR) {
+		iconTeleBlockTop = IIR
+				.registerIcon("teleportstations:TeleporterTopOben");
+		iconTeleBlockTopButtom = IIR
+				.registerIcon("teleportstations:TeleporterTopUnten");
+		iconTeleBlockSide = IIR
+				.registerIcon("teleportstations:TeleporterTopSeite");
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public IIcon getIcon(int side, int meta) {
+
+		switch (side) {
+		case 0:
+			return iconTeleBlockTopButtom;
+		case 1:
+			return iconTeleBlockTop;
+		default:
+			return iconTeleBlockSide;
+		}
+	}
+	
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}
-
-	// TODO Textures
-	// @Override
-	// public String getTextureFile() {
-	// return "/adanaran/mods/ts/textures/TS.png";
-	// }
-
-	// TODO Textures
-	// @Override
-	// public int getBlockTextureFromSide(int par1) {
-	// return par1 > 1 ? 35 : 33 + par1;
-	// }
 
 	@Override
 	public void onBlockDestroyedByPlayer(World par1World, int par2, int par3,

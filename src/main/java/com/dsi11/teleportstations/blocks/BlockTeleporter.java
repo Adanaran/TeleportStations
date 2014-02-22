@@ -3,6 +3,11 @@ package com.dsi11.teleportstations.blocks;
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -13,6 +18,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 /**
@@ -23,20 +29,78 @@ import net.minecraft.world.World;
  * @author Demitreus
  */
 public class BlockTeleporter extends BlockTeleTarget {
+	/**
+	 * Icon of the block
+	 */
+	@SideOnly(Side.CLIENT)
+	protected IIcon[] iconTeleBlockTopActive = new IIcon[16];
+	private boolean isActive;
 
 	/**
 	 * Constructor.
 	 */
-	public BlockTeleporter() {
+	public BlockTeleporter(boolean powered) {
 		super();
+		this.isActive = powered;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister IIR) {
+		super.registerBlockIcons(IIR);
+		iconTeleBlockTopActive[0] = IIR
+				.registerIcon("teleportstations:TeleporterAn");
+		iconTeleBlockTopActive[1] = IIR
+				.registerIcon("teleportstations:TeleAnS");
+		iconTeleBlockTopActive[2] = IIR
+				.registerIcon("teleportstations:TeleAnO");
+		iconTeleBlockTopActive[3] = IIR
+				.registerIcon("teleportstations:TeleAnN");
+		iconTeleBlockTopActive[4] = IIR
+				.registerIcon("teleportstations:TeleAnW");
+		iconTeleBlockTopActive[5] = IIR
+				.registerIcon("teleportstations:TeleAn2OS");
+		iconTeleBlockTopActive[6] = IIR
+				.registerIcon("teleportstations:TeleAn2WS");
+		iconTeleBlockTopActive[7] = IIR
+				.registerIcon("teleportstations:TeleAn2WN");
+		iconTeleBlockTopActive[8] = IIR
+				.registerIcon("teleportstations:TeleAn2ON");
+		iconTeleBlockTopActive[9] = IIR
+				.registerIcon("teleportstations:TeleAn3S");
+		iconTeleBlockTopActive[10] = IIR
+				.registerIcon("teleportstations:TeleAn3W");
+		iconTeleBlockTopActive[11] = IIR
+				.registerIcon("teleportstations:TeleAn3N");
+		iconTeleBlockTopActive[12] = IIR
+				.registerIcon("teleportstations:TeleAn3O");
+		iconTeleBlockTopActive[13] = IIR
+				.registerIcon("teleportstations:TeleAn4");
+		iconTeleBlockTopActive[14] = IIR
+				.registerIcon("teleportstations:TeleAn2NS");
+		iconTeleBlockTopActive[15] = IIR
+				.registerIcon("teleportstations:TeleAn2OW");
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public IIcon getIcon(int side, int meta) {
+
+		if (side != 1) {
+			return iconTeleBlockSide;
+		} else if (this.isActive) {
+			return iconTeleBlockTopActive[meta];
+		} else {
+			return iconTeleBlockTop[meta];
+		}
 	}
 
 	@Override
 	public int update(World world, int i, int j, int k) {
 		if (power(world, i, j, k)) {
-		 world.setBlock(i, j, k,TeleportStations.blockTeleporterAn);
+			world.setBlock(i, j, k, TeleportStations.blockTeleporterAn);
 		} else {
-			world.setBlock(i, j, k,TeleportStations.blockTeleporter);
+			world.setBlock(i, j, k, TeleportStations.blockTeleporter);
 		}
 		return super.update(world, i, j, k);
 	}

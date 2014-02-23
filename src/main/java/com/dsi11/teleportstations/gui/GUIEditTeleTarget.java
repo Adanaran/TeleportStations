@@ -157,10 +157,8 @@ public class GUIEditTeleTarget extends GuiScreen {
 		int k = width - width >> 1;
 		int l = height - height >> 1;
 		int i1 = 0;
-		// TODO int i1 =
-		// mc.renderEngine.getTexture("/adanaran/mods/ts/textures/TPGUI.png");
+		mc.renderEngine.bindTexture(TeleportStations.guiTexture);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		// TODO mc.renderEngine.bindTexture(i1);
 		int j1 = k;
 		int l1 = l;
 		drawTexturedModalRect(j1, l1, 0, 0, width, height);

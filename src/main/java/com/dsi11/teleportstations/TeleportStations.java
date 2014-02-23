@@ -81,6 +81,7 @@ public class TeleportStations {
 	// PacketPipeline
 	public static final PacketPipeline packetPipeline = new PacketPipeline();
 	public static final ResourceLocation tileEntityTexture = new ResourceLocation("teleportstations","textures/model/Frame.png");
+	public static final ResourceLocation guiTexture = new ResourceLocation("teleportstations", "textures/gui/TPGUI.png");
 
 	@EventHandler
 	public void initialise(FMLInitializationEvent evt) {

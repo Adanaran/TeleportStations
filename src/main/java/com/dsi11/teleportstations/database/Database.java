@@ -55,6 +55,7 @@ public class Database {
 	public void addTeleDataToDatabaseWithNotificationAtServer(TeleData teleData) {
 		addTeleDataToDatabaseWithOutNotification(teleData);
 		packetHandler.SendTPAddPacket(teleData, Side.CLIENT);
+		TeleportStations.fh.writeToFile();
 	}
 
 	/**
@@ -140,7 +141,7 @@ public class Database {
 	 * @return
 	 */
 	public TreeMap<ChunkCoordinates, TeleData> getDB() {
-		return db;
+		return (TreeMap<ChunkCoordinates, TeleData>) db.clone();
 	}
 
 	/**

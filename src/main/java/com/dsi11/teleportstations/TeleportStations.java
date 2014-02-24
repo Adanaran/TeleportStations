@@ -17,6 +17,7 @@ import com.dsi11.teleportstations.blocks.BlockTeleporter;
 import com.dsi11.teleportstations.database.Database;
 import com.dsi11.teleportstations.database.FileHandler;
 import com.dsi11.teleportstations.entities.EntitySpawnPearl;
+import com.dsi11.teleportstations.entities.TileEntityTeleTarget;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 import com.dsi11.teleportstations.items.ItemSpawnPearl;
 import com.dsi11.teleportstations.items.ItemTeleporter;
@@ -94,7 +95,6 @@ public class TeleportStations {
 		registerBlockTeleMid();
 		registerBlockTeleTarget();
 		registerBlockTeleporter();
-		
 		registerBlockTeleTop();
 		registerSpawnPearl();
 		registerHandtele();
@@ -176,6 +176,8 @@ public class TeleportStations {
 				"DOD", "ORO", "DOD", Character.valueOf('D'), Blocks.glass,
 				Character.valueOf('O'), Blocks.obsidian,
 				Character.valueOf('R'), Items.redstone });
+		GameRegistry.registerTileEntity(TileEntityTeleTarget.class,
+				"TileEntityTeleTarget");
 	}
 
 	private void registerBlockTeleporter() {

@@ -103,7 +103,7 @@ public class BlockTeleTarget extends BlockContainer {
 	}
 
 	@Override
-	public boolean isBlockNormalCube() {
+	public boolean isNormalCube() {
 		return false;
 	}
 
@@ -124,7 +124,7 @@ public class BlockTeleTarget extends BlockContainer {
 
 	@Override
 	public boolean canBlockStay(World world, int i, int j, int k) {
-		return world.getBlock(i, j - 1, k).isBlockNormalCube();
+		return world.getBlock(i, j - 1, k).isNormalCube();
 	}
 
 	@Override

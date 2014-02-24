@@ -116,6 +116,7 @@ public class Database {
 				|| TeleportStations.proxy.isSinglePlayer()) {
 			packetHandler.SendTPRemovePacket(td, Side.CLIENT);
 			deleteReferencesAfterTPRemoved(coords);
+			TeleportStations.fh.writeToFile();
 		}
 	}
 
@@ -225,13 +226,12 @@ public class Database {
 		TeleportStations.logger
 				.log(Level.TRACE, "Removing references in DB...");
 		for (Map.Entry<ChunkCoordinates, TeleData> entry : db.entrySet()) {
-			if (entry.getValue().getZiel() == coords) {
+			if (entry.getValue().getZiel().equals(coords)) {
 				TeleportStations.logger.log(Level.TRACE,
 						"Deleting reference to removed teleporter.");
 				entry.getValue().setZiel(null);
 			}
 		}
-		TeleportStations.fh.writeToFile();
 		TeleportStations.logger.log(Level.TRACE, "All references removed.");
 	}
 
@@ -282,6 +282,7 @@ public class Database {
 			TeleData teleData) {
 		updateTeleDataInDataBaseWithoutNotification(teleData);
 		packetHandler.sendTPUpdatePacket(teleData, Side.CLIENT);
+		TeleportStations.fh.writeToFile();
 	}
 
 	/**

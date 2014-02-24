@@ -116,8 +116,7 @@ public class FileHandler {
 						+ "/TPDatabase.txt");
 
 			} else {
-				file = new File(TeleportStations.dir + "/" + worldName
-						+ "/TPDatabase.txt");
+				file = new File(worldName + "/TPDatabase.txt");
 			}
 			TeleportStations.logger.log(Level.TRACE,
 					"Filepath: " + file.getAbsolutePath());

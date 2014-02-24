@@ -3,6 +3,7 @@ package com.dsi11.teleportstations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.DimensionManager;
@@ -18,6 +19,8 @@ import com.dsi11.teleportstations.renderer.TileEntityTeleRenderer;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * The client proxy for teleporter mod.
@@ -28,6 +31,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
  * 
  */
 public class ClientProxy extends CommonProxy {
+	
 
 	@Override
 	public void registerRenderInformation() {
@@ -37,6 +41,7 @@ public class ClientProxy extends CommonProxy {
 		// .preloadTexture("/adanaran/mods/ts/textures/TeleporterFrame.png");
 		// MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/TPGUI.png");
 		// MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/Frame.png");
+		
 		ClientRegistry.bindTileEntitySpecialRenderer(
 				TileEntityTeleporter.class, new TileEntityTeleRenderer(0));
 		ClientRegistry.bindTileEntitySpecialRenderer(

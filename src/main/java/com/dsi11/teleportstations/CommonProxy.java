@@ -2,6 +2,7 @@ package com.dsi11.teleportstations;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.network.IGuiHandler;
@@ -16,6 +17,9 @@ import cpw.mods.fml.common.network.IGuiHandler;
  */
 public class CommonProxy implements IGuiHandler {
 
+	public final IIcon[] iconTeleBlockTop = new IIcon[16];
+	public final IIcon[] iconTeleBlockTopActive = new IIcon[16];
+	
 	/**
 	 * Registers render information.
 	 * <p>

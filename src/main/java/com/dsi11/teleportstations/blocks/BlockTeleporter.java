@@ -29,25 +29,21 @@ import net.minecraft.world.World;
  * @author Demitreus
  */
 public class BlockTeleporter extends BlockTeleTarget {
-	/**
-	 * Icon of the block
-	 */
-	@SideOnly(Side.CLIENT)
-	protected IIcon[] iconTeleBlockTopActive = new IIcon[16];
+	
 	private boolean isActive;
 
 	/**
 	 * Constructor.
 	 */
-	public BlockTeleporter(boolean powered) {
+	public BlockTeleporter() {
 		super();
-		this.isActive = powered;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerBlockIcons(IIconRegister IIR) {
 		super.registerBlockIcons(IIR);
+		IIcon[] iconTeleBlockTopActive = TeleportStations.proxy.iconTeleBlockTopActive;
 		iconTeleBlockTopActive[0] = IIR
 				.registerIcon("teleportstations:TeleporterAn");
 		iconTeleBlockTopActive[1] = IIR
@@ -88,10 +84,10 @@ public class BlockTeleporter extends BlockTeleTarget {
 
 		if (side != 1) {
 			return iconTeleBlockSide;
-		} else if (this.isActive) {
-			return iconTeleBlockTopActive[meta];
+		} else if (this.equals(TeleportStations.blockTeleporterAn)) {
+			return TeleportStations.proxy.iconTeleBlockTopActive[meta];
 		} else {
-			return iconTeleBlockTop[meta];
+			return TeleportStations.proxy.iconTeleBlockTop[meta];
 		}
 	}
 

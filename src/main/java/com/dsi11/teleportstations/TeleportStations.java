@@ -91,9 +91,10 @@ public class TeleportStations {
 	public void preInit(FMLPreInitializationEvent evt) {
 		logger = evt.getModLog();
 		logger.log(Level.TRACE, "Registering blocks and items");
+		registerBlockTeleMid();
 		registerBlockTeleTarget();
 		registerBlockTeleporter();
-		registerBlockTeleMid();
+		
 		registerBlockTeleTop();
 		registerSpawnPearl();
 		registerHandtele();
@@ -178,8 +179,8 @@ public class TeleportStations {
 	}
 
 	private void registerBlockTeleporter() {
-		blockTeleporter = new BlockTeleporter(false);
-		blockTeleporterAn = new BlockTeleporter(true);
+		blockTeleporter = new BlockTeleporter();
+		blockTeleporterAn = new BlockTeleporter();
 		blockTeleporter.setBlockName("Teleporter");
 		blockTeleporterAn.setBlockUnbreakable();
 		blockTeleporter.setCreativeTab(CreativeTabs.tabTransport);

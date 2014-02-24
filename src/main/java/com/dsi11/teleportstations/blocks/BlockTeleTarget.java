@@ -42,8 +42,6 @@ public class BlockTeleTarget extends BlockContainer {
 	 */
 	@SideOnly(Side.CLIENT)
 	protected IIcon iconTeleBlockSide;
-	@SideOnly(Side.CLIENT)
-	protected IIcon[] iconTeleBlockTop = new IIcon[16];
 
 	
 	/**
@@ -57,6 +55,7 @@ public class BlockTeleTarget extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerBlockIcons(IIconRegister IIR) {
+		IIcon[] iconTeleBlockTop = TeleportStations.proxy.iconTeleBlockTop;
 		iconTeleBlockTop[0] = IIR.registerIcon("teleportstations:TeleporterAus");
 		iconTeleBlockTop[1] = IIR.registerIcon("teleportstations:TeleAusS");
 		iconTeleBlockTop[2] = IIR.registerIcon("teleportstations:TeleAusO");
@@ -83,7 +82,7 @@ public class BlockTeleTarget extends BlockContainer {
 		if(side != 1){
 			return iconTeleBlockSide;	
 		}
-		return iconTeleBlockTop[meta];
+		return TeleportStations.proxy.iconTeleBlockTop[meta];
 	}
 
 	@Override

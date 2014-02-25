@@ -62,13 +62,9 @@ public class EntitySpawnPearl extends EntityThrowable {
 
 	@Override
 	protected void onImpact(MovingObjectPosition par1MovingObjectPosition) {
-		World theWorld = null;
-		// TODO Modloader-Referenzen
-		// ModLoader.getMinecraftInstance().theWorld;
-		EntityPlayer thePlayer = null;
-		// ModLoader.getMinecraftInstance().thePlayer;
-		Minecraft mc = null;
-		// ModLoader.getMinecraftInstance();
+		Minecraft mc = Minecraft.getMinecraft();
+		World theWorld = mc.theWorld;
+		EntityPlayer thePlayer = mc.thePlayer;
 		InventoryPlayer inv = thePlayer.inventory;
 		if (par1MovingObjectPosition.entityHit != null) {
 			if (!par1MovingObjectPosition.entityHit.attackEntityFrom(

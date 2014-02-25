@@ -34,20 +34,13 @@ public class ClientProxy extends CommonProxy {
 	
 
 	@Override
-	public void registerRenderInformation() {
-		// TODO Textures
-		// MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/TS.png");
-		// MinecraftForgeClient
-		// .preloadTexture("/adanaran/mods/ts/textures/TeleporterFrame.png");
-		// MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/TPGUI.png");
-		// MinecraftForgeClient.preloadTexture("/adanaran/mods/ts/textures/Frame.png");
-		
+	public void registerRenderInformation() {		
 		ClientRegistry.bindTileEntitySpecialRenderer(
 				TileEntityTeleporter.class, new TileEntityTeleRenderer(0));
 		ClientRegistry.bindTileEntitySpecialRenderer(
 				TileEntityTeleTarget.class, new TileEntityTeleRenderer(2));
 		RenderingRegistry.registerEntityRenderingHandler(
-				EntitySpawnPearl.class, new RenderSpawnPearl(38));
+				EntitySpawnPearl.class, new RenderSpawnPearl());
 	}
 
 	@Override

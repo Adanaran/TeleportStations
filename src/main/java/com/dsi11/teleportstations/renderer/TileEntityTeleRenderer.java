@@ -56,7 +56,6 @@ public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 			}
 		}
 		GL11.glPopMatrix();
-
 	}
 
 	private void drawText(int i, String tName, String tTarget) {
@@ -64,8 +63,7 @@ public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 		float var10 = 0.6666667F;
 		float var12 = 0.016666668F * var10;
 		float[] xy = { 0, 0.5f, 0, -0.5f };
-		FontRenderer fR = this.func_147498_b(); // obfuscated for:
-												// getFontRenderer();
+		FontRenderer fR = this.func_147498_b();
 		GL11.glTranslatef(xy[i], -0.6F, xy[i + (i != 3 ? 1 : -1)]);
 		GL11.glScalef(var12, -var12, var12);
 		GL11.glRotatef(i * 90, 0, 1, 0);

@@ -1,9 +1,14 @@
 package com.dsi11.teleportstations.items;
 
 import com.dsi11.teleportstations.entities.EntitySpawnPearl;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 /**
@@ -12,10 +17,12 @@ import net.minecraft.world.World;
  */
 public class ItemSpawnPearl extends Item {
 
+	@SideOnly(Side.CLIENT)
+	private IIcon pearlIcon;
+
 	public ItemSpawnPearl() {
 		super();
 		maxStackSize = 16;
-		// TODO: this.iconIndex = 38;
 	}
 
 	@Override
@@ -35,9 +42,34 @@ public class ItemSpawnPearl extends Item {
 		return par1ItemStack;
 	}
 
-	// TODO textures
-	// @Override
-	// public String getTextureFile() {
-	// return "/adanaran/mods/ts/textures/TS.png";
-	// }
+	@Override
+	public void registerIcons(IIconRegister IIR) {
+		pearlIcon = IIR.registerIcon("teleportstations:Spawnpearl");
+	}
+
+	@Override
+	public IIcon getIcon(ItemStack stack, int renderPass, EntityPlayer player,
+			ItemStack usingItem, int useRemaining) {
+		return pearlIcon;
+	}
+
+	@Override
+	public IIcon getIconFromDamage(int par1) {
+		return pearlIcon;
+	}
+
+	@Override
+	public IIcon getIconFromDamageForRenderPass(int par1, int par2) {
+		return pearlIcon;
+	}
+
+	@Override
+	public IIcon getIcon(ItemStack stack, int pass) {
+		return pearlIcon;
+	}
+	
+	
+	
+	
+
 }

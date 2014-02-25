@@ -2,6 +2,8 @@ package com.dsi11.teleportstations.items;
 
 import org.apache.logging.log4j.Level;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +17,9 @@ import net.minecraft.world.World;
 
 import com.dsi11.teleportstations.TeleportStations;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 /**
  * Handteleporter zur mobilen Teleportation.
  * <p>
@@ -27,11 +32,21 @@ import com.dsi11.teleportstations.TeleportStations;
 public class ItemTeleporter extends Item implements ICommandSender {
 	private static ChunkCoordinates target;
 	private boolean porting = false;
+	@SideOnly(Side.CLIENT)
+	private IIcon itemTeleIcon;
+	@SideOnly(Side.CLIENT)
+	private IIcon itemTeleIconActive;
 
 	public ItemTeleporter() {
 		super();
 		maxStackSize = 1;
 		setMaxDamage(200);
+	}
+
+	@Override
+	public void registerIcons(IIconRegister IIR) {
+		itemTeleIcon = IIR.registerIcon("teleportstations:ItemTele");
+		itemTeleIconActive = IIR.registerIcon("teleportstations:ItemTeleAn");
 	}
 
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
@@ -83,20 +98,12 @@ public class ItemTeleporter extends Item implements ICommandSender {
 
 	@Override
 	public IIcon getIconFromDamage(int par1) {
-		// TODO fix Modloader reference
-		// if (ModLoader.getMinecraftInstance().thePlayer.getItemInUseDuration()
-		// <= 50) {
-		// return 36;
-		// } else {
-		// return 37;
-		// }
-		return null;
+		if (Minecraft.getMinecraft().thePlayer.getItemInUseDuration() <= 50) {
+			return itemTeleIcon;
+		} else {
+			return itemTeleIconActive;
+		}
 	}
-
-	// @Override
-	// public String getTextureFile() {
-	// return "/adanaran/mods/ts/textures/TS.png";
-	// }
 
 	/**
 	 * Return the enchantability factor of the item, most of the time is based

@@ -29,7 +29,7 @@ public class GUIEditTeleName extends GuiScreen {
 	private World world;
 	private int updateCounter, i, j, k;
 	private String type = "";
-	// private TileEntityTeleporter tet;
+	private TileEntityTeleporter tet;
 	private String name = "";
 	private static final ArrayList<Character> allowedCharacters = new ArrayList(
 			Arrays.asList(ChatAllowedCharacters.allowedCharacters));
@@ -55,7 +55,7 @@ public class GUIEditTeleName extends GuiScreen {
 		this.j = j;
 		this.k = k;
 		this.type = type;
-		// tet = (TileEntityTeleporter) world.getBlockTileEntity(i, j + 2, k);
+		tet = (TileEntityTeleporter) world.getTileEntity(i, j + 2, k);
 	}
 
 	@Override
@@ -116,5 +116,6 @@ public class GUIEditTeleName extends GuiScreen {
 				.addTeleDataToDatabaseWithNotificationAtClient(new TeleData(
 						name, i, j, k, world.getBlockMetadata(i, j, k),
 						world.provider.dimensionId));
+		tet.setNameAndTarget(name, "");
 	}
 }

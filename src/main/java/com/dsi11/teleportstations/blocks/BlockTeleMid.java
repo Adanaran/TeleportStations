@@ -1,8 +1,13 @@
 package com.dsi11.teleportstations.blocks;
 
 import com.dsi11.teleportstations.TeleportStations;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
@@ -25,6 +30,31 @@ public class BlockTeleMid extends Block {
 	public BlockTeleMid() {
 		super(Material.portal);
 	}
+	
+	
+
+	@Override
+	public void registerBlockIcons(IIconRegister p_149651_1_) {
+		//do nothing -- no Icon
+	}
+
+
+
+	@Override
+	public IIcon getIcon(IBlockAccess IBA, int i,
+			int j, int k, int meta) {
+		return Blocks.air.getIcon(IBA, i, j, k, meta);
+	}
+
+	
+
+
+	@Override
+	public IIcon getIcon(int side, int meta) {
+		return Blocks.air.getIcon(side, meta);
+	}
+
+
 
 	@Override
 	public boolean isOpaqueCube() {

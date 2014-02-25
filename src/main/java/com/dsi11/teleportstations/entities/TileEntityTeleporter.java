@@ -30,7 +30,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 * An array of two strings storing the name and the current target of the
 	 * teleporter.
 	 */
-	public String[] nameAndTarget = new String[] { "", "" };
+	private String[] nameAndTarget = new String[] { "", "" };
 	// To prevent multiple command execution per teleport
 	private boolean porting = false;
 
@@ -46,7 +46,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 			TeleData self = TeleportStations.db.getTeleDataByCoords(
 					this.xCoord, this.yCoord - 2, this.zCoord);
 			TeleData target = TeleportStations.db
-					.getZielByCoords(new ChunkCoordinates(xCoord, yCoord,
+					.getZielByCoords(new ChunkCoordinates(xCoord, yCoord-2,
 							zCoord));
 			nameAndTarget[0] = self.getName();
 			nameAndTarget[1] = target.getName();
@@ -98,7 +98,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 */
 
 	public String getName() {
-		this.updateEntity();
+//		this.updateEntity();
 		return nameAndTarget[0];
 	}
 

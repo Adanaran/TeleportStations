@@ -119,6 +119,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 			} else {
 				TeleportStations.db.changeTarget(new ChunkCoordinates(
 						self.posX, self.posY, self.posZ), zieldb[selected]);
+				
 			}
 			TeleportStations.logger.log(Level.TRACE, "Changed target at " + x
 					+ "|" + y + "|" + z + " to " + zieldb[selected].posX + "|"

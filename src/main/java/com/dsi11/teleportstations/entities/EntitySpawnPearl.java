@@ -77,7 +77,7 @@ public class EntitySpawnPearl extends EntityThrowable {
 		}
 		if (!worldObj.isRemote) {
 			if (getThrower() != null) {
-				ChunkCoordinates SC = thePlayer.getBedLocation();
+				ChunkCoordinates SC = thePlayer.getBedLocation(theWorld.provider.dimensionId);
 				if (SC == null) {
 					SC = theWorld.getSpawnPoint();
 					while (SC.posY < 66

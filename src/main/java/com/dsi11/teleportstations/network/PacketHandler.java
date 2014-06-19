@@ -48,15 +48,18 @@ public class PacketHandler {
 	private void send(IMessage message, Side targetSide) {
 		switch (targetSide) {
 		case CLIENT:
+			System.out.println("Send to all: "+ message.getClass());
 			TeleportStations.network.sendToAll(message);
 			break;
 		case SERVER:
+			System.out.println("Send to server: "+ message.getClass());
 			TeleportStations.network.sendToServer(message);
 			break;
 		}
 	}
 
 	private void send(IMessage message, EntityPlayerMP player) {
+		System.out.println("Send to player: "+ message.getClass());
 		TeleportStations.network.sendTo(message, player);
 	}
 

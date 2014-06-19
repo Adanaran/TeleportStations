@@ -23,6 +23,9 @@ import com.dsi11.teleportstations.items.ItemTeleporter;
 import com.dsi11.teleportstations.network.PacketHandler;
 import com.dsi11.teleportstations.network.PlayerTracker;
 import com.dsi11.teleportstations.network.message.AddMessage;
+import com.dsi11.teleportstations.network.message.DatabaseMessage;
+import com.dsi11.teleportstations.network.message.RemoveMessage;
+import com.dsi11.teleportstations.network.message.UpdateMessage;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -98,6 +101,15 @@ public class TeleportStations {
 		network = NetworkRegistry.INSTANCE.newSimpleChannel("MyChannel");
 	    network.registerMessage(AddMessage.ServerHandler.class, AddMessage.class, 0, Side.SERVER);
 	    network.registerMessage(AddMessage.ClientHandler.class, AddMessage.class, 0, Side.CLIENT);
+	    
+	    network.registerMessage(RemoveMessage.ServerHandler.class, RemoveMessage.class, 0, Side.SERVER);
+	    network.registerMessage(RemoveMessage.ClientHandler.class, RemoveMessage.class, 0, Side.CLIENT);
+	    
+	    network.registerMessage(UpdateMessage.ServerHandler.class, UpdateMessage.class, 0, Side.SERVER);
+	    network.registerMessage(UpdateMessage.ClientHandler.class, UpdateMessage.class, 0, Side.CLIENT);
+	    
+	    network.registerMessage(DatabaseMessage.ServerHandler.class, DatabaseMessage.class, 0, Side.SERVER);
+	    network.registerMessage(DatabaseMessage.ClientHandler.class, DatabaseMessage.class, 0, Side.CLIENT);
 	}
 
 	/**

@@ -1,15 +1,16 @@
 package com.dsi11.teleportstations.items;
 
-import com.dsi11.teleportstations.entities.EntitySpawnPearl;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
+import com.dsi11.teleportstations.entities.EntitySpawnPearl;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * 
@@ -36,8 +37,9 @@ public class ItemSpawnPearl extends Item {
 		par2World.playSoundAtEntity(par3EntityPlayer, "random.bow", 0.5F,
 				0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 		if (!par2World.isRemote) {
-			par2World.spawnEntityInWorld(new EntitySpawnPearl(par2World,
-					par3EntityPlayer));
+			EntitySpawnPearl pearl = new EntitySpawnPearl(par2World,
+					par3EntityPlayer);
+			par2World.spawnEntityInWorld(pearl);
 		}
 		return par1ItemStack;
 	}
@@ -67,9 +69,5 @@ public class ItemSpawnPearl extends Item {
 	public IIcon getIcon(ItemStack stack, int pass) {
 		return pearlIcon;
 	}
-	
-	
-	
-	
 
 }

@@ -1,9 +1,6 @@
 package com.dsi11.teleportstations.entities;
 
-import com.dsi11.teleportstations.TeleportStations;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -77,7 +74,8 @@ public class EntitySpawnPearl extends EntityThrowable {
 		}
 		if (!worldObj.isRemote) {
 			if (getThrower() != null) {
-				ChunkCoordinates SC = thePlayer.getBedLocation(theWorld.provider.dimensionId);
+				ChunkCoordinates SC = thePlayer
+						.getBedLocation(theWorld.provider.dimensionId);
 				if (SC == null) {
 					SC = theWorld.getSpawnPoint();
 					while (SC.posY < 66

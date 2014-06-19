@@ -54,7 +54,7 @@ public class Database {
 	 */
 	public void addTeleDataToDatabaseWithNotificationAtServer(TeleData teleData) {
 		addTeleDataToDatabaseWithOutNotification(teleData);
-		packetHandler.SendTPAddPacket(teleData, Side.CLIENT);
+		packetHandler.sendTPAddMessage(teleData, Side.CLIENT);
 		TeleportStations.fh.writeToFile();
 	}
 
@@ -65,7 +65,7 @@ public class Database {
 	 */
 	public void addTeleDataToDatabaseWithNotificationAtClient(TeleData teleData) {
 		addTeleDataToDatabaseWithOutNotification(teleData);
-		packetHandler.SendTPAddPacket(teleData, Side.SERVER);
+		packetHandler.sendTPAddMessage(teleData, Side.SERVER);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class Database {
 		TeleData td = db.remove(coords);
 		if (TeleportStations.proxy.isServer()
 				|| TeleportStations.proxy.isSinglePlayer()) {
-			packetHandler.SendTPRemovePacket(td, Side.CLIENT);
+			packetHandler.sendTPRemoveMessage(td, Side.CLIENT);
 			deleteReferencesAfterTPRemoved(coords);
 			TeleportStations.fh.writeToFile();
 		}
@@ -191,7 +191,7 @@ public class Database {
 		td.setZiel(target);
 		db.put(self, td);
 		if (!TeleportStations.proxy.isSinglePlayer()) {
-			packetHandler.sendTPUpdatePacket(td, Side.SERVER);
+			packetHandler.sendTPUpdateMessage(td, Side.SERVER);
 		} else {
 			TeleportStations.fh.writeToFile();
 		}
@@ -203,7 +203,7 @@ public class Database {
 	 * @param player
 	 */
 	public void sendDBToPlayer(EntityPlayerMP player) {
-		packetHandler.sendTPDatabasePacket(db, player);
+		packetHandler.sendTPDatabaseMessage(db, player);
 	}
 
 	/**
@@ -281,7 +281,7 @@ public class Database {
 	public void updateTeleDataInDataBaseWithNotificationAtServer(
 			TeleData teleData) {
 		updateTeleDataInDataBaseWithoutNotification(teleData);
-		packetHandler.sendTPUpdatePacket(teleData, Side.CLIENT);
+		packetHandler.sendTPUpdateMessage(teleData, Side.CLIENT);
 		TeleportStations.fh.writeToFile();
 	}
 

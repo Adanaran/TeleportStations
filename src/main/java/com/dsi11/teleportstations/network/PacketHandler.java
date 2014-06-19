@@ -7,13 +7,12 @@ import net.minecraft.util.ChunkCoordinates;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
-import com.dsi11.teleportstations.network.packets.AbstractPacket;
-import com.dsi11.teleportstations.network.packets.AbstractTeleDataPacket;
-import com.dsi11.teleportstations.network.packets.AddPacket;
-import com.dsi11.teleportstations.network.packets.DatabasePacket;
-import com.dsi11.teleportstations.network.packets.RemovePacket;
-import com.dsi11.teleportstations.network.packets.UpdatePacket;
+import com.dsi11.teleportstations.network.message.AddMessage;
+import com.dsi11.teleportstations.network.message.DatabaseMessage;
+import com.dsi11.teleportstations.network.message.RemoveMessage;
+import com.dsi11.teleportstations.network.message.UpdateMessage;
 
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.relauncher.Side;
 
 /**
@@ -25,40 +24,40 @@ import cpw.mods.fml.relauncher.Side;
  */
 public class PacketHandler {
 
-	public void SendTPAddPacket(TeleData payload, Side targetSide) {
-		AddPacket packet = new AddPacket(payload);
-		send(packet, targetSide);
+	public void sendTPAddMessage(TeleData payload, Side targetSide) {
+		AddMessage message = new AddMessage(payload);
+		send(message, targetSide);
 	}
 
-	public void SendTPRemovePacket(TeleData payload, Side targetSide) {
-		RemovePacket packet = new RemovePacket(payload);
-		send(packet, targetSide);
+	public void sendTPRemoveMessage(TeleData payload, Side targetSide) {
+		RemoveMessage message = new RemoveMessage(payload);
+		send(message, targetSide);
 	}
 
-	public void sendTPUpdatePacket(TeleData payload, Side targetSide) {
-		UpdatePacket packet = new UpdatePacket(payload);
-		send(packet, targetSide);
+	public void sendTPUpdateMessage(TeleData payload, Side targetSide) {
+		UpdateMessage message = new UpdateMessage(payload);
+		send(message, targetSide);
 	}
 
-	public void sendTPDatabasePacket(
+	public void sendTPDatabaseMessage(
 			TreeMap<ChunkCoordinates, TeleData> database, EntityPlayerMP player) {
-		DatabasePacket packet = new DatabasePacket(database);
-		send(packet, player);
+		DatabaseMessage message = new DatabaseMessage(database);
+		send(message, player);
 	}
 
-	private void send(AbstractPacket packet, Side targetSide) {
+	private void send(IMessage message, Side targetSide) {
 		switch (targetSide) {
 		case CLIENT:
-			TeleportStations.packetPipeline.sendToAll(packet);
+			TeleportStations.network.sendToAll(message);
 			break;
 		case SERVER:
-			TeleportStations.packetPipeline.sendToServer(packet);
+			TeleportStations.network.sendToServer(message);
 			break;
 		}
 	}
 
-	private void send(AbstractPacket packet, EntityPlayerMP player) {
-		TeleportStations.packetPipeline.sendTo(packet, player);
+	private void send(IMessage message, EntityPlayerMP player) {
+		TeleportStations.network.sendTo(message, player);
 	}
 
 }

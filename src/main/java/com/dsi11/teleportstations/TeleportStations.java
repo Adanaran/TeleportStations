@@ -1,14 +1,13 @@
 package com.dsi11.teleportstations;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 import com.dsi11.teleportstations.blocks.BlockTeleMid;
 import com.dsi11.teleportstations.blocks.BlockTeleTarget;
@@ -21,13 +20,9 @@ import com.dsi11.teleportstations.entities.TileEntityTeleTarget;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 import com.dsi11.teleportstations.items.ItemSpawnPearl;
 import com.dsi11.teleportstations.items.ItemTeleporter;
-import com.dsi11.teleportstations.network.PacketPipeline;
 import com.dsi11.teleportstations.network.PacketHandler;
 import com.dsi11.teleportstations.network.PlayerTracker;
-import com.dsi11.teleportstations.network.packets.AddPacket;
-import com.dsi11.teleportstations.network.packets.DatabasePacket;
-import com.dsi11.teleportstations.network.packets.RemovePacket;
-import com.dsi11.teleportstations.network.packets.UpdatePacket;
+import com.dsi11.teleportstations.network.message.AddMessage;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -42,6 +37,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 /**
  * Mainclass of Minecraft Mod Teleport Stations.
@@ -80,7 +76,7 @@ public class TeleportStations {
 	// The Logger
 	public static Logger logger;
 	// PacketPipeline
-	public static final PacketPipeline packetPipeline = new PacketPipeline();
+	public static SimpleNetworkWrapper network;
 	public static final ResourceLocation tileEntityTexture = new ResourceLocation("teleportstations","textures/model/Frame.png");
 	public static final ResourceLocation guiTexture = new ResourceLocation("teleportstations", "textures/gui/TPGUI.png");
 
@@ -98,6 +94,10 @@ public class TeleportStations {
 		registerBlockTeleTop();
 		registerSpawnPearl();
 		registerHandtele();
+		
+		network = NetworkRegistry.INSTANCE.newSimpleChannel("MyChannel");
+	    network.registerMessage(AddMessage.ServerHandler.class, AddMessage.class, 0, Side.SERVER);
+	    network.registerMessage(AddMessage.ClientHandler.class, AddMessage.class, 0, Side.CLIENT);
 	}
 
 	/**
@@ -117,17 +117,10 @@ public class TeleportStations {
 		fh = new FileHandler(db);
 		pt = new PlayerTracker(db, fh);
 		FMLCommonHandler.instance().bus().register(pt);
-		packetPipeline.initialise();
-		// register packets
-		packetPipeline.registerPacket(AddPacket.class);
-		packetPipeline.registerPacket(UpdatePacket.class);
-		packetPipeline.registerPacket(RemovePacket.class);
-		packetPipeline.registerPacket(DatabasePacket.class);
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
-		packetPipeline.postInitialise();
 	}
 
 	private void registerSpawnPearl() {

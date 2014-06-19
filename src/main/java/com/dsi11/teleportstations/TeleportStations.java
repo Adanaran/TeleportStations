@@ -98,18 +98,18 @@ public class TeleportStations {
 		registerSpawnPearl();
 		registerHandtele();
 		
-		network = NetworkRegistry.INSTANCE.newSimpleChannel("MyChannel");
+		network = NetworkRegistry.INSTANCE.newSimpleChannel("teleportStations");
 	    network.registerMessage(AddMessage.ServerHandler.class, AddMessage.class, 0, Side.SERVER);
-	    network.registerMessage(AddMessage.ClientHandler.class, AddMessage.class, 0, Side.CLIENT);
+	    network.registerMessage(AddMessage.ClientHandler.class, AddMessage.class, 1, Side.CLIENT);
 	    
-	    network.registerMessage(RemoveMessage.ServerHandler.class, RemoveMessage.class, 0, Side.SERVER);
-	    network.registerMessage(RemoveMessage.ClientHandler.class, RemoveMessage.class, 0, Side.CLIENT);
+	    network.registerMessage(RemoveMessage.ServerHandler.class, RemoveMessage.class, 2, Side.SERVER);
+	    network.registerMessage(RemoveMessage.ClientHandler.class, RemoveMessage.class, 3, Side.CLIENT);
 	    
-	    network.registerMessage(UpdateMessage.ServerHandler.class, UpdateMessage.class, 0, Side.SERVER);
-	    network.registerMessage(UpdateMessage.ClientHandler.class, UpdateMessage.class, 0, Side.CLIENT);
+	    network.registerMessage(UpdateMessage.ServerHandler.class, UpdateMessage.class, 4, Side.SERVER);
+	    network.registerMessage(UpdateMessage.ClientHandler.class, UpdateMessage.class, 5, Side.CLIENT);
 	    
-	    network.registerMessage(DatabaseMessage.ServerHandler.class, DatabaseMessage.class, 0, Side.SERVER);
-	    network.registerMessage(DatabaseMessage.ClientHandler.class, DatabaseMessage.class, 0, Side.CLIENT);
+	    network.registerMessage(DatabaseMessage.ServerHandler.class, DatabaseMessage.class, 6, Side.SERVER);
+	    network.registerMessage(DatabaseMessage.ClientHandler.class, DatabaseMessage.class, 7, Side.CLIENT);
 	}
 
 	/**

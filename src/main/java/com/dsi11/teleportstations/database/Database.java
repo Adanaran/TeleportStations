@@ -226,7 +226,12 @@ public class Database {
 		TeleportStations.logger
 				.log(Level.TRACE, "Removing references in DB...");
 		for (Map.Entry<ChunkCoordinates, TeleData> entry : db.entrySet()) {
-			if (entry.getValue().getZiel().equals(coords)) {
+			TeleData value = entry.getValue();
+			if(value== null){
+				throw new RuntimeException("value null");
+			}
+			ChunkCoordinates target = value.getZiel();
+			if(target != null && target.equals(coords)){
 				TeleportStations.logger.log(Level.TRACE,
 						"Deleting reference to removed teleporter.");
 				entry.getValue().setZiel(null);

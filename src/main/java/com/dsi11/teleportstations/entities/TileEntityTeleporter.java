@@ -46,7 +46,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 			TeleData self = TeleportStations.db.getTeleDataByCoords(
 					this.xCoord, this.yCoord - 2, this.zCoord);
 			TeleData target = TeleportStations.db
-					.getZielByCoords(new ChunkCoordinates(xCoord, yCoord-2,
+					.getZielByCoords(new ChunkCoordinates(xCoord, yCoord - 2,
 							zCoord));
 			nameAndTarget[0] = self.getName();
 			nameAndTarget[1] = target.getName();
@@ -98,7 +98,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 */
 
 	public String getName() {
-//		this.updateEntity();
+		// this.updateEntity();
 		return nameAndTarget[0];
 	}
 
@@ -142,14 +142,14 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 				String command = new StringBuilder("/tp ")
 						.append(entity.getGameProfile().getName()).append(" ")
 						.append(ziel.posX + 0.5).append(" ")
-						.append(ziel.posY + entity.getEyeHeight()).append(" ")
+						.append(ziel.posY).append(" ")
 						.append(ziel.posZ + 0.5).toString();
 				TeleportStations.logger.log(Level.INFO, "Executing command "
 						+ command);
 				commandManager.executeCommand(this, command);
 			}
+			porting = false;
 		}
-		porting = false;
 	}
 
 	@Override

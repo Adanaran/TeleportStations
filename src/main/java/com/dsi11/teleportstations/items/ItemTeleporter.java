@@ -58,11 +58,12 @@ public class ItemTeleporter extends Item implements ICommandSender {
 			par3EntityPlayer.openGui(TeleportStations.instance, 1, par2World,
 					-1, -1, -1);
 		} else if (par4 < 71950 && target != null && !par2World.isRemote) {
-			par3EntityPlayer.setPositionAndUpdate(target.posX + 0.5,
-					target.posY, target.posZ + 0.5);
-			par1ItemStack.damageItem(1, par3EntityPlayer);
-			par2World.playSoundAtEntity(par3EntityPlayer, "portal.portal",
-					1.0F, 1.0F);
+//			par3EntityPlayer.setPositionAndUpdate(target.posX + 0.5,
+//					target.posY, target.posZ + 0.5);
+//			par1ItemStack.damageItem(1, par3EntityPlayer);
+//			par2World.playSoundAtEntity(par3EntityPlayer, "portal.portal",
+//					1.0F, 1.0F);
+			tp(par3EntityPlayer);
 		}
 	}
 
@@ -122,22 +123,20 @@ public class ItemTeleporter extends Item implements ICommandSender {
 	public void tp(EntityPlayer entity) {
 		if (!porting && target != null) {
 			porting = true;
+			TeleportStations.logger.log(Level.INFO, "Target: x " + target.posX
+					+ " y " + target.posY + " z " + target.posZ);
 			ICommandManager cm = TeleportStations.proxy.getServer()
 					.getCommandManager();
-			cm.executeCommand(
-					this,
-					new StringBuilder("/tp ")
-							.append(entity.getGameProfile().getName())
-							.append(" ").append(target.posX + 0.5).append(" ")
-							.append(target.posY - 2).append(" ")
-							.append(target.posZ + 0.5).toString());
-			TeleportStations.logger.log(Level.INFO, "teleported "
-					+ entity.getGameProfile().getName() + " from "
-					+ entity.posX + "|" + entity.posY + "|" + entity.posZ
-					+ " to " + target.posX + "|" + (target.posY - 2) + "|"
-					+ target.posZ);
+			String command = new StringBuilder("/tp ")
+					.append(entity.getGameProfile().getName()).append(" ")
+					.append(target.posX + 0.5).append(" ")
+					.append(target.posY).append(" ")
+					.append(target.posZ + 0.5).toString();
+			TeleportStations.logger.log(Level.INFO, "Executing command "
+					+ command);
+			cm.executeCommand(this, command);
+			porting = false;
 		}
-		porting = false;
 	}
 
 	@Override

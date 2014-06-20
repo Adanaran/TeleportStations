@@ -17,7 +17,9 @@ import net.minecraft.world.World;
  * @author Demitreus
  */
 public class EntitySpawnPearl extends EntityThrowable {
-
+	private EntityLivingBase player;
+	private World world;
+	
 	/**
 	 * Creates a new entity.
 	 * 
@@ -38,6 +40,8 @@ public class EntitySpawnPearl extends EntityThrowable {
 	 */
 	public EntitySpawnPearl(World par1World, EntityLivingBase par2EntityLiving) {
 		super(par1World, par2EntityLiving);
+		this.player = par2EntityLiving;
+		this.world = par1World;
 	}
 
 	/**
@@ -59,10 +63,6 @@ public class EntitySpawnPearl extends EntityThrowable {
 
 	@Override
 	protected void onImpact(MovingObjectPosition par1MovingObjectPosition) {
-		Minecraft mc = Minecraft.getMinecraft();
-		World theWorld = mc.theWorld;
-		EntityPlayer thePlayer = mc.thePlayer;
-		InventoryPlayer inv = thePlayer.inventory;
 		if (par1MovingObjectPosition.entityHit != null) {
 			if (!par1MovingObjectPosition.entityHit.attackEntityFrom(
 					DamageSource.causeThrownDamage(this, getThrower()), 0))
@@ -73,18 +73,18 @@ public class EntitySpawnPearl extends EntityThrowable {
 					* 2D, posZ, rand.nextGaussian(), 0.0D, rand.nextGaussian());
 		}
 		if (!worldObj.isRemote) {
-			if (getThrower() != null) {
-				ChunkCoordinates SC = thePlayer
-						.getBedLocation(theWorld.provider.dimensionId);
+			if (getThrower() != null && player instanceof EntityPlayer) {
+				ChunkCoordinates SC = ((EntityPlayer) player)
+						.getBedLocation(world.provider.dimensionId);
 				if (SC == null) {
-					SC = theWorld.getSpawnPoint();
+					SC = world.getSpawnPoint();
 					while (SC.posY < 66
-							|| theWorld.getBlock(SC.posX, SC.posY, SC.posZ) != Blocks.air
-							|| theWorld.getBlock(SC.posX, SC.posY + 1, SC.posZ) != Blocks.air) {
+							|| world.getBlock(SC.posX, SC.posY, SC.posZ) != Blocks.air
+							|| world.getBlock(SC.posX, SC.posY + 1, SC.posZ) != Blocks.air) {
 						SC.posY++;
 					}
 				}
-				thePlayer.setPositionAndUpdate(SC.posX + 0.5, SC.posY + 0,
+				player.setPositionAndUpdate(SC.posX + 0.5, SC.posY + 0,
 						SC.posZ + 0.5);
 			}
 			setDead();

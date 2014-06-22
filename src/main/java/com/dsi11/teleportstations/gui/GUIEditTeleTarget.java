@@ -117,9 +117,18 @@ public class GUIEditTeleTarget extends GuiScreen {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(zieldb[selected]);
 			} else {
-				TeleportStations.db.changeTarget(new ChunkCoordinates(
-						self.posX, self.posY, self.posZ), zieldb[selected]);
-				
+				boolean targetAllowed = true;
+				ChunkCoordinates target = zieldb[selected];
+				while (targetAllowed && target != null) {
+					if (!target.equals(self)) {
+						targetAllowed = false;
+					}
+					target = TeleportStations.db.getZielByCoords(target);
+				}
+				if (targetAllowed) {
+					TeleportStations.db.changeTarget(new ChunkCoordinates(
+							self.posX, self.posY, self.posZ), zieldb[selected]);
+				}
 			}
 			TeleportStations.logger.log(Level.TRACE, "Changed target at " + x
 					+ "|" + y + "|" + z + " to " + zieldb[selected].posX + "|"

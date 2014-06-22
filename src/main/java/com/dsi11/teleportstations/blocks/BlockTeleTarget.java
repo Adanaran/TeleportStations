@@ -43,7 +43,6 @@ public class BlockTeleTarget extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	protected IIcon iconTeleBlockSide;
 
-	
 	/**
 	 * Constructor of teleportertarget-Blocks.
 	 */
@@ -56,7 +55,8 @@ public class BlockTeleTarget extends BlockContainer {
 	@Override
 	public void registerBlockIcons(IIconRegister IIR) {
 		IIcon[] iconTeleBlockTop = TeleportStations.proxy.iconTeleBlockTop;
-		iconTeleBlockTop[0] = IIR.registerIcon("teleportstations:TeleporterAus");
+		iconTeleBlockTop[0] = IIR
+				.registerIcon("teleportstations:TeleporterAus");
 		iconTeleBlockTop[1] = IIR.registerIcon("teleportstations:TeleAusS");
 		iconTeleBlockTop[2] = IIR.registerIcon("teleportstations:TeleAusO");
 		iconTeleBlockTop[3] = IIR.registerIcon("teleportstations:TeleAusN");
@@ -72,22 +72,23 @@ public class BlockTeleTarget extends BlockContainer {
 		iconTeleBlockTop[13] = IIR.registerIcon("teleportstations:TeleAus4");
 		iconTeleBlockTop[14] = IIR.registerIcon("teleportstations:TeleAus2NS");
 		iconTeleBlockTop[15] = IIR.registerIcon("teleportstations:TeleAus2OW");
-		iconTeleBlockSide = IIR.registerIcon("teleportstations:TeleporterSeite");
+		iconTeleBlockSide = IIR
+				.registerIcon("teleportstations:TeleporterSeite");
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IIcon getIcon(int side, int meta) {
 
-		if(side != 1){
-			return iconTeleBlockSide;	
+		if (side != 1) {
+			return iconTeleBlockSide;
 		}
 		return TeleportStations.proxy.iconTeleBlockTop[meta];
 	}
 
 	@Override
 	public boolean isOpaqueCube() {
-		
+
 		return false;
 	}
 
@@ -111,7 +112,6 @@ public class BlockTeleTarget extends BlockContainer {
 	public int getMobilityFlag() {
 		return 2;
 	}
-
 
 	@Override
 	public void onNeighborBlockChange(World world, int i, int j, int k,
@@ -163,7 +163,9 @@ public class BlockTeleTarget extends BlockContainer {
 	 *            int z-coordinate
 	 */
 	protected static void deleteTP(World world, int i, int j, int k) {
-		TeleportStations.db.removeTP(i, j, k);
+		if (!world.isRemote) {
+			TeleportStations.db.removeTP(i, j, k);
+		}
 		world.setBlock(i, j + 1, k, Blocks.air, 0, 2);
 		world.setBlock(i, j + 2, k, Blocks.air, 0, 2);
 		world.setBlock(i, j, k, Blocks.air, 0, 2);
@@ -512,6 +514,7 @@ public class BlockTeleTarget extends BlockContainer {
 	protected boolean power(World world, int i, int j, int k) {
 		return world.isBlockIndirectlyGettingPowered(i, j, k);
 	}
+
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {
 		return new TileEntityTeleTarget();

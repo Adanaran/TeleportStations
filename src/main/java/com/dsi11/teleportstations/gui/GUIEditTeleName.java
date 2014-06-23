@@ -31,6 +31,8 @@ public class GUIEditTeleName extends GuiScreen {
 	private String type = "";
 	private TileEntityTeleporter tet;
 	private String name = "";
+	private boolean nameInUse = false;
+	
 	private static final ArrayList<Character> allowedCharacters = new ArrayList(
 			Arrays.asList(ChatAllowedCharacters.allowedCharacters));
 	private static LinkedList namenListe;
@@ -78,7 +80,7 @@ public class GUIEditTeleName extends GuiScreen {
 			return;
 		}
 		if (guibutton.id == 0 && name.length() > 0
-				&& !namenListe.contains(name)) {
+				&& !nameInUse) {
 			mc.displayGuiScreen(null);
 		}
 	}
@@ -88,7 +90,7 @@ public class GUIEditTeleName extends GuiScreen {
 		if (Character.valueOf(';').equals(c)) {
 			return;
 		}
-		if (i == 28 && name.length() > 0 && !namenListe.contains(name)) {
+		if (i == 28 && name.length() > 0 && !nameInUse) {
 			mc.displayGuiScreen(null);
 		}
 		if (i == 14 && name.length() > 0) {
@@ -98,8 +100,8 @@ public class GUIEditTeleName extends GuiScreen {
 				|| allowedCharacters.contains(c)
 				|| allowedCharacters.contains(c)) {
 			name += c;
-			return;
 		}
+		nameInUse = namenListe.contains(name);
 	}
 
 	@Override
@@ -107,6 +109,9 @@ public class GUIEditTeleName extends GuiScreen {
 		drawDefaultBackground();
 		drawCenteredString(fontRendererObj, type, width / 2, 40, 0xffffff);
 		drawCenteredString(fontRendererObj, name, width / 2, 80, 0xffff00);
+		if(nameInUse){
+			drawCenteredString(fontRendererObj, "Teleporter existiert bereits", width / 2, 120, 0xffff00);
+		}
 		super.drawScreen(i, j, f);
 	}
 

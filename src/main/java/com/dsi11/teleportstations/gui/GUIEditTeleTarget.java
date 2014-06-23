@@ -120,7 +120,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 				boolean targetAllowed = true;
 				ChunkCoordinates target = zieldb[selected];
 				while (targetAllowed && target != null) {
-					if (!target.equals(self)) {
+					if (target.equals(self)) {
 						targetAllowed = false;
 					}
 					target = TeleportStations.db.getZielByCoords(target);

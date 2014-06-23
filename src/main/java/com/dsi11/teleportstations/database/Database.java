@@ -173,7 +173,7 @@ public class Database {
 	 */
 	public TeleData getZielByCoords(ChunkCoordinates chunkCoordinates) {
 		TeleData teleData = db.get(chunkCoordinates);
-		if (teleData.getZiel() == null) {
+		if (teleData == null || teleData.getZiel() == null) {
 			return null;
 		}
 		TeleData target = db.get(teleData.getZiel());
@@ -297,5 +297,22 @@ public class Database {
 	 */
 	public void receiveDB(TreeMap<ChunkCoordinates, TeleData> dataBase) {
 		this.db = dataBase;
+	}
+
+	/**
+	 * 
+	 * @param start
+	 * @param targetToSet
+	 * @return
+	 */
+	public boolean wouldTPRoundtripOccur(TeleData start,
+			ChunkCoordinates targetToSet) {
+		while (targetToSet != null) {
+			if (targetToSet.equals(start)) {
+				return true;
+			}
+			targetToSet = TeleportStations.db.getZielByCoords(targetToSet);
+		}
+		return false;
 	}
 }

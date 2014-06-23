@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.ChunkCoordinates;
@@ -36,6 +37,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 	private int zlSize;
 	private TreeMap<ChunkCoordinates, TeleData> zielliste;
 	private int x, y, z;
+	private World world;
 
 	/**
 	 * Creates a new GUI.
@@ -50,6 +52,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 	 *            int z-coordinate
 	 */
 	public GUIEditTeleTarget(World world, int x, int y, int z) {
+		this.world = world;
 		isScrolling = false;
 		this.x = x;
 		this.y = y;
@@ -117,22 +120,17 @@ public class GUIEditTeleTarget extends GuiScreen {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(zieldb[selected]);
 			} else {
-				boolean targetAllowed = true;
-				ChunkCoordinates target = zieldb[selected];
-				while (targetAllowed && target != null) {
-					if (target.equals(self)) {
-						targetAllowed = false;
-					}
-					target = TeleportStations.db.getZielByCoords(target);
-				}
-				if (targetAllowed) {
+				if (!TeleportStations.db.wouldTPRoundtripOccur(self,
+						zieldb[selected])) {
 					TeleportStations.db.changeTarget(new ChunkCoordinates(
 							self.posX, self.posY, self.posZ), zieldb[selected]);
+					TeleportStations.logger.log(Level.TRACE,
+							"Changed target at " + x + "|" + y + "|" + z
+									+ " to " + zieldb[selected].posX + "|"
+									+ (zieldb[selected].posY) + "|"
+									+ zieldb[selected].posZ);
 				}
 			}
-			TeleportStations.logger.log(Level.TRACE, "Changed target at " + x
-					+ "|" + y + "|" + z + " to " + zieldb[selected].posX + "|"
-					+ (zieldb[selected].posY) + "|" + zieldb[selected].posZ);
 		} else {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(null);
@@ -246,6 +244,10 @@ public class GUIEditTeleTarget extends GuiScreen {
 			if (k >= 20 && k + 9 < 159) {
 				fontRendererObj.drawString(zielNames[i].toString(), j, k,
 						0xdddddd);
+				if (TeleportStations.db.wouldTPRoundtripOccur(self, zieldb[i])) {
+					fontRendererObj.drawString(zielNames[i].toString()
+							+ " (Loop detected!)", j, k, 0xcc0000);
+				}
 			}
 		}
 	}

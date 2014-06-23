@@ -42,16 +42,20 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		try {
-			TeleData self = TeleportStations.db.getTeleDataByCoords(
-					this.xCoord, this.yCoord - 2, this.zCoord);
-			TeleData target = TeleportStations.db
-					.getZielByCoords(new ChunkCoordinates(xCoord, yCoord - 2,
-							zCoord));
+		TeleData self = TeleportStations.db.getTeleDataByCoords(this.xCoord,
+				this.yCoord - 2, this.zCoord);
+		TeleData target = TeleportStations.db
+				.getZielByCoords(new ChunkCoordinates(xCoord, yCoord - 2,
+						zCoord));
+		if (self != null) {
 			nameAndTarget[0] = self.getName();
+		} else {
+			nameAndTarget[0] = "";
+		}
+		if (target != null) {
 			nameAndTarget[1] = target.getName();
-		} catch (Exception e) {
-			// Can cause Nullpointer, can be ignored
+		} else {
+			nameAndTarget[1] = "";
 		}
 	}
 
@@ -141,9 +145,8 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 				ICommandManager commandManager = server.getCommandManager();
 				String command = new StringBuilder("/tp ")
 						.append(entity.getGameProfile().getName()).append(" ")
-						.append(ziel.posX + 0.5).append(" ")
-						.append(ziel.posY).append(" ")
-						.append(ziel.posZ + 0.5).toString();
+						.append(ziel.posX + 0.5).append(" ").append(ziel.posY)
+						.append(" ").append(ziel.posZ + 0.5).toString();
 				TeleportStations.logger.log(Level.INFO, "Executing command "
 						+ command);
 				commandManager.executeCommand(this, command);

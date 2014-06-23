@@ -1,7 +1,7 @@
 [
 {
-  "modid": "teleportstations",
-  "name": "TeleportStations",
+  "modid": "TeleportStations",
+  "name": "Teleport Stations",
   "description": "Mod for teleporting the player.",
   "version": "${version}",
   "mcversion": "${mcversion}",

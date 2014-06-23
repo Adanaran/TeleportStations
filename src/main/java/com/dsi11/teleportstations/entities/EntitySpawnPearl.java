@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 public class EntitySpawnPearl extends EntityThrowable {
 	private EntityLivingBase player;
 	private World world;
-	
+
 	/**
 	 * Creates a new entity.
 	 * 
@@ -78,9 +78,9 @@ public class EntitySpawnPearl extends EntityThrowable {
 						.getBedLocation(world.provider.dimensionId);
 				if (SC == null) {
 					SC = world.getSpawnPoint();
-					while (SC.posY < 66
-							|| world.getBlock(SC.posX, SC.posY, SC.posZ) != Blocks.air
-							|| world.getBlock(SC.posX, SC.posY + 1, SC.posZ) != Blocks.air) {
+					while (!world.canBlockSeeTheSky(SC.posX, SC.posY, SC.posZ)
+							&& !(world.getBlock(SC.posX, SC.posY, SC.posZ) == Blocks.air && world
+									.getBlock(SC.posX, SC.posY + 1, SC.posZ) == Blocks.air)) {
 						SC.posY++;
 					}
 				}

@@ -22,7 +22,7 @@ group= "com.dsi11.teleportstations" // http://maven.apache.org/guides/mini/guide
 archivesBaseName = "TeleportStations"
 
 minecraft {
-    version = "1.7.2-10.12.2.1126"
+    version = "1.7.2-10.12.2.1133"
     assetDir = "eclipse/assets"
 }
 

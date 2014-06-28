@@ -50,7 +50,7 @@ import cpw.mods.fml.relauncher.Side;
  * @author Adanaran
  * @author Demitreus
  */
-@Mod(modid = "TeleportStations", name = "Teleport Stations", version = "0.2")
+@Mod(modid = "TeleportStations", name = "Teleport Stations", version = "0.3")
 public class TeleportStations {
 
 	// The mod instance

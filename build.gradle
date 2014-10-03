@@ -15,15 +15,16 @@ buildscript {
     }
 }
 
-apply plugin: 'forge'
+apply plugin: 'fml'
 
-version = "0.3"
+version = "0.4"
 group= "com.dsi11.teleportstations" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "TeleportStations"
 
 minecraft {
-    version = "1.7.10-10.13.0.1152"
-    assetDir = "eclipse/assets"
+    version = "1.8-7.10.93.1001-1.8"
+    runDir = "eclipse"
+    mappings = 'snapshot_nodoc_20140930'
 }
 
 dependencies {
@@ -51,11 +52,11 @@ processResources
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-        
+
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'

@@ -1,13 +1,10 @@
 package com.dsi11.teleportstations.entities;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
@@ -69,12 +66,12 @@ public class EntitySpawnPearl extends EntityThrowable {
 				;
 		}
 		for (int i = 0; i < 32; i++) {
-			worldObj.spawnParticle("portal", posX, posY + rand.nextDouble()
+			worldObj.spawnParticle(EnumParticleTypes.PORTAL, posX, posY + rand.nextDouble()
 					* 2D, posZ, rand.nextGaussian(), 0.0D, rand.nextGaussian());
 		}
 		if (!worldObj.isRemote) {
 			if (getThrower() != null && player instanceof EntityPlayer) {
-				ChunkCoordinates SC = ((EntityPlayer) player)
+				/*BlockPos SC = ((EntityPlayer) player)
 						.getBedLocation(world.provider.dimensionId);
 				if (SC == null) {
 					SC = world.getSpawnPoint();
@@ -85,7 +82,7 @@ public class EntitySpawnPearl extends EntityThrowable {
 					}
 				}
 				player.setPositionAndUpdate(SC.posX + 0.5, SC.posY + 0,
-						SC.posZ + 0.5);
+						SC.posZ + 0.5);*/
 			}
 			setDead();
 		}

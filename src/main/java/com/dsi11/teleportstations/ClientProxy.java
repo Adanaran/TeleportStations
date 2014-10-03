@@ -34,8 +34,8 @@ public class ClientProxy extends CommonProxy {
                 TileEntityTeleporter.class, new TileEntityTeleRenderer(0));
 		ClientRegistry.bindTileEntitySpecialRenderer(
 				TileEntityTeleTarget.class, new TileEntityTeleRenderer(2));
-		RenderingRegistry.registerEntityRenderingHandler(
-                EntitySpawnPearl.class, new RenderSpawnPearl());
+		/*RenderingRegistry.registerEntityRenderingHandler(
+                EntitySpawnPearl.class, new RenderSpawnPearl());*/ // TODO Rendering
 	}
 
 	@Override

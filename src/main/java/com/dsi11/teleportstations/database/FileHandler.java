@@ -8,13 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
+import net.minecraft.util.BlockPos;
 import org.apache.logging.log4j.Level;
 
 import com.dsi11.teleportstations.TeleportStations;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChunkCoordinates;
 
 /**
  * The FileHandler for teleporter mod.
@@ -57,7 +54,7 @@ public class FileHandler {
 					TeleportStations.logger.log(Level.DEBUG,
 							"Writing flatfile database to disk...");
 					writer = new BufferedWriter(new FileWriter(file));
-					for (Map.Entry<ChunkCoordinates, TeleData> entry : TeleportStations.db
+					for (Map.Entry<BlockPos, TeleData> entry : TeleportStations.db
 							.getDB().entrySet()) {
 						TeleportStations.logger.log(Level.TRACE, "Writing: "
 								+ entry.getValue().toString());

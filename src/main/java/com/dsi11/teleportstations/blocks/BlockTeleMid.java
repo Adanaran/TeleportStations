@@ -4,9 +4,7 @@ import com.dsi11.teleportstations.TeleportStations;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -23,48 +21,36 @@ public class BlockTeleMid extends Block {
 
 	/**
 	 * Constuctor of middle block of teleporter.
-	 * 
-	 * @param par1
-	 *            int ID
 	 */
 	public BlockTeleMid() {
 		super(Material.portal);
 	}
-	
-	
 
-	@Override
+	/*@Override
 	public void registerBlockIcons(IIconRegister p_149651_1_) {
 		//do nothing -- no Icon
-	}
+	}*/
 
-
-
-	@Override
+	/*@Override
 	public IIcon getIcon(IBlockAccess IBA, int i,
 			int j, int k, int meta) {
 		return Blocks.air.getIcon(IBA, i, j, k, meta);
-	}
+	}*/
 
-	
-
-
-	@Override
+	/*@Override
 	public IIcon getIcon(int side, int meta) {
 		return Blocks.air.getIcon(side, meta);
-	}
-
-
+	}*/
 
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}
 
-	@Override
+	/*@Override
 	public boolean canBlockStay(World world, int i, int j, int k) {
 		return ((world.getBlock(i, j - 1, k) == TeleportStations.blockTeleporter || world
 				.getBlock(i, j - 1, k) == TeleportStations.blockTeleporterAn));
-	}
+	}*/
 
 }

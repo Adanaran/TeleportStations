@@ -1,14 +1,14 @@
 package com.dsi11.teleportstations.gui;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import org.apache.logging.log4j.Level;
@@ -28,14 +28,14 @@ public class GUIEditTeleTarget extends GuiScreen {
 
 	protected int width = 176, height = 166, listHeight = 0, scrollY = 0,
 			scrollHeight = 0;
-	private ChunkCoordinates[] zieldb;
+	private BlockPos[] zieldb;
 	private StringBuilder[] zielNames;
 	private int selected;
 	private boolean isScrolling = false;
 	private TeleData self;
 	private int metacheck;
 	private int zlSize;
-	private TreeMap<ChunkCoordinates, TeleData> zielliste;
+	private TreeMap<BlockPos, TeleData> zielliste;
 	private int x, y, z;
 	private World world;
 
@@ -58,19 +58,19 @@ public class GUIEditTeleTarget extends GuiScreen {
 		this.y = y;
 		this.z = z;
 		selected = -1;
-		metacheck = y == -1 ? -1 : world.getBlockMetadata(x, y, z);
+		// metacheck = y == -1 ? -1 : world.getBlockState(new BlockPos(x,y,z)).;
 		TeleportStations.logger
 				.log(Level.TRACE, "Teleportermeta: " + metacheck);
-		zielliste = (TreeMap<ChunkCoordinates, TeleData>) TeleportStations.db
+		zielliste = (TreeMap<BlockPos, TeleData>) TeleportStations.db
 				.getDB();
-		self = zielliste.remove(new ChunkCoordinates(x, y, z));
+		self = zielliste.remove(new BlockPos(x, y, z));
 		if (self == null) {
 			self = new TeleData("(mobile);;0;;0;;0;;0;;0;;null");
 		}
-		for (Iterator<Map.Entry<ChunkCoordinates, TeleData>> entry = zielliste
+		for (Iterator<Map.Entry<BlockPos, TeleData>> entry = zielliste
 				.entrySet().iterator(); entry.hasNext();) {
 			TeleData LName = entry.next().getValue();
-			if (LName.getWorldType() != world.provider.dimensionId
+			if (LName.getWorldType() != world.provider.getDimensionId()
 					|| (metacheck <= 0 && LName.getMeta() > 0)
 					|| (metacheck > 0 && LName.getMeta() == 0)) {
 				entry.remove();
@@ -83,10 +83,10 @@ public class GUIEditTeleTarget extends GuiScreen {
 			if (scrollHeight <= 0 || scrollHeight >= 139) {
 				scrollHeight = 139;
 			}
-			zieldb = new ChunkCoordinates[zlSize];
+			zieldb = new BlockPos[zlSize];
 			zielNames = new StringBuilder[zlSize];
 			int i = 0;
-			for (Entry<ChunkCoordinates, TeleData> entry : zielliste.entrySet()) {
+			for (Entry<BlockPos, TeleData> entry : zielliste.entrySet()) {
 				TeleData LName = entry.getValue();
 				TeleportStations.logger.log(Level.TRACE, LName.getMeta()
 						+ " meta Lname");
@@ -94,10 +94,10 @@ public class GUIEditTeleTarget extends GuiScreen {
 				zielNames[i] = new StringBuilder(LName.getName());
 				TeleportStations.logger.log(Level.TRACE, i + " benannt: "
 						+ zielNames[i].toString());
-				if (LName.getZiel() != null) {
-					ChunkCoordinates tZiel = LName.getZiel();
+				if (LName.getTarget() != null) {
+                    BlockPos tZiel = LName.getTarget();
 					String ttName = TeleportStations.db.getTeleDataByCoords(
-							tZiel.posX, tZiel.posY, tZiel.posZ).getName();
+							tZiel.getX(), tZiel.getY(), tZiel.getZ()).getName();
 					if (ttName != null) {
 						zielNames[i].append(" (" + ttName + ")");
 					}
@@ -122,29 +122,32 @@ public class GUIEditTeleTarget extends GuiScreen {
 			} else {
 				if (!TeleportStations.db.wouldTPRoundtripOccur(self,
 						zieldb[selected])) {
-					TeleportStations.db.changeTarget(new ChunkCoordinates(
-							self.posX, self.posY, self.posZ), zieldb[selected]);
+					TeleportStations.db.changeTarget(new BlockPos(
+							self.getX(), self.getY(), self.getZ()), zieldb[selected]);
 					TeleportStations.logger.log(Level.TRACE,
 							"Changed target at " + x + "|" + y + "|" + z
-									+ " to " + zieldb[selected].posX + "|"
-									+ (zieldb[selected].posY) + "|"
-									+ zieldb[selected].posZ);
+									+ " to " + zieldb[selected].getX() + "|"
+									+ (zieldb[selected].getY()) + "|"
+									+ zieldb[selected].getZ());
 				}
 			}
 		} else {
 			if (metacheck == -1) {
 				ItemTeleporter.setTarget(null);
 			} else {
-				TeleportStations.db.changeTarget(new ChunkCoordinates(
-						self.posX, self.posY, self.posZ), null);
-			}
-		}
+                TeleportStations.db.changeTarget(self.getPosition(), null);
+            }
+        }
 	}
 
 	@Override
 	protected void mouseClicked(int i, int j, int k) {
-		super.mouseClicked(i, j, k);
-		int l = width - width >> 1;
+        try {
+            super.mouseClicked(i, j, k);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int l = width - width >> 1;
 		int i1 = height - height >> 1;
 		i -= l;
 		j -= i1;
@@ -161,8 +164,12 @@ public class GUIEditTeleTarget extends GuiScreen {
 
 	@Override
 	public void drawScreen(int i, int j, float f) {
-		handleKeyboardInput();
-		int k = width - width >> 1;
+        try {
+            handleKeyboardInput();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int k = width - width >> 1;
 		int l = height - height >> 1;
 		int i1 = 0;
 		mc.renderEngine.bindTexture(TeleportStations.guiTexture);
@@ -287,7 +294,7 @@ public class GUIEditTeleTarget extends GuiScreen {
 					if ((zielNames[j].toString()
 							.compareToIgnoreCase(zielNames[j + 1].toString())) > 0) {
 						StringBuilder z1 = zielNames[j];
-						ChunkCoordinates db = zieldb[j];
+                        BlockPos db = zieldb[j];
 						zielNames[j] = zielNames[j + 1];
 						zieldb[j] = zieldb[j + 1];
 						zielNames[j + 1] = z1;

@@ -1,12 +1,12 @@
 package com.dsi11.teleportstations.network.message;
 
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
 import com.dsi11.teleportstations.database.TeleData;
 
 import io.netty.buffer.ByteBuf;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public abstract class TSMessage implements IMessage {
 
@@ -34,7 +34,7 @@ public abstract class TSMessage implements IMessage {
 		String name = ByteBufUtils.readUTF8String(buffer);
 
 		if (t_y >= 0) {
-			ChunkCoordinates target = new ChunkCoordinates(t_x, t_y, t_z);
+			BlockPos target = new BlockPos(t_x, t_y, t_z);
 			this.teleData = new TeleData(name, x, y, z, meta, worldType, target);
 		} else {
 			this.teleData = new TeleData(name, x, y, z, meta, worldType);
@@ -43,20 +43,20 @@ public abstract class TSMessage implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buffer) {
-		buffer.writeInt(teleData.posX);
-		buffer.writeInt(teleData.posY);
-		buffer.writeInt(teleData.posZ);
+		buffer.writeInt(teleData.getX());
+		buffer.writeInt(teleData.getY());
+		buffer.writeInt(teleData.getZ());
 		buffer.writeInt(teleData.getMeta());
 		buffer.writeInt(teleData.getWorldType());
 
-		ChunkCoordinates ziel = teleData.getZiel();
+		BlockPos ziel = teleData.getTarget();
 		if (ziel == null) {
-			ziel = new ChunkCoordinates(0, -1, 0);
+			ziel = new BlockPos(0, -1, 0);
 		}
 
-		buffer.writeInt(ziel.posX);
-		buffer.writeInt(ziel.posY);
-		buffer.writeInt(ziel.posZ);
+		buffer.writeInt(ziel.getX());
+		buffer.writeInt(ziel.getY());
+		buffer.writeInt(ziel.getZ());
 
 		ByteBufUtils.writeUTF8String(buffer, teleData.getName());
 	}

@@ -1,5 +1,9 @@
 package com.dsi11.teleportstations.entities;
 
+import net.minecraft.command.CommandResultStats;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import org.apache.logging.log4j.Level;
 
 import com.dsi11.teleportstations.TeleportStations;
@@ -12,7 +16,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 
@@ -45,7 +48,7 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 		TeleData self = TeleportStations.db.getTeleDataByCoords(this.xCoord,
 				this.yCoord - 2, this.zCoord);
 		TeleData target = TeleportStations.db
-				.getZielByCoords(new ChunkCoordinates(xCoord, yCoord - 2,
+				.getZielByCoords(new BlockPos(xCoord, yCoord - 2,
 						zCoord));
 		if (self != null) {
 			nameAndTarget[0] = self.getName();
@@ -106,7 +109,12 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 		return nameAndTarget[0];
 	}
 
-	/**
+    @Override
+    public IChatComponent getDisplayName() {
+        return null;
+    }
+
+    /**
 	 * Gets the teleporter's target.
 	 * 
 	 * @return String target
@@ -133,8 +141,8 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	 *            EntityPlayer to be teleported
 	 */
 	public void tp(EntityPlayer entity) {
-		ChunkCoordinates ziel = TeleportStations.db
-				.getZielByCoords(new ChunkCoordinates(this.xCoord,
+        BlockPos ziel = TeleportStations.db
+				.getZielByCoords(new BlockPos(this.xCoord,
 						this.yCoord - 2, this.zCoord));
 		if (!porting && ziel != null) {
 			porting = true;
@@ -165,15 +173,15 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 		return true;
 	}
 
-	@Override
-	public ChunkCoordinates getPlayerCoordinates() {
-		return new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord);
-	}
+    @Override
+    public BlockPos getPosition() {
+        return null;
+    }
 
-	@Override
-	public IChatComponent func_145748_c_() {
-		return null;
-	}
+    @Override
+    public Vec3 getPositionVector() {
+        return null;
+    }
 
 	@Override
 	public void addChatMessage(IChatComponent var1) {
@@ -183,4 +191,19 @@ public class TileEntityTeleporter extends TileEntity implements ICommandSender {
 	public World getEntityWorld() {
 		return this.worldObj;
 	}
+
+    @Override
+    public Entity getCommandSenderEntity() {
+        return null;
+    }
+
+    @Override
+    public boolean sendCommandFeedback() {
+        return false;
+    }
+
+    @Override
+    public void func_174794_a(CommandResultStats.Type p_174794_1_, int p_174794_2_) {
+
+    }
 }

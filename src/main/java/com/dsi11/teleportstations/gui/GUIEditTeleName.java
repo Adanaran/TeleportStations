@@ -1,19 +1,18 @@
 package com.dsi11.teleportstations.gui;
 
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.world.World;
 
 import org.lwjgl.input.Keyboard;
 
 import com.dsi11.teleportstations.TeleportStations;
-import com.dsi11.teleportstations.blocks.BlockTeleTarget;
 import com.dsi11.teleportstations.database.TeleData;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 
@@ -34,7 +33,7 @@ public class GUIEditTeleName extends GuiScreen {
 	private boolean nameInUse = false;
 	
 	private static final ArrayList<Character> allowedCharacters = new ArrayList(
-			Arrays.asList(ChatAllowedCharacters.allowedCharacters));
+			Arrays.asList(ChatAllowedCharacters.allowedCharactersArray));
 	private static LinkedList namenListe;
 
 	/**
@@ -57,7 +56,7 @@ public class GUIEditTeleName extends GuiScreen {
 		this.j = j;
 		this.k = k;
 		this.type = type;
-		tet = (TileEntityTeleporter) world.getTileEntity(i, j + 2, k);
+		tet = (TileEntityTeleporter) world.getTileEntity(new BlockPos(i, j + 2, k));
 	}
 
 	@Override
@@ -117,10 +116,10 @@ public class GUIEditTeleName extends GuiScreen {
 
 	@Override
 	public void onGuiClosed() {
-		TeleportStations.db
+/*		TeleportStations.db
 				.addTeleDataToDatabaseWithNotificationAtClient(new TeleData(
 						name, i, j, k, world.getBlockMetadata(i, j, k),
-						world.provider.dimensionId));
+						world.provider.getDimensionId()));*/
 		tet.setNameAndTarget(name, "");
 	}
 }

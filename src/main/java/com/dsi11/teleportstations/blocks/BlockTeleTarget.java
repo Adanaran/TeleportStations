@@ -3,7 +3,6 @@ package com.dsi11.teleportstations.blocks;
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
 import com.dsi11.teleportstations.entities.TileEntityTeleTarget;
-import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -13,7 +12,6 @@ import net.minecraft.block.BlockRail;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
@@ -324,7 +322,7 @@ public class BlockTeleTarget extends BlockContainer {
 		double ex = eM.posX, ez = eM.posZ, speed = eM.motionX + eM.motionZ
 				+ 0.05;
 		TeleData quelle = TeleportStations.db.getTeleDataByCoords(i, j, k);
-		ChunkCoordinates ziel = quelle.getZiel();
+		ChunkCoordinates ziel = quelle.getTarget();
 		if (ziel != null && world.isBlockIndirectlyGettingPowered(i, j, k)) {
 			i = ziel.posX;
 			j = ziel.posY;

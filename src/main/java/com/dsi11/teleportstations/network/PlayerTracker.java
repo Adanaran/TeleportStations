@@ -1,13 +1,13 @@
 package com.dsi11.teleportstations.network;
 
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.Level;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.Database;
 import com.dsi11.teleportstations.database.FileHandler;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -38,7 +38,7 @@ public class PlayerTracker {
 	}
 
 	@SubscribeEvent
-	public void onPlayerLogin(PlayerLoggedInEvent evt) {
+	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent evt) {
 		EntityPlayer player = evt.player;
 		TeleportStations.logger.log(Level.TRACE, "Player logging in at");
 		if (TeleportStations.proxy.isSinglePlayer()) {

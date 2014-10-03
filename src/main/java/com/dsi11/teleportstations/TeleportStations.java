@@ -6,6 +6,18 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.LanguageRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
@@ -27,21 +39,6 @@ import com.dsi11.teleportstations.network.message.DatabaseMessage;
 import com.dsi11.teleportstations.network.message.RemoveMessage;
 import com.dsi11.teleportstations.network.message.UpdateMessage;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-
 /**
  * Mainclass of Minecraft Mod Teleport Stations.
  * <p>
@@ -54,7 +51,7 @@ import cpw.mods.fml.relauncher.Side;
 public class TeleportStations {
 
 	// The mod instance
-	@Instance
+	@Mod.Instance
 	public static TeleportStations instance;
 	// The sided Proxy instance
 	@SidedProxy(clientSide = "com.dsi11.teleportstations.ClientProxy", serverSide = "com.dsi11.teleportstations.CommonProxy")
@@ -83,11 +80,11 @@ public class TeleportStations {
 	public static final ResourceLocation tileEntityTexture = new ResourceLocation("teleportstations","textures/model/Frame.png");
 	public static final ResourceLocation guiTexture = new ResourceLocation("teleportstations", "textures/gui/TPGUI.png");
 
-	@EventHandler
+	@Mod.EventHandler
 	public void initialise(FMLInitializationEvent evt) {
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		logger = evt.getModLog();
 		logger.log(Level.TRACE, "Registering blocks and items");
@@ -120,7 +117,7 @@ public class TeleportStations {
 	 * @param evt
 	 *            FMLInitializationEvent
 	 */
-	@EventHandler
+	@Mod.EventHandler
 	public void load(FMLInitializationEvent evt) {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
@@ -131,7 +128,7 @@ public class TeleportStations {
 		FMLCommonHandler.instance().bus().register(pt);
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 	}
 
@@ -140,11 +137,11 @@ public class TeleportStations {
 		itemSpawnPearl.setCreativeTab(CreativeTabs.tabTransport)
 				.setUnlocalizedName("Spawnpearl");
 		EntityRegistry.registerModEntity(EntitySpawnPearl.class, "Spawnpearl",
-				3, this, 164, 10, true);
+                3, this, 164, 10, true);
 		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(itemSpawnPearl, "Spawnpearl");
 		GameRegistry.registerItem(itemSpawnPearl,
-				itemSpawnPearl.getUnlocalizedName());
+                itemSpawnPearl.getUnlocalizedName());
 		GameRegistry.addRecipe(new ItemStack(itemSpawnPearl),
 				new Object[] { "K", "E", Character.valueOf('E'),
 						Items.ender_pearl, Character.valueOf('K'),
@@ -167,7 +164,7 @@ public class TeleportStations {
 
 	private void registerBlockTeleTarget() {
 		blockTeleTarget = new BlockTeleTarget();
-		blockTeleTarget.setBlockName("Teleporterziel");
+		// TODO blockTeleTarget.setBlockName("Teleporterziel");
 		blockTeleTarget.setCreativeTab(CreativeTabs.tabTransport);
 		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleTarget, "Teleporterziel");
@@ -188,8 +185,8 @@ public class TeleportStations {
 	private void registerBlockTeleporter() {
 		blockTeleporter = new BlockTeleporter();
 		blockTeleporterAn = new BlockTeleporter();
-		blockTeleporter.setBlockName("Teleporter");
-		blockTeleporterAn.setBlockUnbreakable();
+        // TODO blockTeleporter.setBlockName("Teleporter");
+        // TODO blockTeleporterAn.setBlockUnbreakable();
 		blockTeleporter.setCreativeTab(CreativeTabs.tabTransport);
 		GameRegistry.registerBlock(blockTeleporter,
 				blockTeleporter.getUnlocalizedName());
@@ -208,8 +205,8 @@ public class TeleportStations {
 		GameRegistry.registerBlock(blockTeleTop, "Teleporterdeckel");
 		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleTop, "Teleporterdeckel");
-		blockTeleTop.setBlockUnbreakable().setBlockBounds(0.01f, 0.5f, 0.01f,
-				0.99f, 1f, 0.99f);
+        // TODO blockTeleTop.setBlockUnbreakable().setBlockBounds(0.01f, 0.5f, 0.01f,
+        // TODO 		0.99f, 1f, 0.99f);
 		GameRegistry.registerTileEntity(TileEntityTeleporter.class,
 				"TileEntityTeleporter");
 	}
@@ -219,7 +216,7 @@ public class TeleportStations {
 		GameRegistry.registerBlock(blockTeleMid, "Teleportermitte");
 		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleMid, "Teleportermitte");
-		blockTeleMid.setBlockUnbreakable().setBlockBounds(0.5f, 1.5F, 0.5f,
-				0.5f, 1.5f, 0.5f);
+        // TODO blockTeleMid.setBlockUnbreakable().setBlockBounds(0.5f, 1.5F, 0.5f,
+        // TODO 		0.5f, 1.5f, 0.5f);
 	}
 }

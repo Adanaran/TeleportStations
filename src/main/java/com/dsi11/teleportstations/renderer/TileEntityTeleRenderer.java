@@ -1,11 +1,9 @@
 package com.dsi11.teleportstations.renderer;
 
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+
 
 import org.lwjgl.opengl.GL11;
 
@@ -36,7 +34,7 @@ public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity entityTele, double var2,
-			double var4, double var6, float var8) {
+			double var4, double var6, float var8, int p_180535_9_) {
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) var2 + 0.5F, (float) var4 + 1.5f + pos,
@@ -63,7 +61,7 @@ public class TileEntityTeleRenderer extends TileEntitySpecialRenderer {
 		float var10 = 0.6666667F;
 		float var12 = 0.016666668F * var10;
 		float[] xy = { 0, 0.5f, 0, -0.5f };
-		FontRenderer fR = this.func_147498_b();
+		FontRenderer fR = this.getFontRenderer();
 		GL11.glTranslatef(xy[i], -0.6F, xy[i + (i != 3 ? 1 : -1)]);
 		GL11.glScalef(var12, -var12, var12);
 		GL11.glRotatef(i * 90, 0, 1, 0);

@@ -2,11 +2,9 @@ package com.dsi11.teleportstations.network.message;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
-
-import io.netty.buffer.ByteBuf;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class RemoveMessage extends TSMessage {
 
@@ -27,7 +25,7 @@ public class RemoveMessage extends TSMessage {
 	}
 
 	public static class ClientHandler implements
-			IMessageHandler<RemoveMessage, IMessage> {
+            IMessageHandler<RemoveMessage, IMessage> {
 
 		@Override
 		public IMessage onMessage(RemoveMessage message, MessageContext ctx) {

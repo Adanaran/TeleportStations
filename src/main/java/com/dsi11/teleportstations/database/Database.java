@@ -5,14 +5,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.network.PacketHandler;
-
-import cpw.mods.fml.relauncher.Side;
 
 /**
  * Database for {@link#TeleportStations}.
@@ -22,8 +21,8 @@ import cpw.mods.fml.relauncher.Side;
  * @author Adanaran
  */
 public class Database {
-	private TreeMap<ChunkCoordinates, TeleData> db = new TreeMap<ChunkCoordinates, TeleData>(
-			new ChunkCoordsComparator());
+	private TreeMap<BlockPos, TeleData> db = new TreeMap<BlockPos, TeleData>(
+			new BlockPosComparator());
 	private PacketHandler packetHandler;
 
 	/**
@@ -42,8 +41,7 @@ public class Database {
 	 *            TeleData
 	 */
 	public void addTeleDataToDatabaseWithOutNotification(TeleData teleData) {
-		this.db.put(new ChunkCoordinates(teleData.posX, teleData.posY,
-				teleData.posZ), teleData);
+		this.db.put(teleData.getPosition(), teleData);
 	}
 
 	/**
@@ -77,7 +75,7 @@ public class Database {
 	 * @return
 	 */
 	public boolean isTPInDatabase(int i, int j, int k) {
-		return db.containsKey(new ChunkCoordinates(i, j, k));
+		return db.containsKey(new BlockPos(i, j, k));
 	}
 
 	/**
@@ -89,17 +87,17 @@ public class Database {
 	 * @return
 	 */
 	public TeleData getTeleDataByCoords(int i, int j, int k) {
-		return getTeleDataByCoords(new ChunkCoordinates(i, j, k));
+		return getTeleDataByCoords(new BlockPos(i, j, k));
 	}
 
 	/**
 	 * this
 	 * 
-	 * @param chunkCoordinates
+	 * @param BlockPos
 	 * @return
 	 */
-	public TeleData getTeleDataByCoords(ChunkCoordinates chunkCoordinates) {
-		return db.get(chunkCoordinates);
+	public TeleData getTeleDataByCoords(BlockPos BlockPos) {
+		return db.get(BlockPos);
 	}
 
 	/**
@@ -110,7 +108,7 @@ public class Database {
 	 * @param k
 	 */
 	public void removeTP(int i, int j, int k) {
-		ChunkCoordinates coords = new ChunkCoordinates(i, j, k);
+		BlockPos coords = new BlockPos(i, j, k);
 		TeleData td = db.remove(coords);
 		if (TeleportStations.proxy.isServer()
 				|| TeleportStations.proxy.isSinglePlayer()) {
@@ -129,7 +127,7 @@ public class Database {
 	 * @param meta
 	 */
 	public void updateMeta(int i, int j, int k, int meta) {
-		ChunkCoordinates coords = new ChunkCoordinates(i, j, k);
+		BlockPos coords = new BlockPos(i, j, k);
 		TeleData td = db.get(coords);
 		td.setMeta(meta);
 		db.put(coords, td);
@@ -141,8 +139,8 @@ public class Database {
 	 * 
 	 * @return
 	 */
-	public TreeMap<ChunkCoordinates, TeleData> getDB() {
-		return (TreeMap<ChunkCoordinates, TeleData>) db.clone();
+	public TreeMap<BlockPos, TeleData> getDB() {
+		return (TreeMap<BlockPos, TeleData>) db.clone();
 	}
 
 	/**
@@ -159,7 +157,7 @@ public class Database {
 	 */
 	public LinkedList getAllNames() {
 		LinkedList<String> names = new LinkedList();
-		for (Map.Entry<ChunkCoordinates, TeleData> entry : db.entrySet()) {
+		for (Map.Entry<BlockPos, TeleData> entry : db.entrySet()) {
 			names.add(entry.getValue().getName());
 		}
 		return names;
@@ -168,27 +166,27 @@ public class Database {
 	/**
 	 * TileEntityTeleporter
 	 * 
-	 * @param chunkCoordinates
+	 * @param blockPos
 	 * @return
 	 */
-	public TeleData getZielByCoords(ChunkCoordinates chunkCoordinates) {
-		TeleData teleData = db.get(chunkCoordinates);
-		if (teleData == null || teleData.getZiel() == null) {
+	public TeleData getZielByCoords(BlockPos blockPos) {
+		TeleData teleData = db.get(blockPos);
+		if (teleData == null || teleData.getTarget() == null) {
 			return null;
 		}
-		TeleData target = db.get(teleData.getZiel());
+		TeleData target = db.get(teleData.getTarget());
 		return target;
 	}
 
 	/**
 	 * GuiEditTeleTarget
 	 * 
-	 * @param chunkCoordinates
-	 * @param chunkCoordinates2
+	 * @param self
+	 * @param target
 	 */
-	public void changeTarget(ChunkCoordinates self, ChunkCoordinates target) {
+	public void changeTarget(BlockPos self, BlockPos target) {
 		TeleData td = db.get(self);
-		td.setZiel(target);
+		td.setTarget(target);
 		db.put(self, td);
 		if (!TeleportStations.proxy.isSinglePlayer()) {
 			packetHandler.sendTPUpdateMessage(td, Side.SERVER);
@@ -212,29 +210,28 @@ public class Database {
 	 * @param teleData
 	 */
 	public void removeTeleDataFromDatabaseWithOutNotification(TeleData teleData) {
-		TeleData td = db.remove(new ChunkCoordinates(teleData.posX,
-				teleData.posY, teleData.posZ));
-		deleteReferencesAfterTPRemoved(td);
+		TeleData td = db.remove(teleData.getPosition());
+		deleteReferencesAfterTPRemoved(td.getPosition());
 	}
 
 	/**
 	 * this only serverside
-	 * 
-	 * @param coords
-	 */
-	private void deleteReferencesAfterTPRemoved(ChunkCoordinates coords) {
+	 *
+     * @param coords
+     */
+	private void deleteReferencesAfterTPRemoved(BlockPos coords) {
 		TeleportStations.logger
 				.log(Level.TRACE, "Removing references in DB...");
-		for (Map.Entry<ChunkCoordinates, TeleData> entry : db.entrySet()) {
+		for (Map.Entry<BlockPos, TeleData> entry : db.entrySet()) {
 			TeleData value = entry.getValue();
 			if(value== null){
 				throw new RuntimeException("value null");
 			}
-			ChunkCoordinates target = value.getZiel();
+			BlockPos target = value.getTarget();
 			if(target != null && target.equals(coords)){
 				TeleportStations.logger.log(Level.TRACE,
 						"Deleting reference to removed teleporter.");
-				entry.getValue().setZiel(null);
+				entry.getValue().setTarget(null);
 			}
 		}
 		TeleportStations.logger.log(Level.TRACE, "All references removed.");
@@ -245,18 +242,18 @@ public class Database {
 	 * 
 	 * @param coords
 	 */
-	private void deleteReferencesAfterMetaChange(ChunkCoordinates coords) {
+	private void deleteReferencesAfterMetaChange(BlockPos coords) {
 		TeleportStations.logger.log(Level.TRACE,
 				"Checking for references in DB...");
 		TeleData td = db.get(coords);
 		int meta = td.getMeta();
-		for (Map.Entry<ChunkCoordinates, TeleData> entry : db.entrySet()) {
+		for (Map.Entry<BlockPos, TeleData> entry : db.entrySet()) {
 			TeleData refTD = entry.getValue();
 			int refMeta = refTD.getMeta();
-			ChunkCoordinates refZiel = refTD.getZiel();
+			BlockPos refZiel = refTD.getTarget();
 			if (refZiel == coords) {
 				if ((meta > 0 && refMeta == 0) || (meta == 0 && refMeta > 0)) {
-					refTD.setZiel(null);
+					refTD.setTarget(null);
 					TeleportStations.logger.log(Level.TRACE,
 							"Removed wrong reference");
 				}
@@ -273,8 +270,7 @@ public class Database {
 	 * @param teleData
 	 */
 	public void updateTeleDataInDataBaseWithoutNotification(TeleData teleData) {
-		ChunkCoordinates coords = new ChunkCoordinates(teleData.posX,
-				teleData.posY, teleData.posZ);
+		BlockPos coords = teleData.getPosition();
 		db.put(coords, teleData);
 	}
 
@@ -292,10 +288,10 @@ public class Database {
 
 	/**
 	 * Packet
-	 * 
-	 * @param dataBase
-	 */
-	public void receiveDB(TreeMap<ChunkCoordinates, TeleData> dataBase) {
+	 *
+     * @param dataBase
+     */
+	public void receiveDB(TreeMap<BlockPos, TeleData> dataBase) {
 		this.db = dataBase;
 	}
 
@@ -306,12 +302,15 @@ public class Database {
 	 * @return
 	 */
 	public boolean wouldTPRoundtripOccur(TeleData start,
-			ChunkCoordinates targetToSet) {
+			BlockPos targetToSet) {
 		while (targetToSet != null) {
 			if (targetToSet.equals(start)) {
 				return true;
 			}
-			targetToSet = TeleportStations.db.getZielByCoords(targetToSet);
+            TeleData td = TeleportStations.db.getZielByCoords(targetToSet);
+            if(td!=null) {
+                targetToSet = td.getPosition();
+            }
 		}
 		return false;
 	}

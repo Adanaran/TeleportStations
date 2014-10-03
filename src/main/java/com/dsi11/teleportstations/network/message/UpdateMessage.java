@@ -4,9 +4,9 @@ import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
 
 import io.netty.buffer.ByteBuf;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class UpdateMessage extends TSMessage {
 
@@ -29,7 +29,7 @@ public class UpdateMessage extends TSMessage {
 	}
 
 	public static class ClientHandler implements
-			IMessageHandler<UpdateMessage, IMessage> {
+            IMessageHandler<UpdateMessage, IMessage> {
 
 		@Override
 		public IMessage onMessage(UpdateMessage message, MessageContext ctx) {

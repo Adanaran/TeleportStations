@@ -3,7 +3,6 @@ package com.dsi11.teleportstations.network;
 import java.util.TreeMap;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChunkCoordinates;
 
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
@@ -11,9 +10,10 @@ import com.dsi11.teleportstations.network.message.AddMessage;
 import com.dsi11.teleportstations.network.message.DatabaseMessage;
 import com.dsi11.teleportstations.network.message.RemoveMessage;
 import com.dsi11.teleportstations.network.message.UpdateMessage;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.relauncher.Side;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.relauncher.Side;
 
 /**
  * PacketHandler for teleporter mod.
@@ -40,7 +40,7 @@ public class PacketHandler {
 	}
 
 	public void sendTPDatabaseMessage(
-			TreeMap<ChunkCoordinates, TeleData> database, EntityPlayerMP player) {
+			TreeMap<BlockPos, TeleData> database, EntityPlayerMP player) {
 		DatabaseMessage message = new DatabaseMessage(database);
 		send(message, player);
 	}

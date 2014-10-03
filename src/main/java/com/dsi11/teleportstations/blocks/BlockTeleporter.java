@@ -6,17 +6,11 @@ import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.command.ICommandManager;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -133,7 +127,7 @@ public class BlockTeleporter extends BlockTeleTarget {
 	private void teleportPlayer(EntityPlayer entity, World world, int i, int j,
 			int k) {
 		TeleData quelle = TeleportStations.db.getTeleDataByCoords(i, j, k);
-		ChunkCoordinates ziel = quelle.getZiel();
+		ChunkCoordinates ziel = quelle.getTarget();
 		TileEntity te = world.getTileEntity(i, j + 2, k);
 		if (te != null
 				&& te instanceof TileEntityTeleporter

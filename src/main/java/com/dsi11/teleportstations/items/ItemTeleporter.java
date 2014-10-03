@@ -1,24 +1,25 @@
 package com.dsi11.teleportstations.items;
 
+import jdk.nashorn.internal.ir.Block;
+import net.minecraft.command.CommandResultStats;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 import com.dsi11.teleportstations.TeleportStations;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Handteleporter zur mobilen Teleportation.
@@ -30,12 +31,12 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 
 public class ItemTeleporter extends Item implements ICommandSender {
-	private static ChunkCoordinates target;
+	private static BlockPos target;
 	private boolean porting = false;
-	@SideOnly(Side.CLIENT)
+	/*@SideOnly(Side.CLIENT)
 	private IIcon itemTeleIcon;
 	@SideOnly(Side.CLIENT)
-	private IIcon itemTeleIconActive;
+	private IIcon itemTeleIconActive;*/
 
 	public ItemTeleporter() {
 		super();
@@ -43,11 +44,11 @@ public class ItemTeleporter extends Item implements ICommandSender {
 		setMaxDamage(200);
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister IIR) {
 		itemTeleIcon = IIR.registerIcon("teleportstations:ItemTele");
 		itemTeleIconActive = IIR.registerIcon("teleportstations:ItemTeleAn");
-	}
+	}*/
 
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer, int par4) {
@@ -67,7 +68,7 @@ public class ItemTeleporter extends Item implements ICommandSender {
 		}
 	}
 
-	public static void setTarget(ChunkCoordinates tarCoords) {
+	public static void setTarget(BlockPos tarCoords) {
 		target = tarCoords;
 	}
 
@@ -83,7 +84,7 @@ public class ItemTeleporter extends Item implements ICommandSender {
 	 * is being used
 	 */
 	public EnumAction getItemUseAction(ItemStack par1ItemStack) {
-		return EnumAction.block;
+		return EnumAction.BLOCK;
 	}
 
 	/**
@@ -97,14 +98,14 @@ public class ItemTeleporter extends Item implements ICommandSender {
 		return par1ItemStack;
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconFromDamage(int par1) {
 		if (Minecraft.getMinecraft().thePlayer.getItemInUseDuration() <= 50) {
 			return itemTeleIcon;
 		} else {
 			return itemTeleIconActive;
 		}
-	}
+	}*/
 
 	/**
 	 * Return the enchantability factor of the item, most of the time is based
@@ -123,15 +124,15 @@ public class ItemTeleporter extends Item implements ICommandSender {
 	public void tp(EntityPlayer entity) {
 		if (!porting && target != null) {
 			porting = true;
-			TeleportStations.logger.log(Level.INFO, "Target: x " + target.posX
-					+ " y " + target.posY + " z " + target.posZ);
+			TeleportStations.logger.log(Level.INFO, "Target: x " + target.getX()
+					+ " y " + target.getY() + " z " + target.getZ());
 			ICommandManager cm = TeleportStations.proxy.getServer()
 					.getCommandManager();
 			String command = new StringBuilder("/tp ")
 					.append(entity.getGameProfile().getName()).append(" ")
-					.append(target.posX + 0.5).append(" ")
-					.append(target.posY).append(" ")
-					.append(target.posZ + 0.5).toString();
+					.append(target.getX() + 0.5).append(" ")
+					.append(target.getY()).append(" ")
+					.append(target.getZ() + 0.5).toString();
 			TeleportStations.logger.log(Level.INFO, "Executing command "
 					+ command);
 			cm.executeCommand(this, command);
@@ -140,26 +141,31 @@ public class ItemTeleporter extends Item implements ICommandSender {
 	}
 
 	@Override
-	public String getCommandSenderName() {
-		return "Teleport Stations";
-	}
-
-	@Override
 	public boolean canCommandSenderUseCommand(int var1, String var2) {
 		return true;
 	}
 
-	@Override
-	public ChunkCoordinates getPlayerCoordinates() {
-		return null;
-	}
+    @Override
+    public BlockPos getPosition() {
+        return null;
+    }
 
-	@Override
-	public IChatComponent func_145748_c_() {
-		return null;
-	}
+    @Override
+    public Vec3 getPositionVector() {
+        return null;
+    }
 
-	@Override
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return null;
+    }
+
+    @Override
 	public void addChatMessage(IChatComponent var1) {
 	}
 
@@ -167,4 +173,19 @@ public class ItemTeleporter extends Item implements ICommandSender {
 	public World getEntityWorld() {
 		return null;
 	}
+
+    @Override
+    public Entity getCommandSenderEntity() {
+        return null;
+    }
+
+    @Override
+    public boolean sendCommandFeedback() {
+        return false;
+    }
+
+    @Override
+    public void func_174794_a(CommandResultStats.Type p_174794_1_, int p_174794_2_) {
+
+    }
 }

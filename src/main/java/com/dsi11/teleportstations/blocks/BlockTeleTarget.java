@@ -106,7 +106,15 @@ public class BlockTeleTarget extends BlockContainer {
         return 2;
     }
 
-	/*@Override
+
+    @Override
+    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+        update(worldIn, pos);
+        if (!this.canPlaceBlockAt(worldIn, pos.offsetDown())) {
+//            deleteTP(worldIn, pos);
+        }
+    }
+    /*@Override
     public void onNeighborBlockChange(World world, int i, int j, int k,
 			Block blockChanged) {
 		update(world, i, j, k);
@@ -166,7 +174,7 @@ public class BlockTeleTarget extends BlockContainer {
             ((EntityPlayer) player).openGui(TeleportStations.instance, 0,
                     worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
-        update(worldIn, pos.getX(), pos.getY(), pos.getZ());
+        update(worldIn, pos);
     }
 
     @Override
@@ -183,28 +191,24 @@ public class BlockTeleTarget extends BlockContainer {
      * if they are rails. The block is replaced with the new meta.
      *
      * @param world World world
-     * @param i     int x-coordinate
-     * @param j     int y-coordinate
-     * @param k     int z-coordinate
+     * @param pos   BlockPos position
      * @return int new meta value
      */
-    public int update(World world, int i, int j, int k) {
-
+    public int update(World world, BlockPos pos) {
+        int i = pos.getX();
+        int j = pos.getY();
+        int k = pos.getZ();
         int meta = 0;
         Block ostId = world.getBlockState(new BlockPos(i + 1, j, k)).getBlock();
         Block westId = world.getBlockState(new BlockPos(i - 1, j, k)).getBlock();
         Block suedId = world.getBlockState(new BlockPos(i, j, k + 1)).getBlock();
         Block nordId = world.getBlockState(new BlockPos(i, j, k - 1)).getBlock();
 
-        /*int ostMd = world.getBlockMetadata(new BlockPos(i + 1, j, k)).getBlock();
-        int westMd = world.getBlockMetadata(new BlockPos(i - 1, j, k)).getBlock();
-        int suedMd = world.getBlockMetadata(new BlockPos(i, j, k + 1)).getBlock();
-        int nordMd = world.getBlockMetadata(new BlockPos(i, j, k - 1)).getBlock();*/
-
-        int ostMd = 0;
-        int westMd = 0;
-        int suedMd = 0;
-        int nordMd = 0;
+        // TODO Meta / BlockState
+        int ostMd = 0; //world.getBlockMetadata(new BlockPos(i + 1, j, k)).getBlock();
+        int westMd = 0; // world.getBlockMetadata(new BlockPos(i - 1, j, k)).getBlock();
+        int suedMd = 0; // world.getBlockMetadata(new BlockPos(i, j, k + 1)).getBlock();
+        int nordMd = 0; // world.getBlockMetadata(new BlockPos(i, j, k - 1)).getBlock();
 
         boolean ost = false, west = false, nord = false, sued = false;
         int connects = 0;

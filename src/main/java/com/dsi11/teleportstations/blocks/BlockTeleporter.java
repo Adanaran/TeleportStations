@@ -3,6 +3,8 @@ package com.dsi11.teleportstations.blocks;
 import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.database.TeleData;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
@@ -21,12 +23,13 @@ import net.minecraft.world.World;
  */
 public class BlockTeleporter extends BlockTeleTarget {
 
+    public static final PropertyBool POWERED = PropertyBool.create("powered");
     private boolean isActive;
 
     /**
      * Constructor.
      */
-    public BlockTeleporter(boolean isActive) {
+    public BlockTeleporter() {
         super();
         if(isActive) {
             this.setBlockUnbreakable();
@@ -34,9 +37,10 @@ public class BlockTeleporter extends BlockTeleTarget {
         }else {
             this.setUnlocalizedName("Teleporter");
         }
+        this.setDefaultState(this.blockState.getBaseState().withProperty(POWERED, Boolean.valueOf(false)));
     }
 
-	/*@SideOnly(Side.CLIENT)
+/*@SideOnly(Side.CLIENT)
     @Override
 	public void registerBlockIcons(IIconRegister IIR) {
 		super.registerBlockIcons(IIR);
@@ -89,13 +93,16 @@ public class BlockTeleporter extends BlockTeleTarget {
 	}*/
 
     @Override
-    public int update(World world, int i, int j, int k) {
+    public int update(World world, BlockPos pos) {
+        int i = pos.getX();
+        int j = pos.getY();
+        int k = pos.getZ();
         if (power(world, i, j, k)) {
             world.setBlockState(new BlockPos(i, j, k), TeleportStations.blockTeleporterAn.getDefaultState());
         } else {
             world.setBlockState(new BlockPos(i, j, k), TeleportStations.blockTeleporter.getDefaultState());
         }
-        return super.update(world, i, j, k);
+        return super.update(world, pos);
     }
 
     @Override

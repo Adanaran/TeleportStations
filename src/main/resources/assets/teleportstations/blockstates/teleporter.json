@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "powered=false": { "model": "teleporter" },
+        "powered=true": { "model": "teleporter_an" }
+    }
+}

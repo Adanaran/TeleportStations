@@ -1,6 +1,5 @@
 package com.dsi11.teleportstations.blocks;
 
-import com.dsi11.teleportstations.TeleportStations;
 import com.dsi11.teleportstations.entities.TileEntityTeleporter;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -34,6 +33,8 @@ public class BlockTeleTop extends BlockContainer {
      */
     public BlockTeleTop() {
         super(Material.portal);
+        this.setBlockUnbreakable();
+        this.setBlockBounds(0.01f, 0.5f, 0.01f, 0.99f, 1f, 0.99f);
     }
 
 	/*@SideOnly(Side.CLIENT)

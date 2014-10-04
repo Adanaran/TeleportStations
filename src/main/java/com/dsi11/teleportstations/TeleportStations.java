@@ -164,7 +164,6 @@ public class TeleportStations {
 
 	private void registerBlockTeleTarget() {
 		blockTeleTarget = new BlockTeleTarget();
-		// TODO blockTeleTarget.setBlockName("Teleporterziel");
 		blockTeleTarget.setCreativeTab(CreativeTabs.tabTransport);
 		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleTarget, "Teleporterziel");
@@ -183,10 +182,8 @@ public class TeleportStations {
 	}
 
 	private void registerBlockTeleporter() {
-		blockTeleporter = new BlockTeleporter();
-		blockTeleporterAn = new BlockTeleporter();
-        // TODO blockTeleporter.setBlockName("Teleporter");
-        // TODO blockTeleporterAn.setBlockUnbreakable();
+		blockTeleporter = new BlockTeleporter(true);
+		blockTeleporterAn = new BlockTeleporter(false);
 		blockTeleporter.setCreativeTab(CreativeTabs.tabTransport);
 		GameRegistry.registerBlock(blockTeleporter,
 				blockTeleporter.getUnlocalizedName());
@@ -205,8 +202,6 @@ public class TeleportStations {
 		GameRegistry.registerBlock(blockTeleTop, "Teleporterdeckel");
 		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleTop, "Teleporterdeckel");
-        // TODO blockTeleTop.setBlockUnbreakable().setBlockBounds(0.01f, 0.5f, 0.01f,
-        // TODO 		0.99f, 1f, 0.99f);
 		GameRegistry.registerTileEntity(TileEntityTeleporter.class,
 				"TileEntityTeleporter");
 	}
@@ -216,7 +211,5 @@ public class TeleportStations {
 		GameRegistry.registerBlock(blockTeleMid, "Teleportermitte");
 		// TODO localization auf assets umstellen!
 		LanguageRegistry.addName(blockTeleMid, "Teleportermitte");
-        // TODO blockTeleMid.setBlockUnbreakable().setBlockBounds(0.5f, 1.5F, 0.5f,
-        // TODO 		0.5f, 1.5f, 0.5f);
 	}
 }

@@ -5,3 +5,6 @@ build/
 .gradle/
 eclipse/
 bin/
+TeleportStations.iws
+TeleportStations.iml
+TeleportStations.ipr

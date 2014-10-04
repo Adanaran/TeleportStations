@@ -26,8 +26,14 @@ public class BlockTeleporter extends BlockTeleTarget {
     /**
      * Constructor.
      */
-    public BlockTeleporter() {
+    public BlockTeleporter(boolean isActive) {
         super();
+        if(isActive) {
+            this.setBlockUnbreakable();
+            this.setUnlocalizedName("TeleporterAn");
+        }else {
+            this.setUnlocalizedName("Teleporter");
+        }
     }
 
 	/*@SideOnly(Side.CLIENT)

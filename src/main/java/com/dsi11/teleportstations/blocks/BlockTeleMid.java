@@ -1,38 +1,34 @@
 package com.dsi11.teleportstations.blocks;
 
-import com.dsi11.teleportstations.TeleportStations;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 /**
  * Middle block of teleporter.
- * <p>
+ * <p/>
  * This block doesn't do anything, it's just a blocker to prevent other blocks
  * being placed in a teleporter.
- * 
+ *
  * @author Demitreus
- * 
  */
 public class BlockTeleMid extends Block {
 
-	/**
-	 * Constuctor of middle block of teleporter.
-	 */
-	public BlockTeleMid() {
-		super(Material.portal);
-	}
+    /**
+     * Constuctor of middle block of teleporter.
+     */
+    public BlockTeleMid() {
+        super(Material.portal);
+        this.setBlockUnbreakable();
+        this.setBlockBounds(0.5f, 1.5F, 0.5f, 0.5f, 1.5f, 0.5f);
+    }
 
 	/*@Override
-	public void registerBlockIcons(IIconRegister p_149651_1_) {
+    public void registerBlockIcons(IIconRegister p_149651_1_) {
 		//do nothing -- no Icon
 	}*/
 
 	/*@Override
-	public IIcon getIcon(IBlockAccess IBA, int i,
+    public IIcon getIcon(IBlockAccess IBA, int i,
 			int j, int k, int meta) {
 		return Blocks.air.getIcon(IBA, i, j, k, meta);
 	}*/
@@ -42,10 +38,10 @@ public class BlockTeleMid extends Block {
 		return Blocks.air.getIcon(side, meta);
 	}*/
 
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
 
 	/*@Override
 	public boolean canBlockStay(World world, int i, int j, int k) {

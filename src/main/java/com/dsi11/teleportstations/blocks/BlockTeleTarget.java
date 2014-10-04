@@ -41,6 +41,7 @@ public class BlockTeleTarget extends BlockContainer {
     public BlockTeleTarget() {
         super(Material.iron);
         this.setBlockBounds(0.0f, 0f, 0.0f, 1.0f, 0.125f, 1.0f);
+        this.setUnlocalizedName("Teleporterziel");
     }
 
 /*	@SideOnly(Side.CLIENT)

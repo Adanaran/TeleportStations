@@ -29,7 +29,7 @@ public class BlockTeleporter extends BlockTeleTarget {
     /**
      * Constructor.
      */
-    public BlockTeleporter() {
+    public BlockTeleporter(boolean isActive) {
         super();
         if(isActive) {
             this.setBlockUnbreakable();
@@ -37,7 +37,7 @@ public class BlockTeleporter extends BlockTeleTarget {
         }else {
             this.setUnlocalizedName("Teleporter");
         }
-        this.setDefaultState(this.blockState.getBaseState().withProperty(POWERED, Boolean.valueOf(false)));
+        //this.setDefaultState(this.blockState.getBaseState().withProperty(POWERED, Boolean.valueOf(false)));
     }
 
 /*@SideOnly(Side.CLIENT)

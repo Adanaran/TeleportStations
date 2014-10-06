@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Mainclass of Minecraft Mod Teleport Stations.
+ * Mainclass of Minecraft ExampleMod Teleport Stations.
  * <p/>
  * Registers blocks and all other needed modules.
  *
@@ -48,7 +48,7 @@ import org.apache.logging.log4j.Logger;
 public class TeleportStations {
 
     // The mod instance
-    @Mod.Instance
+    @Mod.Instance("TeleportStations")
     public static TeleportStations instance;
     // The sided Proxy instance
     @SidedProxy(clientSide = "com.dsi11.teleportstations.ClientProxy", serverSide = "com.dsi11.teleportstations.CommonProxy")
@@ -160,8 +160,8 @@ public class TeleportStations {
     }
 
     private void registerBlockTeleporter() {
-        blockTeleporter = new BlockTeleporter(true);
-        blockTeleporterAn = new BlockTeleporter(false);
+        blockTeleporter = new BlockTeleporter(false);
+        blockTeleporterAn = new BlockTeleporter(true);
         blockTeleporter.setCreativeTab(CreativeTabs.tabTransport);
         GameRegistry.registerBlock(blockTeleporter,
                 blockTeleporter.getUnlocalizedName());
